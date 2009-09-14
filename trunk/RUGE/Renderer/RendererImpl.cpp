@@ -262,11 +262,10 @@ STDMETHODIMP CRendererImpl::RendererLoop()
 				nFrames=0;
 			}
 			else nFrames++;
-			m_lpD3DDevice->BeginScene();
+			BeginScene();
 			if (m_pEventHandler!=NULL) m_pEventHandler->Render();
 			else Clear();
-			RenderBatch(true);
-			m_lpD3DDevice->EndScene();
+			EndScene();
 
 			LPDIRECT3DSURFACE9 lpD3DSurface;
 
@@ -287,17 +286,12 @@ STDMETHODIMP CRendererImpl::RendererLoop()
 		break;
 	case D3DERR_DEVICENOTRESET:
 		{
-			m_lpD3DVertexBuf->Release();
-			m_lpD3DVertexBuf=NULL;
-
-			HRESULT hr=Font_OnLostDevice();
+			HRESULT hr=OnLostDevice();
 
 			if (FAILED(hr)) return hr;
 			hr=m_lpD3DDevice->Reset(&m_D3Dpp);
 			if (FAILED(hr)) return hr;
-			hr=InitLost();
-			if (FAILED(hr)) return hr;
-			hr=Font_OnResetDevice();
+			hr=OnResetDevice();
 			if (FAILED(hr)) return hr;
 			m_bDeviceLost=false;
 		}
@@ -534,8 +528,6 @@ HRESULT CRendererImpl::InitLost()
 		D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1, D3DPOOL_DEFAULT, &m_lpD3DVertexBuf, NULL);
 
 	if (FAILED(hr)) return hr;
-	m_lpD3DDevice->SetFVF(D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1);
-	m_lpD3DDevice->SetStreamSource(0, m_lpD3DVertexBuf, 0, sizeof(VERTEX));
 
 	// ÉèÖÃ¹«¹²äÖÈ¾×´Ì¬
 	m_lpD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
@@ -597,13 +589,25 @@ void CRendererImpl::RenderBatch(bool bEndRender/* =false */)
 			m_lpD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, m_nPrims);
 			break;
 		case PRIM_QUAD:
-			
 			m_lpD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, m_nPrims*2);
 			break;
 		}
 		m_nPrims=0;
 	}
 	if (!bEndRender) m_lpD3DVertexBuf->Lock(0, 0, (void**)&m_pVertexes, 0);
+}
+
+void CRendererImpl::BeginScene()
+{
+	m_lpD3DDevice->BeginScene();
+	m_lpD3DDevice->SetStreamSource(0, m_lpD3DVertexBuf, 0, sizeof(VERTEX));
+	m_lpD3DDevice->SetFVF(D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1);
+}
+
+void CRendererImpl::EndScene()
+{
+	RenderBatch(true);
+	m_lpD3DDevice->EndScene();
 }
 
 void CRendererImpl::Texture_Append(LPDIRECT3DTEXTURE9 lpD3DTex)
@@ -704,23 +708,28 @@ void CRendererImpl::Font_RemoveAll()
 	}
 }
 
-HRESULT CRendererImpl::Font_OnLostDevice()
+HRESULT CRendererImpl::OnLostDevice()
 {
+	HRESULT hr;
+
+	m_lpD3DVertexBuf->Release();
+	m_lpD3DVertexBuf=NULL;
 	for (PFONTLIST p=m_pFontList; p!=NULL; p=p->pNext)
 	{
-		HRESULT hr=p->lpD3DFont->OnLostDevice();
-
+		hr=p->lpD3DFont->OnLostDevice();
 		if (FAILED(hr)) return hr;
 	}
 	return m_lpD3DSprite->OnLostDevice();
 }
 
-HRESULT CRendererImpl::Font_OnResetDevice()
+HRESULT CRendererImpl::OnResetDevice()
 {
+	HRESULT hr=InitLost();
+	
+	if (FAILED(hr)) return hr;
 	for (PFONTLIST p=m_pFontList; p!=NULL; p=p->pNext)
 	{
-		HRESULT hr=p->lpD3DFont->OnResetDevice();
-
+		hr=p->lpD3DFont->OnResetDevice();
 		if (FAILED(hr)) return hr;
 	}
 	return m_lpD3DSprite->OnResetDevice();
