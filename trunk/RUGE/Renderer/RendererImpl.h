@@ -5,11 +5,24 @@
 
 #include "Renderer.h"
 
+typedef struct TARGET
+{
+	LPDIRECT3DTEXTURE9 lpD3DTex;
+	LPDIRECT3DSURFACE9 lpD3DSurf, lpD3DSurfDepth;
+	int nWidth, nHeight;
+} *PTARGET;
+
 typedef struct TEXTURELIST
 {
 	LPDIRECT3DTEXTURE9 lpD3DTex;
 	TEXTURELIST *pNext;
 } *PTEXTURELIST;
+
+typedef struct TARGETLIST
+{
+	PTARGET pTarg;
+	TARGETLIST *pNext;
+} *PTARGETLIST;
 
 typedef struct FONTLIST
 {
@@ -44,6 +57,8 @@ public:
 	STDMETHOD(Shutdown)();
 	STDMETHOD(RendererLoop)();
 
+	STDMETHOD(BeginTarget)(HTARGET hTarg);
+	STDMETHOD(EndTarget)();
 	STDMETHOD(Clear)(DWORD dwColor=0);
 	STDMETHOD(RenderLine)(PVERTEX pV1, PVERTEX pV2, DWORD dwBlend=BLEND_DEFAULT);
 	STDMETHOD(RenderTriangle)(PTRIANGLE pTriangle);
@@ -58,6 +73,10 @@ public:
 	STDMETHOD_(int, Texture_GetWidth)(HTEXTURE hTex);
 	STDMETHOD_(int, Texture_GetHeight)(HTEXTURE hTex);
 
+	STDMETHOD_(HTARGET, Target_Create)(int nWidth, int nHeight);
+	STDMETHOD(Target_Free)(HTARGET hTarg);
+	STDMETHOD_(HTEXTURE, Target_GetTexture)(HTARGET hTarg);
+
 	STDMETHOD_(HFONTX, Font_Create)(int nHeight, int nWidth, int nWeight, BOOL bItalic, LPCSTR lpcszFont);
 	STDMETHOD(Font_Free)(HFONTX hFont);
 	STDMETHOD_(int, Font_DrawText)(HFONTX hFont, LPCSTR lpcszText, LPRECT lpRect,
@@ -69,14 +88,18 @@ protected:
 	void RenderBatch(bool bEndRender=false);
 	void BeginScene();
 	void EndScene();
+	void SetProjectionMatrix(int nWidth, int nHeight);
+	HRESULT OnLostDevice();
+	HRESULT OnResetDevice();
 	void Texture_Append(LPDIRECT3DTEXTURE9 lpD3DTex);
 	void Texture_Remove(LPDIRECT3DTEXTURE9 lpD3DTex);
 	void Texture_RemoveAll();
+	void Target_Append(PTARGET pTarg);
+	void Target_Remove(PTARGET pTarg);
+	void Target_RemoveAll();
 	void Font_Append(LPD3DXFONT lpD3DFont);
 	void Font_Remove(LPD3DXFONT lpD3DFont);
 	void Font_RemoveAll();
-	HRESULT OnLostDevice();
-	HRESULT OnResetDevice();
 
 protected:
 	ULONG m_uRefCount;
@@ -84,9 +107,10 @@ protected:
 	BOOL m_bWindowed;
 	DWORD m_dwVSync, m_dwMagFilter, m_dwMinFilter;
 	LPDIRECT3D9 m_lpD3D;
-	D3DDISPLAYMODE m_D3Ddm;
 	D3DPRESENT_PARAMETERS m_D3Dpp;
 	LPDIRECT3DDEVICE9 m_lpD3DDevice;
+	LPDIRECT3DSURFACE9 m_lpD3DSurfBack, m_lpD3DSurfDepth;
+	D3DXMATRIX m_d3dxmatProj;
 	LPD3DXSPRITE m_lpD3DSprite;
 	ITimerPtr m_pTimer;
 	BOOL m_bDeviceLost;
@@ -94,6 +118,7 @@ protected:
 	LPDIRECT3DVERTEXBUFFER9 m_lpD3DVertexBuf;
 	PVERTEX m_pVertexes;
 	PTEXTURELIST m_pTexList;
+	PTARGETLIST m_pTargList;
 	PFONTLIST m_pFontList;
 	DWORD m_dwCurPrim, m_dwCurBlend;
 	HTEXTURE m_hCurTex;

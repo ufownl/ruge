@@ -23,6 +23,7 @@
 
 typedef HANDLE HDEVICE;
 typedef HANDLE HTEXTURE;
+typedef HANDLE HTARGET;
 typedef HANDLE HFONTX;
 
 typedef struct VERTEX
@@ -126,6 +127,8 @@ typedef struct IRenderer : public IUnknown
 	STDMETHOD(Shutdown)() PURE;
 	STDMETHOD(RendererLoop)() PURE;
 
+	STDMETHOD(BeginTarget)(HTARGET hTarg) PURE;
+	STDMETHOD(EndTarget)() PURE;
 	STDMETHOD(Clear)(DWORD dwColor=0) PURE;
 	STDMETHOD(RenderLine)(PVERTEX pV1, PVERTEX pV2, DWORD dwBlend=BLEND_DEFAULT) PURE;
 	STDMETHOD(RenderTriangle)(PTRIANGLE pTriangle) PURE;
@@ -139,6 +142,10 @@ typedef struct IRenderer : public IUnknown
 	STDMETHOD(Texture_Unlock)(HTEXTURE hTex) PURE;
 	STDMETHOD_(int, Texture_GetWidth)(HTEXTURE hTex) PURE;
 	STDMETHOD_(int, Texture_GetHeight)(HTEXTURE hTex) PURE;
+
+	STDMETHOD_(HTARGET, Target_Create)(int nWidth, int nHeight) PURE;
+	STDMETHOD(Target_Free)(HTARGET hTarg) PURE;
+	STDMETHOD_(HTEXTURE, Target_GetTexture)(HTARGET hTarg) PURE;
 
 	STDMETHOD_(HFONTX, Font_Create)(int nHeight, int nWidth, int nWeight, BOOL bItalic, LPCSTR lpcszFont) PURE;
 	STDMETHOD(Font_Free)(HFONTX hFont) PURE;

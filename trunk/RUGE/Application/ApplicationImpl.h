@@ -33,6 +33,8 @@ public:
 	STDMETHOD(System_Initialize)();
 	STDMETHOD(System_Run)();
 
+	STDMETHOD(Gfx_BeginTarget)(HTARGET hTarg);
+	STDMETHOD(Gfx_EndTarget)();
 	STDMETHOD(Gfx_Clear)(DWORD dwColor=0);
 	STDMETHOD(Gfx_RenderLine)(PVERTEX pV1, PVERTEX pV2, DWORD dwBlend=BLEND_DEFAULT);
 	STDMETHOD(Gfx_RenderTriangle)(PTRIANGLE pTriangle);
@@ -46,6 +48,10 @@ public:
 	STDMETHOD(Texture_Unlock)(HTEXTURE hTex);
 	STDMETHOD_(int, Texture_GetWidth)(HTEXTURE hTex);
 	STDMETHOD_(int, Texture_GetHeight)(HTEXTURE hTex);
+
+	STDMETHOD_(HTARGET, Target_Create)(int nWidth, int nHeight);
+	STDMETHOD(Target_Free)(HTARGET hTarg);
+	STDMETHOD_(HTEXTURE, Target_GetTexture)(HTARGET hTarg);
 
 	STDMETHOD_(HFONTX, Font_Create)(int nHeight, int nWidth, int nWeight, BOOL bItalic, LPCSTR lpcszFont);
 	STDMETHOD(Font_Free)(HFONTX hFont);
