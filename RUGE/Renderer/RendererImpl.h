@@ -67,14 +67,16 @@ protected:
 	HRESULT InitLost();
 	void SetBlendMode(DWORD dwBlend);
 	void RenderBatch(bool bEndRender=false);
+	void BeginScene();
+	void EndScene();
 	void Texture_Append(LPDIRECT3DTEXTURE9 lpD3DTex);
 	void Texture_Remove(LPDIRECT3DTEXTURE9 lpD3DTex);
 	void Texture_RemoveAll();
 	void Font_Append(LPD3DXFONT lpD3DFont);
 	void Font_Remove(LPD3DXFONT lpD3DFont);
 	void Font_RemoveAll();
-	HRESULT Font_OnLostDevice();
-	HRESULT Font_OnResetDevice();
+	HRESULT OnLostDevice();
+	HRESULT OnResetDevice();
 
 protected:
 	ULONG m_uRefCount;
