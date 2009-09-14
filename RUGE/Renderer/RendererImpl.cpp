@@ -13,11 +13,15 @@ CRendererImpl::CRendererImpl()
 	, m_dwMinFilter(TEXF_NEAREST)
 	, m_lpD3D(NULL)
 	, m_lpD3DDevice(NULL)
+	, m_lpD3DSurfBack(NULL)
+	, m_lpD3DSurfDepth(NULL)
+	, m_lpD3DSprite(NULL)
 	, m_bDeviceLost(FALSE)
 	, m_pEventHandler(NULL)
 	, m_lpD3DVertexBuf(NULL)
 	, m_pVertexes(NULL)
 	, m_pTexList(NULL)
+	, m_pTargList(NULL)
 	, m_pFontList(NULL)
 	, m_dwCurPrim(PRIM_LINE)
 	, m_dwCurBlend(BLEND_DEFAULT)
@@ -191,15 +195,15 @@ STDMETHODIMP CRendererImpl::Initialize(HWND hWnd)
 	assert(m_lpD3D==NULL && m_lpD3DDevice==NULL);
 	m_lpD3D=Direct3DCreate9(D3D_SDK_VERSION);  // 创建D3D对象
 	if (m_lpD3D==NULL) return -1;
-	memset(&m_D3Ddm, 0, sizeof(m_D3Ddm));
 
-	HRESULT hr=m_lpD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &m_D3Ddm);
+	D3DDISPLAYMODE D3Ddm;
+	HRESULT hr=m_lpD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &D3Ddm);
 
 	if (FAILED(hr)) return hr;
 	memset(&m_D3Dpp, 0, sizeof(m_D3Dpp));
 	m_D3Dpp.BackBufferWidth=m_nWidth;
 	m_D3Dpp.BackBufferHeight=m_nHeight;
-	m_D3Dpp.BackBufferFormat=m_D3Ddm.Format;
+	m_D3Dpp.BackBufferFormat=D3Ddm.Format;
 	m_D3Dpp.BackBufferCount=1;
 	m_D3Dpp.SwapEffect=D3DSWAPEFFECT_FLIP;
 	m_D3Dpp.hDeviceWindow=hWnd;
@@ -221,11 +225,22 @@ STDMETHODIMP CRendererImpl::Initialize(HWND hWnd)
 STDMETHODIMP CRendererImpl::Shutdown()
 {
 	Font_RemoveAll();
+	Target_RemoveAll();
 	Texture_RemoveAll();
 	if (m_lpD3DVertexBuf!=NULL)
 	{
 		m_lpD3DVertexBuf->Release();
 		m_lpD3DVertexBuf=NULL;
+	}
+	if (m_lpD3DSurfDepth!=NULL)
+	{
+		m_lpD3DSurfDepth->Release();
+		m_lpD3DSurfDepth=NULL;
+	}
+	if (m_lpD3DSurfBack!=NULL)
+	{
+		m_lpD3DSurfBack->Release();
+		m_lpD3DSurfBack=NULL;
 	}
 	if (m_pTimer!=NULL) m_pTimer.Release();
 	if (m_lpD3DSprite!=NULL)
@@ -304,10 +319,35 @@ STDMETHODIMP CRendererImpl::RendererLoop()
 	return S_OK;
 }
 
+STDMETHODIMP CRendererImpl::BeginTarget(HTARGET hTarg)
+{
+	if (hTarg==NULL) return E_HANDLE;
+	EndScene();
+	m_lpD3DDevice->SetRenderTarget(0, ((PTARGET)hTarg)->lpD3DSurf);
+	m_lpD3DDevice->SetDepthStencilSurface(((PTARGET)hTarg)->lpD3DSurfDepth);
+	SetProjectionMatrix(((PTARGET)hTarg)->nWidth, ((PTARGET)hTarg)->nHeight);
+	BeginScene();
+	return S_OK;
+}
+
+STDMETHODIMP CRendererImpl::EndTarget()
+{
+	EndScene();
+	m_lpD3DDevice->SetRenderTarget(0, m_lpD3DSurfBack);
+	m_lpD3DDevice->SetDepthStencilSurface(m_lpD3DSurfDepth);
+	SetProjectionMatrix(m_nWidth, m_nHeight);
+	BeginScene();
+	return S_OK;
+}
+
 STDMETHODIMP CRendererImpl::Clear(DWORD dwColor/* =0 */)
 {
 	assert(m_lpD3DDevice!=NULL);
-	return m_lpD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, dwColor, 1.0f, 0);
+
+	HRESULT hr=m_lpD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, dwColor, 1.0f, 0);
+
+	if ((FAILED(hr))) return hr;
+	return m_lpD3DDevice->SetTransform(D3DTS_PROJECTION, &m_d3dxmatProj);
 }
 
 STDMETHODIMP CRendererImpl::RenderLine(PVERTEX pV1, PVERTEX pV2, DWORD dwBlend/* =BLEND_DEFAULT */)
@@ -483,6 +523,66 @@ STDMETHODIMP_(int) CRendererImpl::Texture_GetHeight(HTEXTURE hTex)
 	return D3Dsd.Height;
 }
 
+STDMETHODIMP_(HTARGET) CRendererImpl::Target_Create(int nWidth, int nHeight)
+{
+	assert(m_lpD3D!=NULL && m_lpD3DDevice!=NULL);
+
+	PTARGET pTarg=new TARGET;
+	DWORD dwQualityLevels;
+
+	memset(pTarg, 0, sizeof(TARGET));
+	if (FAILED(m_lpD3DDevice->CreateTexture(nWidth, nHeight, 1, D3DUSAGE_RENDERTARGET,
+		m_D3Dpp.BackBufferFormat, D3DPOOL_DEFAULT, &pTarg->lpD3DTex, NULL)))
+	{
+		delete pTarg;
+		return NULL;
+	}
+	if (FAILED(pTarg->lpD3DTex->GetSurfaceLevel(0, &pTarg->lpD3DSurf)))
+	{
+		pTarg->lpD3DTex->Release();
+		pTarg->lpD3DTex=NULL;
+		delete pTarg;
+		return NULL;
+	}
+	if (FAILED(m_lpD3D->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
+		m_D3Dpp.AutoDepthStencilFormat, m_bWindowed, D3DMULTISAMPLE_NONE, &dwQualityLevels)))
+	{
+		pTarg->lpD3DTex->Release();
+		pTarg->lpD3DTex=NULL;
+		pTarg->lpD3DSurf->Release();
+		pTarg->lpD3DSurf=NULL;
+		delete pTarg;
+		return NULL;
+	}
+	if (FAILED(m_lpD3DDevice->CreateDepthStencilSurface(nWidth, nHeight, m_D3Dpp.AutoDepthStencilFormat,
+		D3DMULTISAMPLE_NONE, dwQualityLevels, FALSE, &pTarg->lpD3DSurfDepth, NULL)))
+	{
+		pTarg->lpD3DTex->Release();
+		pTarg->lpD3DTex=NULL;
+		pTarg->lpD3DSurf->Release();
+		pTarg->lpD3DSurf=NULL;
+		delete pTarg;
+		return NULL;
+	}
+	pTarg->nWidth=nWidth;
+	pTarg->nHeight=nHeight;
+	Target_Append(pTarg);
+	return (HTARGET)pTarg;
+}
+
+STDMETHODIMP CRendererImpl::Target_Free(HTARGET hTarg)
+{
+	if (hTarg==NULL) return E_HANDLE;
+	Target_Remove((PTARGET)hTarg);
+	return S_OK;
+}
+
+STDMETHODIMP_(HTEXTURE) CRendererImpl::Target_GetTexture(HTARGET hTarg)
+{
+	if (hTarg==NULL) return NULL;
+	return (HTEXTURE)((PTARGET)hTarg)->lpD3DTex;
+}
+
 STDMETHODIMP_(HFONTX) CRendererImpl::Font_Create(int nHeight, int nWidth, int nWeight, BOOL bItalic, LPCSTR lpcszFont)
 {
 	assert(m_lpD3DDevice!=NULL);
@@ -522,11 +622,13 @@ STDMETHODIMP_(int) CRendererImpl::Font_DrawText(HFONTX hFont, LPCSTR lpcszText, 
 
 HRESULT CRendererImpl::InitLost()
 {
-	assert(m_lpD3DVertexBuf==NULL);
-	
-	HRESULT hr=m_lpD3DDevice->CreateVertexBuffer(sizeof(VERTEX)*VERTEX_BUFFER_SIZE,
-		D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1, D3DPOOL_DEFAULT, &m_lpD3DVertexBuf, NULL);
+	HRESULT hr=m_lpD3DDevice->GetRenderTarget(0, &m_lpD3DSurfBack);
 
+	if (FAILED(hr)) return hr;
+	hr=m_lpD3DDevice->GetDepthStencilSurface(&m_lpD3DSurfDepth);
+	if (FAILED(hr)) return hr;
+	hr=m_lpD3DDevice->CreateVertexBuffer(sizeof(VERTEX)*VERTEX_BUFFER_SIZE, D3DUSAGE_WRITEONLY,
+		D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1, D3DPOOL_DEFAULT, &m_lpD3DVertexBuf, NULL);
 	if (FAILED(hr)) return hr;
 
 	// 设置公共渲染状态
@@ -610,6 +712,95 @@ void CRendererImpl::EndScene()
 	m_lpD3DDevice->EndScene();
 }
 
+void CRendererImpl::SetProjectionMatrix(int nWidth, int nHeight)
+{
+	D3DXMATRIX d3dxmatTemp;
+
+	D3DXMatrixScaling(&m_d3dxmatProj, 1.0f, -1.0f, 1.0f);
+	D3DXMatrixTranslation(&d3dxmatTemp, -0.5f, nHeight+0.5f, 0.0f);
+	D3DXMatrixMultiply(&m_d3dxmatProj, &m_d3dxmatProj, &d3dxmatTemp);
+	D3DXMatrixOrthoOffCenterLH(&d3dxmatTemp, 0, (float)nWidth, 0, (float)nHeight, 0.0f, 1.0f);
+	D3DXMatrixMultiply(&m_d3dxmatProj, &m_d3dxmatProj, &d3dxmatTemp);
+}
+
+HRESULT CRendererImpl::OnLostDevice()
+{
+	HRESULT hr;
+
+	m_lpD3DSurfBack->Release();
+	m_lpD3DSurfBack=NULL;
+	m_lpD3DSurfDepth->Release();
+	m_lpD3DSurfDepth=NULL;
+	m_lpD3DVertexBuf->Release();
+	m_lpD3DVertexBuf=NULL;
+	for (PTARGETLIST p=m_pTargList; p!=NULL; p=p->pNext)
+	{
+		p->pTarg->lpD3DTex->Release();
+		p->pTarg->lpD3DTex=NULL;
+		p->pTarg->lpD3DSurf->Release();
+		p->pTarg->lpD3DSurf=NULL;
+		p->pTarg->lpD3DSurfDepth->Release();
+		p->pTarg->lpD3DSurfDepth=NULL;
+	}
+	for (PFONTLIST p=m_pFontList; p!=NULL; p=p->pNext)
+	{
+		hr=p->lpD3DFont->OnLostDevice();
+		if (FAILED(hr)) return hr;
+	}
+	return m_lpD3DSprite->OnLostDevice();
+}
+
+HRESULT CRendererImpl::OnResetDevice()
+{
+	assert(m_lpD3D!=NULL && m_lpD3DDevice!=NULL);
+
+	HRESULT hr=InitLost();
+	
+	if (FAILED(hr)) return hr;
+	for (PTARGETLIST p=m_pTargList; p!=NULL; p=p->pNext)
+	{
+		DWORD dwQualityLevels;
+
+		hr=m_lpD3DDevice->CreateTexture(p->pTarg->nWidth, p->pTarg->nHeight, 1, D3DUSAGE_RENDERTARGET,
+			m_D3Dpp.BackBufferFormat, D3DPOOL_DEFAULT, &p->pTarg->lpD3DTex, NULL);
+		if (FAILED(hr)) return hr;
+		hr=p->pTarg->lpD3DTex->GetSurfaceLevel(0, &p->pTarg->lpD3DSurf);
+		if (FAILED(hr))
+		{
+			p->pTarg->lpD3DTex->Release();
+			p->pTarg->lpD3DTex=NULL;
+			return hr;
+		}
+		hr=m_lpD3D->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
+			m_D3Dpp.AutoDepthStencilFormat, m_bWindowed, D3DMULTISAMPLE_NONE, &dwQualityLevels);
+		if (FAILED(hr))
+		{
+			p->pTarg->lpD3DTex->Release();
+			p->pTarg->lpD3DTex=NULL;
+			p->pTarg->lpD3DSurf->Release();
+			p->pTarg->lpD3DSurf=NULL;
+			return hr;
+		}
+		hr=m_lpD3DDevice->CreateDepthStencilSurface(p->pTarg->nWidth, p->pTarg->nHeight,
+			m_D3Dpp.AutoDepthStencilFormat, D3DMULTISAMPLE_NONE, dwQualityLevels, FALSE,
+			&p->pTarg->lpD3DSurfDepth, NULL);
+		if (FAILED(hr))
+		{
+			p->pTarg->lpD3DTex->Release();
+			p->pTarg->lpD3DTex=NULL;
+			p->pTarg->lpD3DSurf->Release();
+			p->pTarg->lpD3DSurf=NULL;
+			return hr;
+		}
+	}
+	for (PFONTLIST p=m_pFontList; p!=NULL; p=p->pNext)
+	{
+		hr=p->lpD3DFont->OnResetDevice();
+		if (FAILED(hr)) return hr;
+	}
+	return m_lpD3DSprite->OnResetDevice();
+}
+
 void CRendererImpl::Texture_Append(LPDIRECT3DTEXTURE9 lpD3DTex)
 {
 	PTEXTURELIST pNode=new TEXTURELIST;
@@ -655,6 +846,100 @@ void CRendererImpl::Texture_RemoveAll()
 
 		m_pTexList=m_pTexList->pNext;
 		pNode->lpD3DTex->Release();
+		delete pNode;
+	}
+}
+
+void CRendererImpl::Target_Append(PTARGET pTarg)
+{
+	PTARGETLIST pNode=new TARGETLIST;
+
+	pNode->pTarg=pTarg;
+	pNode->pNext=m_pTargList;
+	m_pTargList=pNode;
+}
+
+void CRendererImpl::Target_Remove(PTARGET pTarg)
+{
+	assert(m_pTargList!=NULL);
+	if (m_pTargList->pTarg==pTarg)
+	{
+		PTARGETLIST pNode=m_pTargList;
+
+		m_pTargList=m_pTargList->pNext;
+		if (pTarg->lpD3DTex!=NULL)
+		{
+			pTarg->lpD3DTex->Release();
+			pTarg->lpD3DTex=NULL;
+		}
+		if (pTarg->lpD3DSurf!=NULL)
+		{
+			pTarg->lpD3DSurf->Release();
+			pTarg->lpD3DSurf=NULL;
+		}
+		if (pTarg->lpD3DSurfDepth!=NULL)
+		{
+			pTarg->lpD3DSurfDepth->Release();
+			pTarg->lpD3DSurfDepth=NULL;
+		}
+		delete pTarg;
+		delete pNode;
+	}
+	else
+	{
+		for (PTARGETLIST p=m_pTargList; p->pNext!=NULL; p=p->pNext)
+		{
+			if (p->pNext->pTarg==pTarg)
+			{
+				PTARGETLIST pNode=p->pNext;
+
+				p->pNext=pNode->pNext;
+				if (pTarg->lpD3DTex!=NULL)
+				{
+					pTarg->lpD3DTex->Release();
+					pTarg->lpD3DTex=NULL;
+				}
+				if (pTarg->lpD3DSurf!=NULL)
+				{
+					pTarg->lpD3DSurf->Release();
+					pTarg->lpD3DSurf=NULL;
+				}
+				if (pTarg->lpD3DSurfDepth!=NULL)
+				{
+					pTarg->lpD3DSurfDepth->Release();
+					pTarg->lpD3DSurfDepth=NULL;
+				}
+				delete pTarg;
+				delete pNode;
+				break;
+			}
+		}
+	}
+}
+
+void CRendererImpl::Target_RemoveAll()
+{
+	while (m_pTargList!=NULL)
+	{
+		PTARGETLIST pNode=m_pTargList;
+
+		m_pTargList=m_pTargList->pNext;
+		if (pNode->pTarg->lpD3DTex!=NULL)
+		{
+			pNode->pTarg->lpD3DTex->Release();
+			pNode->pTarg->lpD3DTex=NULL;
+		}
+		if (pNode->pTarg->lpD3DSurf!=NULL)
+		{
+			pNode->pTarg->lpD3DSurf->Release();
+			pNode->pTarg->lpD3DSurf=NULL;
+		}
+		if (pNode->pTarg->lpD3DSurfDepth!=NULL)
+		{
+			pNode->pTarg->lpD3DSurfDepth->Release();
+			pNode->pTarg->lpD3DSurfDepth=NULL;
+		}
+		delete pNode->pTarg;
 		delete pNode;
 	}
 }
@@ -706,31 +991,4 @@ void CRendererImpl::Font_RemoveAll()
 		pNode->lpD3DFont->Release();
 		delete pNode;
 	}
-}
-
-HRESULT CRendererImpl::OnLostDevice()
-{
-	HRESULT hr;
-
-	m_lpD3DVertexBuf->Release();
-	m_lpD3DVertexBuf=NULL;
-	for (PFONTLIST p=m_pFontList; p!=NULL; p=p->pNext)
-	{
-		hr=p->lpD3DFont->OnLostDevice();
-		if (FAILED(hr)) return hr;
-	}
-	return m_lpD3DSprite->OnLostDevice();
-}
-
-HRESULT CRendererImpl::OnResetDevice()
-{
-	HRESULT hr=InitLost();
-	
-	if (FAILED(hr)) return hr;
-	for (PFONTLIST p=m_pFontList; p!=NULL; p=p->pNext)
-	{
-		hr=p->lpD3DFont->OnResetDevice();
-		if (FAILED(hr)) return hr;
-	}
-	return m_lpD3DSprite->OnResetDevice();
 }

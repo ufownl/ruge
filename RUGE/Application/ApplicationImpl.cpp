@@ -318,6 +318,16 @@ STDMETHODIMP CApplicationImpl::System_Run()
 	return (HRESULT)Msg.wParam;
 }
 
+STDMETHODIMP CApplicationImpl::Gfx_BeginTarget(HTARGET hTarg)
+{
+	return m_pRenderer->BeginTarget(hTarg);
+}
+
+STDMETHODIMP CApplicationImpl::Gfx_EndTarget()
+{
+	return m_pRenderer->EndTarget();
+}
+
 STDMETHODIMP CApplicationImpl::Gfx_Clear(DWORD dwColor/* =0 */)
 {
 	return m_pRenderer->Clear(dwColor);
@@ -377,6 +387,21 @@ STDMETHODIMP_(int) CApplicationImpl::Texture_GetWidth(HTEXTURE hTex)
 STDMETHODIMP_(int) CApplicationImpl::Texture_GetHeight(HTEXTURE hTex)
 {
 	return m_pRenderer->Texture_GetHeight(hTex);
+}
+
+STDMETHODIMP_(HTARGET) CApplicationImpl::Target_Create(int nWidth, int nHeight)
+{
+	return m_pRenderer->Target_Create(nWidth, nHeight);
+}
+
+STDMETHODIMP CApplicationImpl::Target_Free(HTARGET hTarg)
+{
+	return m_pRenderer->Target_Free(hTarg);
+}
+
+STDMETHODIMP_(HTEXTURE) CApplicationImpl::Target_GetTexture(HTARGET hTarg)
+{
+	return m_pRenderer->Target_GetTexture(hTarg);
 }
 
 STDMETHODIMP_(HFONTX) CApplicationImpl::Font_Create(int nHeight, int nWidth, int nWeight, BOOL bItalic, LPCSTR lpcszFont)
