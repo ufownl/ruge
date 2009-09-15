@@ -43,14 +43,14 @@ public:
 	void SetBlendMode(DWORD dwBlend);
 	void SetZ(int nRow, int nCol, float z);
 	void SetColor(int nRow, int nCol, DWORD dwColor);
-	void SetDisplacement(int nCol, int nRow, float dx, float dy, DWORD dwMode);
+	void SetDisplacement(int nRow, int nCol, float dx, float dy, DWORD dwMode);
 
 	HTEXTURE GetTexture() const;
 	void GetTextureRect(float &x, float &y, float &w, float &h) const;
 	DWORD GetBlendMode() const;
 	float GetZ(int nRow, int nCol) const;
 	DWORD GetColor(int nRow, int nCol) const;
-	void GetDisplacement(int nCol, int nRow, float &dx, float &dy, DWORD dwMode) const;
+	void GetDisplacement(int nRow, int nCol, float &dx, float &dy, DWORD dwMode) const;
 	int GetRows() const;
 	int GetCols() const;
 
