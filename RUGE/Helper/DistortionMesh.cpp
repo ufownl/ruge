@@ -199,7 +199,7 @@ void CDistortionMesh::SetColor(int nRow, int nCol, DWORD dwColor)
 	if (0<=nRow && nRow<m_nRows && 0<=nCol && nCol<m_nCols) m_pVertexArray[nRow*m_nCols+nCol].dwColor=dwColor;
 }
 
-void CDistortionMesh::SetDisplacement(int nCol, int nRow, float dx, float dy, DWORD dwMode)
+void CDistortionMesh::SetDisplacement(int nRow, int nCol, float dx, float dy, DWORD dwMode)
 {
 	if (0<=nRow && nRow<m_nRows && 0<=nCol && nCol<m_nCols)
 	{
@@ -254,7 +254,7 @@ DWORD CDistortionMesh::GetColor(int nRow, int nCol) const
 	return 0;
 }
 
-void CDistortionMesh::GetDisplacement(int nCol, int nRow, float &dx, float &dy, DWORD dwMode) const
+void CDistortionMesh::GetDisplacement(int nRow, int nCol, float &dx, float &dy, DWORD dwMode) const
 {
 	if (0<=nRow && nRow<m_nRows && 0<=nCol && nCol<m_nCols)
 	{
