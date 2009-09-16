@@ -252,7 +252,7 @@ STDMETHODIMP CApplicationImpl::System_Initialize()
 	HINSTANCE hInstance=GetModuleHandle(NULL);
 	WNDCLASS wc;
 
-	wc.style=CS_DBLCLKS|CS_HREDRAW|CS_VREDRAW;
+	wc.style=CS_DBLCLKS|CS_OWNDC|CS_HREDRAW|CS_VREDRAW;
 	wc.lpfnWndProc=WndProc;
 	wc.cbClsExtra=0;
 	wc.cbWndExtra=0;
@@ -312,26 +312,27 @@ STDMETHODIMP CApplicationImpl::System_Run()
 			TranslateMessage(&Msg);
 			DispatchMessage(&Msg);
 		}
-		else
-		{
-			static float fDelta;
 
-			fDelta=(float)m_pTimer->GetDelta()/1000;
-			m_pTimer->Start();
-			if (!m_pRenderer->GetState(RENDERER_DEVICELOST) && m_bFocus)
+		float fDelta=(float)m_pTimer->GetDelta()/1000;
+
+		m_pTimer->Start();
+		if (m_bFocus)
+		{
+			if (!m_pRenderer->GetState(RENDERER_DEVICELOST))
 			{
-				m_pAudio->Update();
 				if (m_pEventHandler!=NULL)
 				{
 					if (m_pEventHandler->Frame(fDelta)) PostQuitMessage(0);
 				}
+				m_pAudio->Update();
 			}
 			else Sleep(100);
-			
+
 			HRESULT hr=m_pRenderer->RendererLoop();
 
 			if (FAILED(hr)) PostQuitMessage(hr);
 		}
+		else Sleep(100);
 	}
 	if (m_pEventHandler!=NULL) m_pEventHandler->ReleaseResource();
 	return (HRESULT)Msg.wParam;
