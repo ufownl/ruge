@@ -316,23 +316,16 @@ STDMETHODIMP CApplicationImpl::System_Run()
 		float fDelta=(float)m_pTimer->GetDelta()/1000;
 
 		m_pTimer->Start();
-		if (m_bFocus)
+		if (m_pEventHandler!=NULL)
 		{
-			if (!m_pRenderer->GetState(RENDERER_DEVICELOST))
-			{
-				if (m_pEventHandler!=NULL)
-				{
-					if (m_pEventHandler->Frame(fDelta)) PostQuitMessage(0);
-				}
-				m_pAudio->Update();
-			}
-			else Sleep(100);
-
-			HRESULT hr=m_pRenderer->RendererLoop();
-
-			if (FAILED(hr)) PostQuitMessage(hr);
+			if (m_pEventHandler->Frame(fDelta)) PostQuitMessage(0);
 		}
-		else Sleep(100);
+		
+		HRESULT hr=m_pRenderer->RendererLoop();
+
+		if (FAILED(hr)) PostQuitMessage(hr);
+		hr=m_pAudio->Update();
+		if (FAILED(hr)) PostQuitMessage(hr);
 	}
 	if (m_pEventHandler!=NULL) m_pEventHandler->ReleaseResource();
 	return (HRESULT)Msg.wParam;
