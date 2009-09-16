@@ -29,7 +29,6 @@ CApplicationImpl::CApplicationImpl()
 	, m_nMaxChannels(32)
 	, m_bWindowed(TRUE)
 	, m_bHideCursor(FALSE)
-	, m_bFocus(FALSE)
 	, m_dwVSync(VSYNC_DEFAULT)
 	, m_dwMagFilter(TEXF_NEAREST)
 	, m_dwMinFilter(TEXF_NEAREST)
@@ -196,7 +195,7 @@ STDMETHODIMP_(BOOL) CApplicationImpl::System_GetState(RUGEBoolState State)
 		if (m_pRenderer!=NULL) return m_pRenderer->GetState(RENDERER_DEVICELOST);
 		else return FALSE;
 	case RUGE_FOCUS:
-		return m_bFocus;
+		return m_hWnd==GetFocus();
 	case RUGE_HIDECURSOR:
 		return m_bHideCursor;
 	default:
@@ -567,12 +566,6 @@ LRESULT CALLBACK CApplicationImpl::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
 		if (m_pThis->m_pEventHandler!=NULL) m_pThis->m_pEventHandler->WndEvent(uMsg, wParam, lParam);
 		switch (uMsg)
 		{
-		case WM_SETFOCUS:
-			m_pThis->m_bFocus=TRUE;
-			break;
-		case WM_KILLFOCUS:
-			m_pThis->m_bFocus=FALSE;
-			break;
 		case WM_SETCURSOR:
 			if (m_pThis->m_bHideCursor) SetCursor(NULL);
 			else SetCursor(LoadCursor(NULL, IDC_ARROW));

@@ -118,7 +118,7 @@ protected:
 	ULONG m_uRefCount;
 	char m_szCaption[MAX_PATH];
 	int m_nWidth, m_nHeight, m_nMaxChannels;
-	BOOL m_bWindowed, m_bHideCursor, m_bFocus;
+	BOOL m_bWindowed, m_bHideCursor;
 	DWORD m_dwVSync, m_dwMagFilter, m_dwMinFilter;
 	PAPPLICATIONEVENTHANDLER m_pEventHandler;
 	HWND m_hWnd;
