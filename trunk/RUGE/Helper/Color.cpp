@@ -44,9 +44,9 @@ CColor::CColor(DWORD dwColor)
 CColor& CColor::operator = (const CColor &color)
 {
 	a=color.a;
-	a=color.r;
-	a=color.g;
-	a=color.b;
+	r=color.r;
+	g=color.g;
+	b=color.b;
 	return *this;
 }
 
