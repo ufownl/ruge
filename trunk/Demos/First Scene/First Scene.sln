@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "First Scene", "First Scene.vcproj", "{3654C2B8-2CCB-453E-B80E-37455776C21B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3654C2B8-2CCB-453E-B80E-37455776C21B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3654C2B8-2CCB-453E-B80E-37455776C21B}.Debug|Win32.Build.0 = Debug|Win32
+		{3654C2B8-2CCB-453E-B80E-37455776C21B}.Release|Win32.ActiveCfg = Release|Win32
+		{3654C2B8-2CCB-453E-B80E-37455776C21B}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
