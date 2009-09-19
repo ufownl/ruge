@@ -169,10 +169,7 @@ int main(int argc, char *argv[])
 		system("Pause");
 		return -1;
 	}
-
-	CEventHandler Event;  // 创建事件处理对象
-
-	g_pApp->System_SetState(RUGE_EVENTHANDLER, &Event);  // 设置事件处理对象
+	g_pApp->System_SetState(RUGE_EVENTHANDLER, &CEventHandler());  // 设置事件处理对象
 	g_pApp->System_SetState(RUGE_CAPTION, "The Big Calm");  // 设置窗口标题
 	g_pApp->System_SetState(RUGE_VSYNC, VSYNC_ONE);  // 开启垂直同步
 	g_pApp->System_SetState(RUGE_MAGFILTER, TEXF_LINEAR);
