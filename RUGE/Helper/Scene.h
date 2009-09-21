@@ -19,31 +19,17 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _RECT_H_
-#define _RECT_H_
+#ifndef _SCENE_H_
+#define _SCENE_H_
 
-class CRect
+class CSceneManager;
+
+typedef struct IScene
 {
-public:
-	CRect();
-	CRect(const CRect &rect);
-	CRect(float fLeft, float fTop, float fRight, float fBottom);
+	virtual BOOL EnterScene(WPARAM wParam, LPARAM lParam)=0;
+	virtual void ExitScene()=0;
+	virtual BOOL Update(CSceneManager *pSceneManager, float fDelta)=0;
+	virtual void Render()=0;
+} *PSCENE;
 
-	CRect& operator=(const CRect &rect);
-
-	void Clear();
-	BOOL IsClean();
-	void Set(float fLeft, float fTop, float fRight, float fBottom);
-	void SetRadius(float x, float y, float r);
-	void Encapsulate(float x, float y);
-	BOOL TestPoint(float x, float y) const;
-	BOOL Intersect(const CRect &rect) const;
-
-public:
-	float x1, y1, x2, y2;
-
-protected:
-	BOOL m_bClean;
-};
-
-#endif  // _RECT_H_
+#endif  // _SCENE_H_

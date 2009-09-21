@@ -168,6 +168,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SceneManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Sprite.cpp"
 				>
 			</File>
@@ -219,6 +223,14 @@
 			</File>
 			<File
 				RelativePath=".\Rect.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Scene.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SceneManager.h"
 				>
 			</File>
 			<File
