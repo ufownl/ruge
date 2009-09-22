@@ -26,6 +26,7 @@ CSceneManager::CSceneManager()
 }
 
 CSceneManager::CSceneManager(PSCENE pScene)
+	: m_pScene(NULL)
 {
 	SwitchScene(pScene);
 }
@@ -37,6 +38,7 @@ CSceneManager::CSceneManager(CSceneManager &SceneManager)
 
 CSceneManager::~CSceneManager()
 {
+	if (m_pScene!=NULL) m_pScene->ExitScene();
 }
 
 CSceneManager& CSceneManager::operator = (PSCENE pScene)
