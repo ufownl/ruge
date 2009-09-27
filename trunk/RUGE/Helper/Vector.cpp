@@ -148,8 +148,8 @@ CVector& CVector::Normalize()
 
 CVector& CVector::Rotate(float a)
 {
-	x=x*cosf(a) - y*sinf(a);
-	y=x*sinf(a) + y*cosf(a);
+	x=x*cosf(a)-y*sinf(a);
+	y=x*sinf(a)+y*cosf(a);
 	return *this;
 }
 
