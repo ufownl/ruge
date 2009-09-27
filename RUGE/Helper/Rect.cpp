@@ -103,13 +103,10 @@ void CRect::Encapsulate(float x, float y)
 
 BOOL CRect::TestPoint(float x, float y) const
 {
-	if(x1<=x && x<=x2 && y1<=y && y<=y2) return TRUE;
-	return FALSE;
+	return x1<=x && x<=x2 && y1<=y && y<=y2;
 }
 
 BOOL CRect::Intersect(const CRect &rect) const
 {
-	if(fabs(x1+x2-rect.x1-rect.x2)<(x2-x1+rect.x2-rect.x1)
-		&& fabs(y1+y2-rect.y1-rect.y2)<(y2-y1+rect.y2-rect.y1)) return TRUE;
-	return FALSE;
+	return fabs(x1+x2-rect.x1-rect.x2)<(x2-x1+rect.x2-rect.x1) && fabs(y1+y2-rect.y1-rect.y2)<(y2-y1+rect.y2-rect.y1);
 }
