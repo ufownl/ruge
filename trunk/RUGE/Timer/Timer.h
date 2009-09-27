@@ -32,7 +32,7 @@ typedef struct ITimer : public IUnknown
 {
 	STDMETHOD_(DWORD, Start)() PURE;
 	STDMETHOD_(DWORD, GetDelta)() PURE;
-} *PITIMER;
+} *PTIMER;
 
 _COM_SMARTPTR_TYPEDEF(ITimer, __uuidof(ITimer));
 
