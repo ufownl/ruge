@@ -31,7 +31,7 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #include <Application.h>
 #endif  // _RUGE_IMPL_
 
-#define RUGE_VERSION 0x00020001
+#define RUGE_VERSION 0x00020002
 
 #ifndef RUGE_EXPORT
 #define RUGE_EXPORT _declspec(dllimport)
