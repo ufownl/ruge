@@ -1,5 +1,9 @@
 #include <RUGE.h>
+#ifdef _DEBUG
+#pragma comment(lib, "RUGE_Debug.lib")
+#else
 #pragma comment(lib, "RUGE.lib")
+#endif
 
 #include <Sprite.h>
 #include <ParticleSystem.h>
@@ -13,7 +17,6 @@
 #include <math.h>
 
 PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
-IRandomPtr g_pRand;
 
 int g_nState;
 float g_fRes;
@@ -50,8 +53,7 @@ public:
 HRESULT CEventHandler::InitResource()
 {
 	// 在此添加资源初始化代码
-	g_pRand.CreateInstance(__uuidof(CRandomImpl));
-	g_pRand->Randomize((DWORD)time(NULL));
+	g_pApp->Random_Seed((DWORD)time(NULL));
 
 	g_hFont=g_pApp->Font_Create(20, 0, 0, FALSE, "微软雅黑");
 	g_hFontHint=g_pApp->Font_Create(100, 0, 0, FALSE, "微软雅黑");
@@ -87,17 +89,17 @@ HRESULT CEventHandler::InitResource()
 
 	for (int i=0; i<STARCNT-3; i+=4)
 	{
-		g_StarInfo[i].fx=g_pRand->Float(0, 800);
-		g_StarInfo[i].fy=g_pRand->Float(-128, -16);
+		g_StarInfo[i].fx=g_pApp->Random_Float(0, 800);
+		g_StarInfo[i].fy=g_pApp->Random_Float(-128, -16);
 
-		g_StarInfo[i+1].fx=g_pRand->Float(0, 800);
-		g_StarInfo[i+1].fy=g_pRand->Float(616, 728);
+		g_StarInfo[i+1].fx=g_pApp->Random_Float(0, 800);
+		g_StarInfo[i+1].fy=g_pApp->Random_Float(616, 728);
 
-		g_StarInfo[i+2].fx=g_pRand->Float(-128, -16);
-		g_StarInfo[i+2].fy=g_pRand->Float(0, 600);
+		g_StarInfo[i+2].fx=g_pApp->Random_Float(-128, -16);
+		g_StarInfo[i+2].fy=g_pApp->Random_Float(0, 600);
 
-		g_StarInfo[i+3].fx=g_pRand->Float(816, 928);
-		g_StarInfo[i+3].fy=g_pRand->Float(0, 600);
+		g_StarInfo[i+3].fx=g_pApp->Random_Float(816, 928);
+		g_StarInfo[i+3].fy=g_pApp->Random_Float(0, 600);
 	}
 
 	return S_OK;  // 返回S_OK表示资源初始化成功
@@ -112,7 +114,6 @@ void CEventHandler::ReleaseResource()
 	delete g_pPar;
 	delete g_pSpt;
 	delete g_pSpr;
-	g_pRand.Release();
 }
 
 // float fDelta: 上一帧和当前帧的时间间隔，以秒为单位
@@ -158,7 +159,7 @@ BOOL CEventHandler::Frame(float fDelta)
 		{
 			if (g_StarInfo[i].fx<=-16 || g_StarInfo[i].fx>=816 || g_StarInfo[i].fy<=-16 || g_StarInfo[i].fy>=616)
 			{
-				float fRate=g_pRand->Float(g_cfSpeed*0.5f, g_cfSpeed*1.5f)/sqrtf((g_fx-g_StarInfo[i].fx)*(g_fx-g_StarInfo[i].fx)+(g_fy-g_StarInfo[i].fy)*(g_fy-g_StarInfo[i].fy));
+				float fRate=g_pApp->Random_Float(g_cfSpeed*0.5f, g_cfSpeed*1.5f)/sqrtf((g_fx-g_StarInfo[i].fx)*(g_fx-g_StarInfo[i].fx)+(g_fy-g_StarInfo[i].fy)*(g_fy-g_StarInfo[i].fy));
 
 				g_StarInfo[i].fdx=(g_fx-g_StarInfo[i].fx)*fRate;
 				g_StarInfo[i].fdy=(g_fy-g_StarInfo[i].fy)*fRate;
@@ -188,17 +189,17 @@ BOOL CEventHandler::Frame(float fDelta)
 
 			for (int i=0; i<STARCNT-3; i+=4)
 			{
-				g_StarInfo[i].fx=g_pRand->Float(0, 800);
-				g_StarInfo[i].fy=g_pRand->Float(-128, -16);
+				g_StarInfo[i].fx=g_pApp->Random_Float(0, 800);
+				g_StarInfo[i].fy=g_pApp->Random_Float(-128, -16);
 
-				g_StarInfo[i+1].fx=g_pRand->Float(0, 800);
-				g_StarInfo[i+1].fy=g_pRand->Float(616, 728);
+				g_StarInfo[i+1].fx=g_pApp->Random_Float(0, 800);
+				g_StarInfo[i+1].fy=g_pApp->Random_Float(616, 728);
 
-				g_StarInfo[i+2].fx=g_pRand->Float(-128, -16);
-				g_StarInfo[i+2].fy=g_pRand->Float(0, 600);
+				g_StarInfo[i+2].fx=g_pApp->Random_Float(-128, -16);
+				g_StarInfo[i+2].fy=g_pApp->Random_Float(0, 600);
 
-				g_StarInfo[i+3].fx=g_pRand->Float(816, 928);
-				g_StarInfo[i+3].fy=g_pRand->Float(0, 600);
+				g_StarInfo[i+3].fx=g_pApp->Random_Float(816, 928);
+				g_StarInfo[i+3].fy=g_pApp->Random_Float(0, 600);
 			}
 
 			g_hChannelBg=g_pApp->Music_Play(g_hAudioBg);
@@ -206,8 +207,6 @@ BOOL CEventHandler::Frame(float fDelta)
 			g_fRes=0;
 			g_nState=1;
 		}
-	default:
-		break;
 	}
 
 	return FALSE;  // 返回FALSE表示游戏未结束
@@ -249,7 +248,7 @@ void CEventHandler::Render()
 
 	RECT Rect={0, 0, 200, 40};
 
-	sprintf(szBuf, "FPS: %d\nTime: %f", g_pApp->System_GetState(RUGE_FPS), g_fRes);
+	sprintf(szBuf, "FPS: %d\nTime: %f", g_pApp->Timer_GetFPS(), g_fRes);
 	g_pApp->Font_DrawText(g_hFont, szBuf, &Rect);
 }
 
@@ -274,7 +273,7 @@ int main(int argc, char *argv[])
 	HRESULT hr=0;  // 程序返回值
 
 	CoInitialize(NULL);  // 初始化COM库
-	g_pApp=GetRUGE(RUGE_VERSION);  // 获取RUGE Application对象
+	g_pApp=GetRUGE();  // 获取RUGE Application对象
 	if (g_pApp==NULL)
 	{
 		puts("Error: RUGE Application对象获取失败");
