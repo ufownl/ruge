@@ -1,5 +1,9 @@
 #include <RUGE.h>
+#ifdef _DEBUG
+#pragma comment(lib, "RUGE_Debug.lib")
+#else
 #pragma comment(lib, "RUGE.lib")
+#endif  // _DEBUG
 
 #include <Sprite.h>
 #include <DistortionMesh.h>
@@ -13,7 +17,6 @@
 #include <math.h>
 
 PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
-IRandomPtr g_pRand;
 
 HFONTX g_hFont;
 
@@ -77,7 +80,6 @@ public:
 HRESULT CEventHandler::InitResource()
 {
 	// 在此添加资源初始化代码
-	g_pRand.CreateInstance(__uuidof(CRandomImpl));
 	g_hFont=g_pApp->Font_Create(20, 0, 0, FALSE, "Fixedsys");
 	InitSimulation();
 	return S_OK;  // 返回S_OK表示资源初始化成功
@@ -88,7 +90,6 @@ void CEventHandler::ReleaseResource()
 	// 在此添加资源释放代码
 	// 引擎内部管理系统可以自动释放纹理、字体及声音资源
 	DoneSimulation();
-	g_pRand.Release();
 }
 
 // float fDelta: 上一帧和当前帧的时间间隔，以秒为单位
@@ -137,7 +138,7 @@ void CEventHandler::Render()
 	fTemp=(g_fTime-nHrs)*60.0f;
 	nMins=(int)floorf(fTemp);
 	nSecs=(int)floorf((fTemp-nMins)*60.0f);
-	sprintf(szBuf, "%02d:%02d:%02d\nSpeed: %d\nFPS: %d", nHrs, nMins, nSecs, g_nSpeed+1, g_pApp->System_GetState(RUGE_FPS));
+	sprintf(szBuf, "%02d:%02d:%02d\nSpeed: %d\nFPS: %d", nHrs, nMins, nSecs, g_nSpeed+1, g_pApp->Timer_GetFPS());
 	g_pApp->Font_DrawText(g_hFont, szBuf, &Rect);
 }
 
@@ -162,7 +163,7 @@ int main(int argc, char *argv[])
 	HRESULT hr=0;  // 程序返回值
 
 	CoInitialize(NULL);  // 初始化COM库
-	g_pApp=GetRUGE(RUGE_VERSION);  // 获取RUGE Application对象
+	g_pApp=GetRUGE();  // 获取RUGE Application对象
 	if (g_pApp==NULL)
 	{
 		puts("Error: RUGE Application对象获取失败");
@@ -227,12 +228,12 @@ void InitSimulation()
 
 	for(int i=0; i<NUM_STARS; i++)
 	{
-		g_fStarX[i]=g_pRand->Float(0, SCREEN_WIDTH);
-		g_fStarY[i]=g_pRand->Float(0, STARS_HEIGHT);
-		g_fStarS[i]=g_pRand->Float(0.1f, 0.7f);
+		g_fStarX[i]=g_pApp->Random_Float(0, SCREEN_WIDTH);
+		g_fStarY[i]=g_pApp->Random_Float(0, STARS_HEIGHT);
+		g_fStarS[i]=g_pApp->Random_Float(0.1f, 0.7f);
 	}
 
-	for(int i=0; i<SEA_SUBDIVISION; i++) g_fSeaP[i]=i+g_pRand->Float(-15.0f, 15.0f);
+	for(int i=0; i<SEA_SUBDIVISION; i++) g_fSeaP[i]=i+g_pApp->Random_Float(-15.0f, 15.0f);
 }
 
 void DoneSimulation()
@@ -248,10 +249,6 @@ void DoneSimulation()
 
 void UpdateSimulation(float fDelta)
 {
-	static float fTick=0;
-
-	fTick+=fDelta;
-
 	if(g_fSpeed==0.0f) g_fTime=GetTime();
 	else
 	{
@@ -287,7 +284,7 @@ void UpdateSimulation(float fDelta)
 		for(int i=0; i<NUM_STARS; i++)
 		{
 			a=1.0f-g_fStarY[i]/STARS_HEIGHT;
-			a*=g_pRand->Float(0.6f, 1.0f);
+			a*=g_pApp->Random_Float(0.6f, 1.0f);
 			if(g_nSeqID>=6) a*=sinf((g_fTime-18.0f)/6.0f*M_PI_2);
 			else a*=sinf((1.0f-g_fTime/6.0f)*M_PI_2);
 			g_fStarA[i]=a;
@@ -365,7 +362,7 @@ void UpdateSimulation(float fDelta)
 		dwCol1=col1.GetColor();
 		a*=20;
 
-		float fTime=2.0f*fTick;
+		float fTime=2.0f*g_pApp->Timer_GetTime();
 
 		for(int j=0; j<SEA_SUBDIVISION; j++)
 		{
