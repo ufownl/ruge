@@ -1,5 +1,9 @@
 #include <RUGE.h>
+#ifdef _DEBUG
+#pragma comment(lib, "RUGE_Debug.lib")
+#else
 #pragma comment(lib, "RUGE.lib")
+#endif  // _DEBUG
 
 #include <Sprite.h>
 #ifdef _DEBUG
@@ -164,7 +168,7 @@ void CEventHandler::Render()
 	char szBuf[256];
 
 	sprintf(szBuf, "UP and DOWN to adjust number of hares: %d\nSPACE to change blending mode: %d\nFPS: %d",
-		g_nObjs, g_nBlend, g_pApp->System_GetState(RUGE_FPS));
+		g_nObjs, g_nBlend, g_pApp->Timer_GetFPS());
 
 	g_pApp->Gfx_Clear();
 	g_pSprBg->Render(0, 0);
@@ -197,7 +201,7 @@ int main(int argc, char *argv[])
 	HRESULT hr=0;  // 程序返回值
 
 	CoInitialize(NULL);  // 初始化COM库
-	g_pApp=GetRUGE(RUGE_VERSION);  // 获取RUGE Application对象
+	g_pApp=GetRUGE();  // 获取RUGE Application对象
 	if (g_pApp==NULL)
 	{
 		puts("Error: RUGE Application对象获取失败");
@@ -206,7 +210,7 @@ int main(int argc, char *argv[])
 	}
 	g_pApp->System_SetState(RUGE_EVENTHANDLER, &CEventHandler());  // 设置事件处理对象
 	g_pApp->System_SetState(RUGE_CAPTION, "Thousand of Hares");  // 设置窗口标题
-	g_pApp->System_SetState(RUGE_VSYNC, VSYNC_IMMEDIATE);  // 开启垂直同步
+	g_pApp->System_SetState(RUGE_VSYNC, VSYNC_IMMEDIATE);  // 关闭垂直同步
 	hr=g_pApp->System_Initialize();  // 初始化RUGE Application对象
 	if (SUCCEEDED(hr)) hr=g_pApp->System_Run();  // 进入主循环
 	else
