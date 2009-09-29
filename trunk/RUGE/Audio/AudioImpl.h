@@ -42,7 +42,11 @@ public:
 	STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
 
 	// IAudio
-	STDMETHOD(Initialize)(int nMaxChannels=32);
+	STDMETHOD(SetState)(AudioIntState State, int nMaxChannels);
+
+	STDMETHOD_(int, GetState)(AudioIntState State);
+
+	STDMETHOD(Initialize)();
 	STDMETHOD(Shutdown)();
 	STDMETHOD(Update)();
 
@@ -76,6 +80,7 @@ protected:
 
 protected:
 	ULONG m_uRefCount;
+	int m_nMaxChannels;
 	FMOD::System *m_pFmod;
 	PSOUNDLIST m_pSndList;
 };

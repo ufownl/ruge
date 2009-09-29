@@ -48,8 +48,8 @@ typedef struct PARTICLE
 
 typedef struct PARTICLESYSTEMINFO
 {
-	CSprite *pSprite;  // texture + blend mode
-	int nEmission;  // particles per sec
+	CSprite *pSprite;
+	int nEmission;
 	float fLifetime;
 	float fParticleLifeMin, fParticleLifeMax;
 	float fDirection, fSpread;
@@ -95,7 +95,7 @@ public:
 	PARTICLESYSTEMINFO m_Info;
 
 protected:
-	IRandomPtr m_pRandom;
+	PAPPLICATION m_pApp;
 	float m_fAge, m_fEmissionResidue;
 	CVector m_vecPrevLocation, m_vecLocation;
 	float m_fTx, m_fTy, m_fScale;

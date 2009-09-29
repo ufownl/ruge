@@ -21,7 +21,7 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #include "DistortionMesh.h"
 
 CDistortionMesh::CDistortionMesh(int nRows, int nCols)
-	: m_pApp(GetRUGE(RUGE_VERSION))
+	: m_pApp(GetRUGE())
 	, m_nRows(nRows)
 	, m_nCols(nCols)
 	, m_fCellWidth(0.0f)
@@ -47,7 +47,7 @@ CDistortionMesh::CDistortionMesh(int nRows, int nCols)
 }
 
 CDistortionMesh::CDistortionMesh(const CDistortionMesh &dm)
-	: m_pApp(GetRUGE(RUGE_VERSION))
+	: m_pApp(GetRUGE())
 	, m_nRows(dm.m_nRows)
 	, m_nCols(dm.m_nCols)
 	, m_fCellWidth(dm.m_fCellWidth)

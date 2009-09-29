@@ -26,7 +26,6 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include <assert.h>
 
-#include "..\\Random\\Random.h"
 #include "..\\Renderer\\Renderer.h"
 #include "..\\Audio\\Audio.h"
 #include "..\\Application\\Application.h"

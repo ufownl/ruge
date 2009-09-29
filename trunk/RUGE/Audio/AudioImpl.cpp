@@ -22,6 +22,7 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 CAudioImpl::CAudioImpl()
 	: m_uRefCount(0)
+	, m_nMaxChannels(32)
 	, m_pFmod(NULL)
 	, m_pSndList(NULL)
 {
@@ -60,14 +61,35 @@ STDMETHODIMP CAudioImpl::QueryInterface(REFIID riid, void** ppv)
 	return hr;
 }
 
-STDMETHODIMP CAudioImpl::Initialize(int nMaxChannels/* =32 */)
+STDMETHODIMP CAudioImpl::SetState(AudioIntState State, int nMaxChannels)
+{
+	switch (State)
+	{
+	case AUDIO_MAXCHANNELS:
+		if (m_pFmod==NULL) m_nMaxChannels=nMaxChannels;
+		break;
+	}
+	return S_OK;
+}
+
+STDMETHODIMP_(int) CAudioImpl::GetState(AudioIntState State)
+{
+	switch (State)
+	{
+	case AUDIO_MAXCHANNELS:
+		return m_nMaxChannels;
+	}
+	return 0;
+}
+
+STDMETHODIMP CAudioImpl::Initialize()
 {
 	assert(m_pFmod==NULL);
 
 	FMOD_RESULT fr=System_Create(&m_pFmod);
 
 	if (fr!=FMOD_OK) return -fr;
-	return -m_pFmod->init(nMaxChannels, FMOD_INIT_NORMAL, NULL);
+	return -m_pFmod->init(m_nMaxChannels, FMOD_INIT_NORMAL, NULL);
 }
 
 STDMETHODIMP CAudioImpl::Shutdown()

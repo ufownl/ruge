@@ -21,7 +21,8 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #include "ParticleSystem.h"
 
 CParticleSystem::CParticleSystem(const char *pcszPath, CSprite *pSpr)
-	: m_fTx(0)
+	: m_pApp(GetRUGE())
+	, m_fTx(0)
 	, m_fTy(0)
 	, m_fScale(1.0f)
 	, m_fEmissionResidue(0.0f)
@@ -29,8 +30,6 @@ CParticleSystem::CParticleSystem(const char *pcszPath, CSprite *pSpr)
 	, m_fAge(-2.0)
 	, m_bUpdateBoundingBox(false)
 {
-	m_pRandom.CreateInstance(__uuidof(CRandomImpl));
-
 	FILE *pIn=fopen(pcszPath, "rb");
 	__int64 nSize=0;
 
@@ -41,7 +40,8 @@ CParticleSystem::CParticleSystem(const char *pcszPath, CSprite *pSpr)
 }
 
 CParticleSystem::CParticleSystem(PPARTICLESYSTEMINFO pPsi)
-	: m_fTx(0)
+	: m_pApp(GetRUGE())
+	, m_fTx(0)
 	, m_fTy(0)
 	, m_fScale(1.0f)
 	, m_fEmissionResidue(0.0f)
@@ -49,13 +49,13 @@ CParticleSystem::CParticleSystem(PPARTICLESYSTEMINFO pPsi)
 	, m_fAge(-2.0)
 	, m_bUpdateBoundingBox(false)
 {
-	m_pRandom.CreateInstance(__uuidof(CRandomImpl));
 	memcpy(&m_Info, pPsi, sizeof(PARTICLESYSTEMINFO));
 	m_rectBoundingBox.Clear();
 }
 
 CParticleSystem::CParticleSystem(const CParticleSystem &ps)
-	: m_Info(ps.m_Info)
+	: m_pApp(GetRUGE())
+	, m_Info(ps.m_Info)
 	, m_fAge(ps.m_fAge)
 	, m_fEmissionResidue(ps.m_fEmissionResidue)
 	, m_vecPrevLocation(ps.m_vecPrevLocation)
@@ -67,13 +67,12 @@ CParticleSystem::CParticleSystem(const CParticleSystem &ps)
 	, m_rectBoundingBox(ps.m_rectBoundingBox)
 	, m_bUpdateBoundingBox(false)
 {
-	m_pRandom.CreateInstance(__uuidof(CRandomImpl));
 	memcpy(m_Particles, ps.m_Particles, MAX_PARTICLES);
 }
 
 CParticleSystem::~CParticleSystem()
 {
-	m_pRandom.Release();
+	m_pApp->Release();
 }
 
 CParticleSystem& CParticleSystem::operator = (const CParticleSystem &ps)
@@ -179,26 +178,26 @@ void CParticleSystem::Update(float fDeltaTime)
 		{
 			if (m_nParticlesAlive>=MAX_PARTICLES) break;
 			pPar->fAge=0.0f;
-			pPar->fTerminalAge=m_pRandom->Float(m_Info.fParticleLifeMin, m_Info.fParticleLifeMax);
-			pPar->vecLocation=m_vecPrevLocation+(m_vecLocation-m_vecPrevLocation)*m_pRandom->Float(0.0f, 1.0f);
-			pPar->vecLocation.x+=m_pRandom->Float(-2.0f, 2.0f);
-			pPar->vecLocation.y+=m_pRandom->Float(-2.0f, 2.0f);
-			fAng=m_Info.fDirection-M_PI_2+m_pRandom->Float(0, m_Info.fSpread)-m_Info.fSpread/2.0f;
+			pPar->fTerminalAge=m_pApp->Random_Float(m_Info.fParticleLifeMin, m_Info.fParticleLifeMax);
+			pPar->vecLocation=m_vecPrevLocation+(m_vecLocation-m_vecPrevLocation)*m_pApp->Random_Float(0.0f, 1.0f);
+			pPar->vecLocation.x+=m_pApp->Random_Float(-2.0f, 2.0f);
+			pPar->vecLocation.y+=m_pApp->Random_Float(-2.0f, 2.0f);
+			fAng=m_Info.fDirection-M_PI_2+m_pApp->Random_Float(0, m_Info.fSpread)-m_Info.fSpread/2.0f;
 			if(m_Info.bRelative) fAng+=(m_vecPrevLocation-m_vecLocation).Angle()+M_PI_2;
 			pPar->vecVelocity.x=cosf(fAng);
 			pPar->vecVelocity.y=sinf(fAng);
-			pPar->vecVelocity*=m_pRandom->Float(m_Info.fSpeedMin, m_Info.fSpeedMax);
-			pPar->fGravity=m_pRandom->Float(m_Info.fGravityMin, m_Info.fGravityMax);
-			pPar->fRadialAccel=m_pRandom->Float(m_Info.fRadialAccelMin, m_Info.fRadialAccelMax);
-			pPar->fTangentialAccel=m_pRandom->Float(m_Info.fTangentialAccelMin, m_Info.fTangentialAccelMax);
-			pPar->fSize=m_pRandom->Float(m_Info.fSizeStart, m_Info.fSizeStart+(m_Info.fSizeEnd-m_Info.fSizeStart)*m_Info.fSizeVar);
+			pPar->vecVelocity*=m_pApp->Random_Float(m_Info.fSpeedMin, m_Info.fSpeedMax);
+			pPar->fGravity=m_pApp->Random_Float(m_Info.fGravityMin, m_Info.fGravityMax);
+			pPar->fRadialAccel=m_pApp->Random_Float(m_Info.fRadialAccelMin, m_Info.fRadialAccelMax);
+			pPar->fTangentialAccel=m_pApp->Random_Float(m_Info.fTangentialAccelMin, m_Info.fTangentialAccelMax);
+			pPar->fSize=m_pApp->Random_Float(m_Info.fSizeStart, m_Info.fSizeStart+(m_Info.fSizeEnd-m_Info.fSizeStart)*m_Info.fSizeVar);
 			pPar->fSizeDelta=(m_Info.fSizeEnd-pPar->fSize)/pPar->fTerminalAge;
-			pPar->fSpin=m_pRandom->Float(m_Info.fSpinStart, m_Info.fSpinStart+(m_Info.fSpinEnd-m_Info.fSpinStart)*m_Info.fSpinVar);
+			pPar->fSpin=m_pApp->Random_Float(m_Info.fSpinStart, m_Info.fSpinStart+(m_Info.fSpinEnd-m_Info.fSpinStart)*m_Info.fSpinVar);
 			pPar->fSpinDelta=(m_Info.fSpinEnd-pPar->fSpin)/pPar->fTerminalAge;
-			pPar->colColor.a=m_pRandom->Float(m_Info.colColorStart.a, m_Info.colColorStart.a+(m_Info.colColorEnd.a-m_Info.colColorStart.a)*m_Info.fAlphaVar);
-			pPar->colColor.r=m_pRandom->Float(m_Info.colColorStart.r, m_Info.colColorStart.r+(m_Info.colColorEnd.r-m_Info.colColorStart.r)*m_Info.fColorVar);
-			pPar->colColor.g=m_pRandom->Float(m_Info.colColorStart.g, m_Info.colColorStart.g+(m_Info.colColorEnd.g-m_Info.colColorStart.g)*m_Info.fColorVar);
-			pPar->colColor.b=m_pRandom->Float(m_Info.colColorStart.b, m_Info.colColorStart.b+(m_Info.colColorEnd.b-m_Info.colColorStart.b)*m_Info.fColorVar);
+			pPar->colColor.a=m_pApp->Random_Float(m_Info.colColorStart.a, m_Info.colColorStart.a+(m_Info.colColorEnd.a-m_Info.colColorStart.a)*m_Info.fAlphaVar);
+			pPar->colColor.r=m_pApp->Random_Float(m_Info.colColorStart.r, m_Info.colColorStart.r+(m_Info.colColorEnd.r-m_Info.colColorStart.r)*m_Info.fColorVar);
+			pPar->colColor.g=m_pApp->Random_Float(m_Info.colColorStart.g, m_Info.colColorStart.g+(m_Info.colColorEnd.g-m_Info.colColorStart.g)*m_Info.fColorVar);
+			pPar->colColor.b=m_pApp->Random_Float(m_Info.colColorStart.b, m_Info.colColorStart.b+(m_Info.colColorEnd.b-m_Info.colColorStart.b)*m_Info.fColorVar);
 			pPar->colColorDelta.a=(m_Info.colColorEnd.a-pPar->colColor.a)/pPar->fTerminalAge;
 			pPar->colColorDelta.r=(m_Info.colColorEnd.r-pPar->colColor.r)/pPar->fTerminalAge;
 			pPar->colColorDelta.g=(m_Info.colColorEnd.g-pPar->colColor.g)/pPar->fTerminalAge;

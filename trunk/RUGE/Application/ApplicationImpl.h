@@ -110,22 +110,31 @@ public:
 	STDMETHOD_(int, Channel_GetPan)(HCHANNEL hChannel);
 	STDMETHOD_(float, Channel_GetPosition)(HCHANNEL hChannel);
 
+	STDMETHOD(Random_Seed)(DWORD dwSeed);
+	STDMETHOD_(int, Random_Int)(int nMax, int nMin);
+	STDMETHOD_(float, Random_Float)(float fMax, float fMin);
+
+	STDMETHOD_(float, Timer_GetTime)();
+	STDMETHOD_(float, Timer_GetDelta)();
+	STDMETHOD_(int, Timer_GetFPS)();
+
 protected:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
 	static CApplicationImpl *m_pThis;
 	ULONG m_uRefCount;
-	char m_szCaption[MAX_PATH];
-	int m_nWidth, m_nHeight, m_nMaxChannels;
-	BOOL m_bWindowed, m_bHideCursor;
-	DWORD m_dwVSync, m_dwMagFilter, m_dwMinFilter;
+	LPCSTR m_lpcszCaption, m_lpcszIcon;
+	BOOL m_bHideCursor, m_bActive, m_bNotSuspend;
 	PAPPLICATIONEVENTHANDLER m_pEventHandler;
 	HWND m_hWnd;
+	float m_fTime, m_fDelta;
+	int m_nFPS;
 	IRendererPtr m_pRenderer;
 	IAudioPtr m_pAudio;
 	IInputPtr m_pInput;
 	ITimerPtr m_pTimer;
+	IRandomPtr m_pRand;
 };
 
 #endif  // _APPLICATIONIMPL_H_

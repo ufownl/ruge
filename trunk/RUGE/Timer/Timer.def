@@ -1,5 +1,3 @@
-LIBRARY	"Timer"
-
 EXPORTS
 	DllRegisterServer	PRIVATE
 	DllUnregisterServer	PRIVATE
