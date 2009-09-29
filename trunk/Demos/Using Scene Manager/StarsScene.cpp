@@ -3,7 +3,7 @@
 #include <time.h>
 
 CStarsScene::CStarsScene(PSCENE pParentScene)
-	: m_pApp(GetRUGE(RUGE_VERSION))
+	: m_pApp(GetRUGE())
 	, m_nState(0)
 	, m_fRes(0)
 	, m_hFont(NULL)
@@ -34,8 +34,7 @@ CStarsScene::~CStarsScene()
 
 BOOL CStarsScene::EnterScene(WPARAM wParam, LPARAM lParam)
 {
-	m_pRand.CreateInstance(__uuidof(CRandomImpl));
-	m_pRand->Randomize((DWORD)time(NULL));
+	m_pApp->Random_Seed((DWORD)time(NULL));
 
 	m_hFont=m_pApp->Font_Create(20, 0, 0, FALSE, "Î¢ÈíÑÅºÚ");
 	m_hFontHint=m_pApp->Font_Create(100, 0, 0, FALSE, "Î¢ÈíÑÅºÚ");
@@ -80,17 +79,17 @@ BOOL CStarsScene::EnterScene(WPARAM wParam, LPARAM lParam)
 	case MODE_START:
 		for (int i=0; i<STARCNT-3; i+=4)
 		{
-			m_StarInfo[i].fx=m_pRand->Float(0, 800);
-			m_StarInfo[i].fy=m_pRand->Float(-128, -16);
+			m_StarInfo[i].fx=m_pApp->Random_Float(0, 800);
+			m_StarInfo[i].fy=m_pApp->Random_Float(-128, -16);
 
-			m_StarInfo[i+1].fx=m_pRand->Float(0, 800);
-			m_StarInfo[i+1].fy=m_pRand->Float(616, 728);
+			m_StarInfo[i+1].fx=m_pApp->Random_Float(0, 800);
+			m_StarInfo[i+1].fy=m_pApp->Random_Float(616, 728);
 
-			m_StarInfo[i+2].fx=m_pRand->Float(-128, -16);
-			m_StarInfo[i+2].fy=m_pRand->Float(0, 600);
+			m_StarInfo[i+2].fx=m_pApp->Random_Float(-128, -16);
+			m_StarInfo[i+2].fy=m_pApp->Random_Float(0, 600);
 
-			m_StarInfo[i+3].fx=m_pRand->Float(816, 928);
-			m_StarInfo[i+3].fy=m_pRand->Float(0, 600);
+			m_StarInfo[i+3].fx=m_pApp->Random_Float(816, 928);
+			m_StarInfo[i+3].fy=m_pApp->Random_Float(0, 600);
 		}
 
 		m_fx=400;
@@ -118,8 +117,6 @@ void CStarsScene::ExitScene()
 	m_pApp->Texture_Free(m_hTex);
 	m_pApp->Font_Free(m_hFontHint);
 	m_pApp->Font_Free(m_hFont);
-
-	m_pRand.Release();
 }
 
 BOOL CStarsScene::Update(CSceneManager *pSceneManager, float fDelta)
@@ -167,7 +164,7 @@ BOOL CStarsScene::Update(CSceneManager *pSceneManager, float fDelta)
 		{
 			if (m_StarInfo[i].fx<=-16 || m_StarInfo[i].fx>=816 || m_StarInfo[i].fy<=-16 || m_StarInfo[i].fy>=616)
 			{
-				float fRate=m_pRand->Float(m_cfSpeed*0.5f, m_cfSpeed*1.5f)/sqrtf((m_fx-m_StarInfo[i].fx)*(m_fx-m_StarInfo[i].fx)+(m_fy-m_StarInfo[i].fy)*(m_fy-m_StarInfo[i].fy));
+				float fRate=m_pApp->Random_Float(m_cfSpeed*0.5f, m_cfSpeed*1.5f)/sqrtf((m_fx-m_StarInfo[i].fx)*(m_fx-m_StarInfo[i].fx)+(m_fy-m_StarInfo[i].fy)*(m_fy-m_StarInfo[i].fy));
 
 				m_StarInfo[i].fdx=(m_fx-m_StarInfo[i].fx)*fRate;
 				m_StarInfo[i].fdy=(m_fy-m_StarInfo[i].fy)*fRate;
@@ -197,17 +194,17 @@ BOOL CStarsScene::Update(CSceneManager *pSceneManager, float fDelta)
 
 			for (int i=0; i<STARCNT-3; i+=4)
 			{
-				m_StarInfo[i].fx=m_pRand->Float(0, 800);
-				m_StarInfo[i].fy=m_pRand->Float(-128, -16);
+				m_StarInfo[i].fx=m_pApp->Random_Float(0, 800);
+				m_StarInfo[i].fy=m_pApp->Random_Float(-128, -16);
 
-				m_StarInfo[i+1].fx=m_pRand->Float(0, 800);
-				m_StarInfo[i+1].fy=m_pRand->Float(616, 728);
+				m_StarInfo[i+1].fx=m_pApp->Random_Float(0, 800);
+				m_StarInfo[i+1].fy=m_pApp->Random_Float(616, 728);
 
-				m_StarInfo[i+2].fx=m_pRand->Float(-128, -16);
-				m_StarInfo[i+2].fy=m_pRand->Float(0, 600);
+				m_StarInfo[i+2].fx=m_pApp->Random_Float(-128, -16);
+				m_StarInfo[i+2].fy=m_pApp->Random_Float(0, 600);
 
-				m_StarInfo[i+3].fx=m_pRand->Float(816, 928);
-				m_StarInfo[i+3].fy=m_pRand->Float(0, 600);
+				m_StarInfo[i+3].fx=m_pApp->Random_Float(816, 928);
+				m_StarInfo[i+3].fy=m_pApp->Random_Float(0, 600);
 			}
 
 			m_hChannelBg=m_pApp->Music_Play(m_hAudioBg);
@@ -256,6 +253,6 @@ void CStarsScene::Render()
 
 	RECT Rect={0, 0, 200, 40};
 
-	sprintf(szBuf, "FPS: %d\nTime: %f", m_pApp->System_GetState(RUGE_FPS), m_fRes);
+	sprintf(szBuf, "FPS: %d\nTime: %f", m_pApp->Timer_GetFPS(), m_fRes);
 	m_pApp->Font_DrawText(m_hFont, szBuf, &Rect);
 }
