@@ -1,5 +1,3 @@
-LIBRARY	"Application"
-
 EXPORTS
 	DllRegisterServer	PRIVATE
 	DllUnregisterServer	PRIVATE

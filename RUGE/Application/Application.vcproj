@@ -60,6 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				OutputFile="$(OutDir)\$(ProjectName)_Debug.dll"
 				LinkIncremental="2"
 				ModuleDefinitionFile="Application.def"
 				GenerateDebugInformation="true"

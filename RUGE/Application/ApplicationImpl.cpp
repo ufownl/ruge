@@ -24,20 +24,24 @@ CApplicationImpl *CApplicationImpl::m_pThis=NULL;
 
 CApplicationImpl::CApplicationImpl()
 	: m_uRefCount(0)
-	, m_nWidth(800)
-	, m_nHeight(600)
-	, m_nMaxChannels(32)
-	, m_bWindowed(TRUE)
+	, m_lpcszCaption("RangerUFO's Game Engine")
+	, m_lpcszIcon(NULL)
 	, m_bHideCursor(FALSE)
-	, m_dwVSync(VSYNC_DEFAULT)
-	, m_dwMagFilter(TEXF_NEAREST)
-	, m_dwMinFilter(TEXF_NEAREST)
+	, m_bActive(FALSE)
+	, m_bNotSuspend(FALSE)
 	, m_pEventHandler(NULL)
 	, m_hWnd(NULL)
+	, m_fTime(0)
+	, m_fDelta(0)
+	, m_nFPS(0)
 {
 	assert(m_pThis==NULL);
 	m_pThis=this;
-	strcpy(m_szCaption, "RangerUFO's Game Engine");
+	m_pRenderer.CreateInstance(__uuidof(CRendererImpl));
+	m_pAudio.CreateInstance(__uuidof(CAudioImpl));
+	m_pInput.CreateInstance(__uuidof(CInputImpl));
+	m_pTimer.CreateInstance(__uuidof(CTimerImpl));
+	m_pRand.CreateInstance(__uuidof(CRandomImpl));
 	g_uDllLockCount++;
 }
 
@@ -78,9 +82,12 @@ STDMETHODIMP CApplicationImpl::System_SetState(RUGEStringState State, LPCSTR lpc
 	switch (State)
 	{
 	case RUGE_CAPTION:
-		strcpy(m_szCaption, lpcszVal);
+		m_lpcszCaption=lpcszVal;
+		if (m_hWnd!=NULL) SetWindowText(m_hWnd, m_lpcszCaption);
 		break;
-	default:
+	case RUGE_ICON:
+		m_lpcszIcon=lpcszVal;
+		if (m_hWnd!=NULL) SetClassLong(m_hWnd, GCL_HICON, (LONG)(LONG_PTR)LoadIcon(GetModuleHandle(NULL), m_lpcszIcon));
 		break;
 	}
 	return S_OK;
@@ -91,16 +98,11 @@ STDMETHODIMP CApplicationImpl::System_SetState(RUGEIntState State, int nVal)
 	switch (State)
 	{
 	case RUGE_WIDTH:
-		m_nWidth=nVal;
-		break;
+		return m_pRenderer->SetState(RENDERER_WIDTH, nVal);
 	case RUGE_HEIGHT:
-		m_nHeight=nVal;
-		break;
+		return m_pRenderer->SetState(RENDERER_HEIGHT, nVal);
 	case RUGE_MAXCHANNELS:
-		m_nMaxChannels=nVal;
-		break;
-	default:
-		break;
+		return m_pAudio->SetState(AUDIO_MAXCHANNELS, nVal);
 	}
 	return S_OK;
 }
@@ -110,12 +112,12 @@ STDMETHODIMP CApplicationImpl::System_SetState(RUGEBoolState State, BOOL bVal)
 	switch (State)
 	{
 	case RUGE_WINDOWED:
-		m_bWindowed=bVal;
-		break;
+		return m_pRenderer->SetState(RENDERER_WINDOWED, bVal);
 	case RUGE_HIDECURSOR:
 		m_bHideCursor=bVal;
 		break;
-	default:
+	case RUGE_NOTSUSPEND:
+		m_bNotSuspend=bVal;
 		break;
 	}
 	return S_OK;
@@ -126,16 +128,11 @@ STDMETHODIMP CApplicationImpl::System_SetState(RUGEDwordState State, DWORD dwVal
 	switch (State)
 	{
 	case RUGE_VSYNC:
-		m_dwVSync=dwVal;
-		break;
+		return m_pRenderer->SetState(RENDERER_VSYNC, dwVal);
 	case RUGE_MAGFILTER:
-		m_dwMagFilter=dwVal;
-		break;
+		return m_pRenderer->SetState(RENDERER_MAGFILTER, dwVal);
 	case RUGE_MINFILTER:
-		m_dwMinFilter=dwVal;
-		break;
-	default:
-		break;
+		return m_pRenderer->SetState(RENDERER_MINFILTER, dwVal);
 	}
 	return S_OK;
 }
@@ -145,9 +142,11 @@ STDMETHODIMP CApplicationImpl::System_SetState(RUGEEventHandlerState State, PAPP
 	switch (State)
 	{
 	case RUGE_EVENTHANDLER:
-		m_pEventHandler=pVal;
-		break;
-	default:
+		if (m_pEventHandler==NULL)
+		{
+			m_pEventHandler=pVal;
+			m_pRenderer->SetState(RENDERER_EVENTHANDLER, m_pEventHandler);
+		}
 		break;
 	}
 	return S_OK;
@@ -158,10 +157,11 @@ STDMETHODIMP_(LPCSTR) CApplicationImpl::System_GetState(RUGEStringState State)
 	switch (State)
 	{
 	case RUGE_CAPTION:
-		return m_szCaption;
-	default:
-		return NULL;
+		return m_lpcszCaption;
+	case RUGE_ICON:
+		return m_lpcszIcon;
 	}
+	return NULL;
 }
 
 STDMETHODIMP_(int) CApplicationImpl::System_GetState(RUGEIntState State)
@@ -169,19 +169,13 @@ STDMETHODIMP_(int) CApplicationImpl::System_GetState(RUGEIntState State)
 	switch (State)
 	{
 	case RUGE_WIDTH:
-		if (m_pRenderer!=NULL) return m_pRenderer->GetState(RENDERER_WIDTH);
-		else return 0;
+		return m_pRenderer->GetState(RENDERER_WIDTH);
 	case RUGE_HEIGHT:
-		if (m_pRenderer!=NULL) return m_pRenderer->GetState(RENDERER_HEIGHT);
-		else return 0;
-	case RUGE_FPS:
-		if (m_pRenderer!=NULL) return m_pRenderer->GetState(RENDERER_FPS);
-		else return 0;
+		return m_pRenderer->GetState(RENDERER_HEIGHT);
 	case RUGE_MAXCHANNELS:
-		return m_nMaxChannels;
-	default:
-		return 0;
+		return m_pAudio->GetState(AUDIO_MAXCHANNELS);
 	}
+	return 0;
 }
 
 STDMETHODIMP_(BOOL) CApplicationImpl::System_GetState(RUGEBoolState State)
@@ -189,18 +183,17 @@ STDMETHODIMP_(BOOL) CApplicationImpl::System_GetState(RUGEBoolState State)
 	switch (State)
 	{
 	case RUGE_WINDOWED:
-		if (m_pRenderer!=NULL) return m_pRenderer->GetState(RENDERER_WINDOWED);
-		else return 0;
+		return m_pRenderer->GetState(RENDERER_WINDOWED);
 	case RUGE_DEVICELOST:
-		if (m_pRenderer!=NULL) return m_pRenderer->GetState(RENDERER_DEVICELOST);
-		else return FALSE;
-	case RUGE_FOCUS:
-		return m_hWnd==GetFocus();
+		return m_pRenderer->GetState(RENDERER_DEVICELOST);
+	case RUGE_ACTIVE:
+		return m_bActive;
 	case RUGE_HIDECURSOR:
 		return m_bHideCursor;
-	default:
-		return FALSE;
+	case RUGE_NOTSUSPEND:
+		return m_bNotSuspend;
 	}
+	return FALSE;
 }
 
 STDMETHODIMP_(DWORD) CApplicationImpl::System_GetState(RUGEDwordState State)
@@ -208,17 +201,13 @@ STDMETHODIMP_(DWORD) CApplicationImpl::System_GetState(RUGEDwordState State)
 	switch (State)
 	{
 	case RUGE_VSYNC:
-		if (m_pRenderer!=NULL) return m_pRenderer->GetState(RENDERER_VSYNC);
-		else return 0;
+		return m_pRenderer->GetState(RENDERER_VSYNC);
 	case RUGE_MAGFILTER:
-		if (m_pRenderer!=NULL) return m_pRenderer->GetState(RENDERER_MAGFILTER);
-		else return 0;
+		return m_pRenderer->GetState(RENDERER_MAGFILTER);
 	case RUGE_MINFILTER:
-		if (m_pRenderer!=NULL) return m_pRenderer->GetState(RENDERER_MINFILTER);
-		else return 0;
-	default:
-		return 0;
+		return m_pRenderer->GetState(RENDERER_MINFILTER);
 	}
+	return 0;
 }
 
 STDMETHODIMP_(PAPPLICATIONEVENTHANDLER) CApplicationImpl::System_GetState(RUGEEventHandlerState State)
@@ -227,9 +216,8 @@ STDMETHODIMP_(PAPPLICATIONEVENTHANDLER) CApplicationImpl::System_GetState(RUGEEv
 	{
 	case RUGE_EVENTHANDLER:
 		return m_pEventHandler;
-	default:
-		return NULL;
 	}
+	return NULL;
 }
 
 STDMETHODIMP_(HANDLE) CApplicationImpl::System_GetState(RUGEHandleState State)
@@ -237,18 +225,17 @@ STDMETHODIMP_(HANDLE) CApplicationImpl::System_GetState(RUGEHandleState State)
 	switch (State)
 	{
 	case RUGE_DEVICE:
-		if (m_pRenderer!=NULL) return m_pRenderer->GetState(RENDERER_DEVICE);
-		else return NULL;
+		return m_pRenderer->GetState(RENDERER_DEVICE);
 	case RUGE_MAINWINDOW:
-		return (HANDLE)m_hWnd;
-	default:
-		return NULL;
+		return m_hWnd;
 	}
+	return NULL;
 }
 
 STDMETHODIMP CApplicationImpl::System_Initialize()
 {
 	HINSTANCE hInstance=GetModuleHandle(NULL);
+	int nWidth=m_pRenderer->GetState(RENDERER_WIDTH), nHeight=m_pRenderer->GetState(RENDERER_HEIGHT);
 	WNDCLASS wc;
 
 	wc.style=CS_DBLCLKS|CS_OWNDC|CS_HREDRAW|CS_VREDRAW;
@@ -256,46 +243,29 @@ STDMETHODIMP CApplicationImpl::System_Initialize()
 	wc.cbClsExtra=0;
 	wc.cbWndExtra=0;
 	wc.hInstance=hInstance;
-	wc.hIcon=NULL;
+	wc.hIcon=LoadIcon(hInstance, m_lpcszIcon);
 	wc.hCursor=NULL;
 	wc.hbrBackground=(HBRUSH)GetStockObject(BLACK_BRUSH);
 	wc.lpszMenuName=NULL;
 	wc.lpszClassName="Application";
 	RegisterClass(&wc);
-	m_hWnd=CreateWindow("Application", m_szCaption, WS_CAPTION|WS_SYSMENU|WS_BORDER|WS_MINIMIZEBOX, CW_USEDEFAULT
-		, CW_USEDEFAULT, m_nWidth+GetSystemMetrics(SM_CXFIXEDFRAME)*2, m_nHeight+GetSystemMetrics(SM_CYFIXEDFRAME)*2+GetSystemMetrics(SM_CYCAPTION)
+	m_hWnd=CreateWindow("Application", m_lpcszCaption, WS_CAPTION|WS_SYSMENU|WS_BORDER|WS_MINIMIZEBOX, CW_USEDEFAULT
+		, CW_USEDEFAULT, nWidth+GetSystemMetrics(SM_CXFIXEDFRAME)*2, nHeight+GetSystemMetrics(SM_CYFIXEDFRAME)*2+GetSystemMetrics(SM_CYCAPTION)
 		, NULL, NULL, hInstance, NULL);
 	ShowWindow(m_hWnd, SW_SHOW);
 	UpdateWindow(m_hWnd);
 
-	HRESULT hr=m_pRenderer.CreateInstance(__uuidof(CRendererImpl));
+	HRESULT hr=m_pRenderer->Initialize(m_hWnd);
 
 	if (FAILED(hr)) return hr;
-	m_pRenderer->SetState(RENDERER_WIDTH, m_nWidth);
-	m_pRenderer->SetState(RENDERER_HEIGHT, m_nHeight);
-	m_pRenderer->SetState(RENDERER_WINDOWED, m_bWindowed);
-	m_pRenderer->SetState(RENDERER_VSYNC, m_dwVSync);
-	m_pRenderer->SetState(RENDERER_MAGFILTER, m_dwMagFilter);
-	m_pRenderer->SetState(RENDERER_MINFILTER, m_dwMinFilter);
-	m_pRenderer->SetState(RENDERER_EVENTHANDLER, m_pEventHandler);
-	hr=m_pRenderer->Initialize(m_hWnd);
+	hr=m_pAudio->Initialize();
 	if (FAILED(hr)) return hr;
-
-	hr=m_pAudio.CreateInstance(__uuidof(CAudioImpl));
-	if (FAILED(hr)) return hr;
-	hr=m_pAudio->Initialize(m_nMaxChannels);
-	if (FAILED(hr)) return hr;
-
-	hr=m_pInput.CreateInstance(__uuidof(CInputImpl));
-	if (FAILED(hr)) return hr;
-	hr=m_pTimer.CreateInstance(__uuidof(CTimerImpl));
-	if (FAILED(hr)) return hr;
-
 	if (m_pEventHandler!=NULL)
 	{
 		hr=m_pEventHandler->InitResource();
 		if (FAILED(hr)) return hr;
 	}
+	m_pTimer->Start();
 	return S_OK;
 }
 
@@ -303,29 +273,50 @@ STDMETHODIMP CApplicationImpl::System_Run()
 {
 	MSG Msg;
 
-	memset(&Msg, 0, sizeof(Msg));
-	while (Msg.message!=WM_QUIT)
+	do
 	{
-		if (PeekMessage(&Msg, NULL, 0, 0, PM_REMOVE))
+		if (m_bActive || m_bNotSuspend)
 		{
+			if (PeekMessage(&Msg, NULL, 0, 0, PM_REMOVE))
+			{
+				TranslateMessage(&Msg);
+				DispatchMessage(&Msg);
+			}
+			else
+			{
+				static float fElapsed=0;
+				static int nFrames=0;
+
+				m_fDelta=(float)m_pTimer->GetDelta()/1000;
+				m_pTimer->Start();
+				m_fTime+=m_fDelta;
+				fElapsed+=m_fDelta;
+				if (fElapsed>=1)
+				{
+					m_nFPS=nFrames;
+					fElapsed=0;
+					nFrames=0;
+				}
+				else nFrames++;
+				if (m_pEventHandler!=NULL)
+				{
+					if (m_pEventHandler->Frame(m_fDelta)) PostQuitMessage(0);
+				}
+
+				HRESULT hr=m_pRenderer->RendererLoop();
+
+				if (FAILED(hr)) PostQuitMessage(hr);
+				hr=m_pAudio->Update();
+				if (FAILED(hr)) PostQuitMessage(hr);
+			}
+		}
+		else
+		{
+			GetMessage(&Msg, NULL, 0, 0);
 			TranslateMessage(&Msg);
 			DispatchMessage(&Msg);
 		}
-
-		float fDelta=(float)m_pTimer->GetDelta()/1000;
-
-		m_pTimer->Start();
-		if (m_pEventHandler!=NULL)
-		{
-			if (m_pEventHandler->Frame(fDelta)) PostQuitMessage(0);
-		}
-		
-		HRESULT hr=m_pRenderer->RendererLoop();
-
-		if (FAILED(hr)) PostQuitMessage(hr);
-		hr=m_pAudio->Update();
-		if (FAILED(hr)) PostQuitMessage(hr);
-	}
+	} while (Msg.message!=WM_QUIT);
 	if (m_pEventHandler!=NULL) m_pEventHandler->ReleaseResource();
 	return (HRESULT)Msg.wParam;
 }
@@ -558,6 +549,36 @@ STDMETHODIMP_(float) CApplicationImpl::Channel_GetPosition(HCHANNEL hChannel)
 	return m_pAudio->Channel_GetPosition(hChannel);
 }
 
+STDMETHODIMP CApplicationImpl::Random_Seed(DWORD dwSeed)
+{
+	return m_pRand->Randomize(dwSeed);
+}
+
+STDMETHODIMP_(int) CApplicationImpl::Random_Int(int nMin, int nMax)
+{
+	return m_pRand->Integer(nMin, nMax);
+}
+
+STDMETHODIMP_(float) CApplicationImpl::Random_Float(float fMin, float fMax)
+{
+	return m_pRand->Float(fMin, fMax);
+}
+
+STDMETHODIMP_(float) CApplicationImpl::Timer_GetTime()
+{
+	return m_fTime;
+}
+
+STDMETHODIMP_(float) CApplicationImpl::Timer_GetDelta()
+{
+	return m_fDelta;
+}
+
+STDMETHODIMP_(int) CApplicationImpl::Timer_GetFPS()
+{
+	return m_nFPS;
+}
+
 LRESULT CALLBACK CApplicationImpl::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (m_pThis!=NULL)
@@ -566,14 +587,15 @@ LRESULT CALLBACK CApplicationImpl::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
 		if (m_pThis->m_pEventHandler!=NULL) m_pThis->m_pEventHandler->WndEvent(uMsg, wParam, lParam);
 		switch (uMsg)
 		{
+		case WM_ACTIVATE:
+			m_pThis->m_bActive=LOWORD(wParam)!=WA_INACTIVE && HIWORD(wParam)==0;
+			break;
 		case WM_SETCURSOR:
 			if (m_pThis->m_bHideCursor) SetCursor(NULL);
 			else SetCursor(LoadCursor(NULL, IDC_ARROW));
 			break;
 		case WM_DESTROY:
 			PostQuitMessage(0);
-			break;
-		default:
 			break;
 		}
 	}

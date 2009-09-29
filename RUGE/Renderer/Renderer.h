@@ -102,7 +102,6 @@ enum RendererIntState
 {
 	RENDERER_WIDTH,
 	RENDERER_HEIGHT,
-	RENDERER_FPS
 };
 
 enum RendererBoolState

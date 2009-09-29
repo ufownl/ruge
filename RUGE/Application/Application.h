@@ -31,14 +31,14 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 enum RUGEStringState
 {
-	RUGE_CAPTION
+	RUGE_CAPTION,
+	RUGE_ICON
 };
 
 enum RUGEIntState
 {
 	RUGE_WIDTH,
 	RUGE_HEIGHT,
-	RUGE_FPS,
 	RUGE_MAXCHANNELS
 };
 
@@ -46,8 +46,9 @@ enum RUGEBoolState
 {
 	RUGE_WINDOWED,
 	RUGE_DEVICELOST,
-	RUGE_FOCUS,
-	RUGE_HIDECURSOR
+	RUGE_ACTIVE,
+	RUGE_HIDECURSOR,
+	RUGE_NOTSUSPEND
 };
 
 enum RUGEDwordState
@@ -143,6 +144,14 @@ typedef struct IApplication : public IUnknown
 	STDMETHOD_(int, Channel_GetVolume)(HCHANNEL hChannel) PURE;
 	STDMETHOD_(int, Channel_GetPan)(HCHANNEL hChannel) PURE;
 	STDMETHOD_(float, Channel_GetPosition)(HCHANNEL hChannel) PURE;
+
+	STDMETHOD(Random_Seed)(DWORD dwSeed) PURE;
+	STDMETHOD_(int, Random_Int)(int nMax, int nMin) PURE;
+	STDMETHOD_(float, Random_Float)(float fMax, float fMin) PURE;
+
+	STDMETHOD_(float, Timer_GetTime)() PURE;
+	STDMETHOD_(float, Timer_GetDelta)() PURE;
+	STDMETHOD_(int, Timer_GetFPS)() PURE;
 } *PAPPLICATION;
 
 _COM_SMARTPTR_TYPEDEF(IApplication, __uuidof(IApplication));

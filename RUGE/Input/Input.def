@@ -1,5 +1,3 @@
-LIBRARY	"Input"
-
 EXPORTS
 	DllRegisterServer	PRIVATE
 	DllUnregisterServer	PRIVATE

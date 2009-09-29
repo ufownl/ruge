@@ -24,19 +24,20 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 CRendererImpl::CRendererImpl()
 	: m_uRefCount(0)
+	, m_lStyle(0)
 	, m_nWidth(800)
 	, m_nHeight(600)
 	, m_bWindowed(TRUE)
+	, m_bDeviceLost(FALSE)
 	, m_dwVSync(VSYNC_DEFAULT)
 	, m_dwMagFilter(TEXF_NEAREST)
 	, m_dwMinFilter(TEXF_NEAREST)
+	, m_pEventHandler(NULL)
 	, m_lpD3D(NULL)
 	, m_lpD3DDevice(NULL)
 	, m_lpD3DSurfBack(NULL)
 	, m_lpD3DSurfDepth(NULL)
 	, m_lpD3DSprite(NULL)
-	, m_bDeviceLost(FALSE)
-	, m_pEventHandler(NULL)
 	, m_lpD3DVertexBuf(NULL)
 	, m_pVertexes(NULL)
 	, m_pTexList(NULL)
@@ -46,8 +47,10 @@ CRendererImpl::CRendererImpl()
 	, m_dwCurBlend(BLEND_DEFAULT)
 	, m_hCurTex(NULL)
 	, m_nPrims(0)
-	, m_nFPS(0)
 {
+	memset(&m_rectPos, 0, sizeof(m_rectPos));
+	memset(&m_D3Dpp, 0, sizeof(m_D3Dpp));
+	memset(&m_d3dxmatProj, 0, sizeof(m_d3dxmatProj));
 	g_uDllLockCount++;
 }
 
@@ -88,25 +91,37 @@ STDMETHODIMP CRendererImpl::SetState(RendererIntState State, int nVal)
 	switch (State)
 	{
 	case RENDERER_WIDTH:
-		m_nWidth=nVal;
+		if (m_lpD3DDevice==NULL) m_nWidth=nVal;
 		break;
 	case RENDERER_HEIGHT:
-		m_nHeight=nVal;
-		break;
-	default:
+		if (m_lpD3DDevice==NULL) m_nHeight=nVal;
 		break;
 	}
 	return S_OK;
 }
 
-STDMETHODIMP CRendererImpl::SetState(RendererBoolState State, int bVal)
+STDMETHODIMP CRendererImpl::SetState(RendererBoolState State, BOOL bVal)
 {
 	switch (State)
 	{
 	case RENDERER_WINDOWED:
-		m_bWindowed=bVal;
-		break;
-	default:
+		if (m_lpD3DDevice==NULL) m_bWindowed=bVal;
+		else if (m_bWindowed!=bVal)
+		{
+			m_bWindowed=bVal;
+			if (!m_bWindowed)
+			{
+				m_lStyle=GetWindowLong(m_D3Dpp.hDeviceWindow, GWL_STYLE);
+				GetWindowRect(m_D3Dpp.hDeviceWindow, &m_rectPos);
+			}
+			m_D3Dpp.Windowed=m_bWindowed;
+			if (SUCCEEDED(Restore()) && m_bWindowed)
+			{
+				SetWindowLong(m_D3Dpp.hDeviceWindow, GWL_STYLE, m_lStyle);
+				SetWindowPos(m_D3Dpp.hDeviceWindow, HWND_TOPMOST, m_rectPos.left, m_rectPos.top,
+					m_rectPos.right-m_rectPos.left, m_rectPos.bottom-m_rectPos.top, SWP_FRAMECHANGED);
+			}
+		}
 		break;
 	}
 	return S_OK;
@@ -117,15 +132,29 @@ STDMETHODIMP CRendererImpl::SetState(RendererDwordState State, DWORD dwVal)
 	switch (State)
 	{
 	case RENDERER_VSYNC:
-		m_dwVSync=dwVal;
+		if (m_lpD3DDevice==NULL) m_dwVSync=dwVal;
+		else if (m_dwVSync!=dwVal)
+		{
+			m_dwVSync=dwVal;
+			m_D3Dpp.PresentationInterval=m_dwVSync;
+			Restore();
+		}
 		break;
 	case RENDERER_MAGFILTER:
 		m_dwMagFilter=dwVal;
+		if (m_lpD3DDevice!=NULL)
+		{
+			RenderBatch();
+			m_lpD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, m_dwMagFilter);
+		}
 		break;
 	case RENDERER_MINFILTER:
 		m_dwMinFilter=dwVal;
-		break;
-	default:
+		if (m_lpD3DDevice!=NULL)
+		{
+			RenderBatch();
+			m_lpD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, m_dwMinFilter);
+		}
 		break;
 	}
 	return S_OK;
@@ -136,9 +165,7 @@ STDMETHODIMP CRendererImpl::SetState(RendererEventHandlerState State, PRENDERERE
 	switch (State)
 	{
 	case RENDERER_EVENTHANDLER:
-		m_pEventHandler=pVal;
-		break;
-	default:
+		if (m_pEventHandler==NULL) m_pEventHandler=pVal;
 		break;
 	}
 	return S_OK;
@@ -152,11 +179,8 @@ STDMETHODIMP_(int) CRendererImpl::GetState(RendererIntState State)
 		return m_nWidth;
 	case RENDERER_HEIGHT:
 		return m_nHeight;
-	case RENDERER_FPS:
-		return m_nFPS;
-	default:
-		return 0;
 	}
+	return 0;
 }
 
 STDMETHODIMP_(BOOL) CRendererImpl::GetState(RendererBoolState State)
@@ -167,9 +191,8 @@ STDMETHODIMP_(BOOL) CRendererImpl::GetState(RendererBoolState State)
 		return m_bWindowed;
 	case RENDERER_DEVICELOST:
 		return m_bDeviceLost;
-	default:
-		return FALSE;
 	}
+	return FALSE;
 }
 
 STDMETHODIMP_(DWORD) CRendererImpl::GetState(RendererDwordState State)
@@ -182,9 +205,8 @@ STDMETHODIMP_(DWORD) CRendererImpl::GetState(RendererDwordState State)
 		return m_dwMagFilter;
 	case RENDERER_MINFILTER:
 		return m_dwMinFilter;
-	default:
-		return 0;
 	}
+	return 0;
 }
 
 STDMETHODIMP_(PRENDEREREVENTHANDLER) CRendererImpl::GetState(RendererEventHandlerState State)
@@ -193,9 +215,8 @@ STDMETHODIMP_(PRENDEREREVENTHANDLER) CRendererImpl::GetState(RendererEventHandle
 	{
 	case RENDERER_EVENTHANDLER:
 		return m_pEventHandler;
-	default:
-		return NULL;
 	}
+	return NULL;
 }
 
 STDMETHODIMP_(HANDLE) CRendererImpl::GetState(RendererHandleState State)
@@ -203,16 +224,17 @@ STDMETHODIMP_(HANDLE) CRendererImpl::GetState(RendererHandleState State)
 	switch (State)
 	{
 	case RENDERER_DEVICE:
-		return (HANDLE)m_lpD3DDevice;
-	default:
-		return NULL;
+		return m_lpD3DDevice;
 	}
+	return NULL;
 }
 
 STDMETHODIMP CRendererImpl::Initialize(HWND hWnd)
 {
 	assert(m_lpD3D==NULL && m_lpD3DDevice==NULL);
-	m_lpD3D=Direct3DCreate9(D3D_SDK_VERSION);  // 创建D3D对象
+	m_lStyle=GetWindowLong(hWnd, GWL_STYLE);
+	GetWindowRect(hWnd, &m_rectPos);
+	m_lpD3D=Direct3DCreate9(D3D_SDK_VERSION);
 	if (m_lpD3D==NULL) return -1;
 
 	D3DDISPLAYMODE D3Ddm;
@@ -235,8 +257,6 @@ STDMETHODIMP CRendererImpl::Initialize(HWND hWnd)
 		D3DCREATE_SOFTWARE_VERTEXPROCESSING, &m_D3Dpp, &m_lpD3DDevice);
 	if (FAILED(hr)) return hr;
 	hr=D3DXCreateSprite(m_lpD3DDevice, &m_lpD3DSprite);
-	if (FAILED(hr)) return hr;
-	hr=m_pTimer.CreateInstance(__uuidof(CTimerImpl));
 	if (FAILED(hr)) return hr;
 	return InitLost();
 }
@@ -261,7 +281,6 @@ STDMETHODIMP CRendererImpl::Shutdown()
 		m_lpD3DSurfBack->Release();
 		m_lpD3DSurfBack=NULL;
 	}
-	if (m_pTimer!=NULL) m_pTimer.Release();
 	if (m_lpD3DSprite!=NULL)
 	{
 		m_lpD3DSprite->Release();
@@ -283,19 +302,13 @@ STDMETHODIMP CRendererImpl::Shutdown()
 STDMETHODIMP CRendererImpl::RendererLoop()
 {
 	assert(m_lpD3DDevice!=NULL);
-	switch (m_lpD3DDevice->TestCooperativeLevel())
+
+	HRESULT hr=m_lpD3DDevice->TestCooperativeLevel();
+
+	switch (hr)
 	{
 	case D3D_OK:
 		{
-			static int nFrames=0;
-
-			if (nFrames==0) m_pTimer->Start();
-			if (m_pTimer->GetDelta()>=1000)
-			{
-				m_nFPS=nFrames;
-				nFrames=0;
-			}
-			else nFrames++;
 			BeginScene();
 			if (m_pEventHandler!=NULL) m_pEventHandler->Render();
 			else Clear();
@@ -320,20 +333,12 @@ STDMETHODIMP CRendererImpl::RendererLoop()
 		break;
 	case D3DERR_DEVICENOTRESET:
 		{
-			HRESULT hr=OnLostDevice();
-
-			if (FAILED(hr)) return hr;
-			hr=m_lpD3DDevice->Reset(&m_D3Dpp);
-			if (FAILED(hr)) return hr;
-			hr=OnResetDevice();
-			if (FAILED(hr)) return hr;
+			Restore();
 			m_bDeviceLost=false;
 		}
 		break;
-	case D3DERR_DRIVERINTERNALERROR:
-		return D3DERR_DRIVERINTERNALERROR;
 	default:
-		break;
+		return hr;
 	}
 	return S_OK;
 }
@@ -371,6 +376,7 @@ STDMETHODIMP CRendererImpl::Clear(DWORD dwColor/* =0 */)
 
 STDMETHODIMP CRendererImpl::RenderLine(PVERTEX pV1, PVERTEX pV2, DWORD dwBlend/* =BLEND_DEFAULT */)
 {
+	if (pV1==NULL || pV2==NULL) return E_POINTER;
 	assert(m_lpD3DDevice!=NULL && m_lpD3DVertexBuf!=NULL);
 	if (m_pVertexes==NULL) m_lpD3DVertexBuf->Lock(0, 0, (void**)&m_pVertexes, 0);
 	if(m_dwCurPrim!=PRIM_LINE || m_nPrims>=VERTEX_BUFFER_SIZE/PRIM_LINE || m_dwCurBlend!=dwBlend)
@@ -448,7 +454,6 @@ STDMETHODIMP CRendererImpl::RenderQuad(PQUAD pQuad)
 STDMETHODIMP CRendererImpl::Shotsnap(LPCSTR lpcszPath, DWORD dwIFF/* =IFF_BMP */)
 {
 	assert(m_lpD3DDevice!=NULL);
-
 	
 	LPDIRECT3DSURFACE9 lpD3DSurface;
 	HRESULT hr=m_lpD3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &lpD3DSurface);
@@ -626,6 +631,7 @@ STDMETHODIMP_(int) CRendererImpl::Font_DrawText(HFONTX hFont, LPCSTR lpcszText, 
 									   DWORD dwFormat/* =DT_TOP|DT_LEFT */, DWORD dwColor/* =0xFFFFFFFF */)
 {
 	if (hFont==NULL) return 0;
+	assert(m_lpD3DSprite!=NULL);
 
 	D3DXMATRIX matrix;
 	int nRes;
@@ -641,6 +647,8 @@ STDMETHODIMP_(int) CRendererImpl::Font_DrawText(HFONTX hFont, LPCSTR lpcszText, 
 
 HRESULT CRendererImpl::InitLost()
 {
+	assert(m_lpD3DDevice!=NULL);
+
 	HRESULT hr=m_lpD3DDevice->GetRenderTarget(0, &m_lpD3DSurfBack);
 
 	if (FAILED(hr)) return hr;
@@ -650,7 +658,6 @@ HRESULT CRendererImpl::InitLost()
 		D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1, D3DPOOL_DEFAULT, &m_lpD3DVertexBuf, NULL);
 	if (FAILED(hr)) return hr;
 
-	// 设置公共渲染状态
 	m_lpD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	m_lpD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
 
@@ -720,6 +727,7 @@ void CRendererImpl::RenderBatch(bool bEndRender/* =false */)
 
 void CRendererImpl::BeginScene()
 {
+	assert(m_lpD3DDevice!=NULL);
 	m_lpD3DDevice->BeginScene();
 	m_lpD3DDevice->SetStreamSource(0, m_lpD3DVertexBuf, 0, sizeof(VERTEX));
 	m_lpD3DDevice->SetFVF(D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1);
@@ -727,6 +735,7 @@ void CRendererImpl::BeginScene()
 
 void CRendererImpl::EndScene()
 {
+	assert(m_lpD3DDevice!=NULL);
 	RenderBatch(true);
 	m_lpD3DDevice->EndScene();
 }
@@ -744,6 +753,8 @@ void CRendererImpl::SetProjectionMatrix(int nWidth, int nHeight)
 
 HRESULT CRendererImpl::OnLostDevice()
 {
+	assert(m_lpD3DSprite!=NULL && m_lpD3DVertexBuf!=NULL && m_lpD3DSurfBack!=NULL && m_lpD3DSurfDepth!=NULL);
+
 	HRESULT hr;
 
 	m_lpD3DSurfBack->Release();
@@ -818,6 +829,18 @@ HRESULT CRendererImpl::OnResetDevice()
 		if (FAILED(hr)) return hr;
 	}
 	return m_lpD3DSprite->OnResetDevice();
+}
+
+HRESULT CRendererImpl::Restore()
+{
+	assert(m_lpD3DDevice!=NULL);
+
+	HRESULT hr=OnLostDevice();
+
+	if (FAILED(hr)) return hr;
+	hr=m_lpD3DDevice->Reset(&m_D3Dpp);
+	if (FAILED(hr)) return hr;
+	return OnResetDevice();
 }
 
 void CRendererImpl::Texture_Append(LPDIRECT3DTEXTURE9 lpD3DTex)

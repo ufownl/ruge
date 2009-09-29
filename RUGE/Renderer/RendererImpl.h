@@ -110,6 +110,7 @@ protected:
 	void SetProjectionMatrix(int nWidth, int nHeight);
 	HRESULT OnLostDevice();
 	HRESULT OnResetDevice();
+	HRESULT Restore();
 	void Texture_Append(LPDIRECT3DTEXTURE9 lpD3DTex);
 	void Texture_Remove(LPDIRECT3DTEXTURE9 lpD3DTex);
 	void Texture_RemoveAll();
@@ -122,18 +123,18 @@ protected:
 
 protected:
 	ULONG m_uRefCount;
+	long m_lStyle;
+	RECT m_rectPos;
 	int m_nWidth, m_nHeight;
-	BOOL m_bWindowed;
+	BOOL m_bWindowed, m_bDeviceLost;
 	DWORD m_dwVSync, m_dwMagFilter, m_dwMinFilter;
+	PRENDEREREVENTHANDLER m_pEventHandler;
 	LPDIRECT3D9 m_lpD3D;
 	D3DPRESENT_PARAMETERS m_D3Dpp;
 	LPDIRECT3DDEVICE9 m_lpD3DDevice;
 	LPDIRECT3DSURFACE9 m_lpD3DSurfBack, m_lpD3DSurfDepth;
 	D3DXMATRIX m_d3dxmatProj;
 	LPD3DXSPRITE m_lpD3DSprite;
-	ITimerPtr m_pTimer;
-	BOOL m_bDeviceLost;
-	PRENDEREREVENTHANDLER m_pEventHandler;
 	LPDIRECT3DVERTEXBUFFER9 m_lpD3DVertexBuf;
 	PVERTEX m_pVertexes;
 	PTEXTURELIST m_pTexList;
@@ -141,7 +142,7 @@ protected:
 	PFONTLIST m_pFontList;
 	DWORD m_dwCurPrim, m_dwCurBlend;
 	HTEXTURE m_hCurTex;
-	int m_nPrims, m_nFPS;
+	int m_nPrims;
 };
 
 #endif  // _RENDERERIMPL_H_

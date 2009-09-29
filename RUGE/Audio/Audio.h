@@ -31,9 +31,18 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 typedef HANDLE HAUDIO;
 typedef HANDLE HCHANNEL;
 
+enum AudioIntState
+{
+	AUDIO_MAXCHANNELS
+};
+
 typedef struct IAudio : public IUnknown
 {
-	STDMETHOD(Initialize)(int nMaxChannels=32) PURE;
+	STDMETHOD(SetState)(AudioIntState State, int nMaxChannels) PURE;
+
+	STDMETHOD_(int, GetState)(AudioIntState State) PURE;
+
+	STDMETHOD(Initialize)() PURE;
 	STDMETHOD(Shutdown)() PURE;
 	STDMETHOD(Update)() PURE;
 

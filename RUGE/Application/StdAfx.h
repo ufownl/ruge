@@ -30,6 +30,7 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #include "..\\Audio\\Audio.h"
 #include "..\\Input\\Input.h"
 #include "..\\Timer\\Timer.h"
+#include "..\\Random\\Random.h"
 
 extern HINSTANCE g_hinstThisDll;
 extern UINT g_uDllLockCount;

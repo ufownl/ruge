@@ -21,7 +21,7 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #include "Sprite.h"
 
 CSprite::CSprite(HTEXTURE hTex, float x, float y, float w, float h)
-	: m_pApp(GetRUGE(RUGE_VERSION))
+	: m_pApp(GetRUGE())
 {
 	for (int i=0; i<4; i++)
 	{
@@ -38,7 +38,7 @@ CSprite::CSprite(HTEXTURE hTex, float x, float y, float w, float h)
 }
 
 CSprite::CSprite(const CSprite &Spr)
-	: m_pApp(GetRUGE(RUGE_VERSION))
+	: m_pApp(GetRUGE())
 	, m_quadTex(Spr.m_quadTex)
 	, m_fLeft(Spr.m_fLeft)
 	, m_fTop(Spr.m_fTop)

@@ -34,7 +34,5 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3dx9.lib")
 
-#include "..\\Timer\\Timer.h"
-
 extern HINSTANCE g_hinstThisDll;
 extern UINT g_uDllLockCount;
