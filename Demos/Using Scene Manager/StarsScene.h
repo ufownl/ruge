@@ -23,7 +23,6 @@ public:
 
 protected:
 	PAPPLICATION m_pApp;
-	IRandomPtr m_pRand;
 
 	int m_nState;
 	float m_fRes;

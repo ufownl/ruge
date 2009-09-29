@@ -2,7 +2,7 @@
 #include "MenuScene.h"
 
 CMenuScene::CMenuScene()
-	: m_pApp(GetRUGE(RUGE_VERSION))
+	: m_pApp(GetRUGE())
 	, m_hFont(NULL)
 	, m_hTex(NULL)
 	, m_pSpr(NULL)
