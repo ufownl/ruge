@@ -120,12 +120,12 @@ void CEventHandler::ReleaseResource()
 BOOL CEventHandler::Frame(float fDelta)
 {
 	// 在此添加游戏逻辑控制代码
-	if (g_pApp->Input_KeyPress(VK_ESCAPE)) return TRUE;
+	if (g_pApp->Input_KeyPressed(VK_ESCAPE)) return TRUE;
 
 	switch (g_nState)
 	{
 	case 0:
-		if (g_pApp->Input_KeyPress(VK_RETURN))
+		if (g_pApp->Input_KeyPressed(VK_RETURN))
 		{
 			g_hChannelBg=g_pApp->Music_Play(g_hAudioBg);
 			g_nState=1;
@@ -137,10 +137,10 @@ BOOL CEventHandler::Frame(float fDelta)
 		g_fdx=0;
 		g_fdy=0;
 
-		if (g_pApp->Input_KeyPress(VK_LEFT)) g_fdx=-g_cfSpeed*fDelta;
-		if (g_pApp->Input_KeyPress(VK_RIGHT)) g_fdx=g_cfSpeed*fDelta;
-		if (g_pApp->Input_KeyPress(VK_UP)) g_fdy=-g_cfSpeed*fDelta;
-		if (g_pApp->Input_KeyPress(VK_DOWN)) g_fdy=g_cfSpeed*fDelta;
+		if (g_pApp->Input_KeyPressed(VK_LEFT)) g_fdx=-g_cfSpeed*fDelta;
+		if (g_pApp->Input_KeyPressed(VK_RIGHT)) g_fdx=g_cfSpeed*fDelta;
+		if (g_pApp->Input_KeyPressed(VK_UP)) g_fdy=-g_cfSpeed*fDelta;
+		if (g_pApp->Input_KeyPressed(VK_DOWN)) g_fdy=g_cfSpeed*fDelta;
 
 		g_fx+=g_fdx;
 		if (g_fx<16) g_fx=16;
@@ -182,7 +182,7 @@ BOOL CEventHandler::Frame(float fDelta)
 		}
 		break;
 	case 2:
-		if (g_pApp->Input_KeyPress(VK_RETURN))
+		if (g_pApp->Input_KeyPressed(VK_RETURN))
 		{
 			g_fx=400;
 			g_fy=300;
