@@ -121,7 +121,7 @@ void CStarsScene::ExitScene()
 
 BOOL CStarsScene::Update(CSceneManager *pSceneManager, float fDelta)
 {
-	if (m_pApp->Input_KeyPress(VK_ESCAPE))
+	if (m_pApp->Input_KeyPressed(VK_ESCAPE))
 	{
 		pSceneManager->SwitchScene(m_pParentScene);
 		return FALSE;
@@ -130,7 +130,7 @@ BOOL CStarsScene::Update(CSceneManager *pSceneManager, float fDelta)
 	switch (m_nState)
 	{
 	case 0:
-		if (m_pApp->Input_KeyPress(VK_RETURN))
+		if (m_pApp->Input_KeyPressed(VK_RETURN))
 		{
 			m_hChannelBg=m_pApp->Music_Play(m_hAudioBg);
 			m_nState=1;
@@ -142,10 +142,10 @@ BOOL CStarsScene::Update(CSceneManager *pSceneManager, float fDelta)
 		m_fdx=0;
 		m_fdy=0;
 
-		if (m_pApp->Input_KeyPress(VK_LEFT)) m_fdx=-m_cfSpeed*fDelta;
-		if (m_pApp->Input_KeyPress(VK_RIGHT)) m_fdx=m_cfSpeed*fDelta;
-		if (m_pApp->Input_KeyPress(VK_UP)) m_fdy=-m_cfSpeed*fDelta;
-		if (m_pApp->Input_KeyPress(VK_DOWN)) m_fdy=m_cfSpeed*fDelta;
+		if (m_pApp->Input_KeyPressed(VK_LEFT)) m_fdx=-m_cfSpeed*fDelta;
+		if (m_pApp->Input_KeyPressed(VK_RIGHT)) m_fdx=m_cfSpeed*fDelta;
+		if (m_pApp->Input_KeyPressed(VK_UP)) m_fdy=-m_cfSpeed*fDelta;
+		if (m_pApp->Input_KeyPressed(VK_DOWN)) m_fdy=m_cfSpeed*fDelta;
 
 		m_fx+=m_fdx;
 		if (m_fx<16) m_fx=16;
@@ -187,7 +187,7 @@ BOOL CStarsScene::Update(CSceneManager *pSceneManager, float fDelta)
 		}
 		break;
 	case 2:
-		if (m_pApp->Input_KeyPress(VK_RETURN))
+		if (m_pApp->Input_KeyPressed(VK_RETURN))
 		{
 			m_fx=400;
 			m_fy=300;
