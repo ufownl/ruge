@@ -22,8 +22,11 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #define _RUGE_IMPL_
 
 #include <windows.h>
+#include <mmsystem.h>
 #include <comdef.h>
 #include <tchar.h>
+
+#pragma comment(lib, "winmm.lib")
 
 extern HINSTANCE g_hinstThisDll;
 extern UINT g_uDllLockCount;
