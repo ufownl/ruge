@@ -83,11 +83,11 @@ void CEventHandler::ReleaseResource()
 BOOL CEventHandler::Frame(float fDelta)
 {
 	// 在此添加游戏逻辑控制代码
-	if (g_pApp->Input_KeyPress(VK_ESCAPE)) return TRUE;
-	if (g_pApp->Input_KeyPress(VK_LEFT)) g_fdx-=g_cfAcceleration*fDelta;
-	if (g_pApp->Input_KeyPress(VK_RIGHT)) g_fdx+=g_cfAcceleration*fDelta;
-	if (g_pApp->Input_KeyPress(VK_UP)) g_fdy-=g_cfAcceleration*fDelta;
-	if (g_pApp->Input_KeyPress(VK_DOWN)) g_fdy+=g_cfAcceleration*fDelta;
+	if (g_pApp->Input_KeyPressed(VK_ESCAPE)) return TRUE;
+	if (g_pApp->Input_KeyPressed(VK_LEFT)) g_fdx-=g_cfAcceleration*fDelta;
+	if (g_pApp->Input_KeyPressed(VK_RIGHT)) g_fdx+=g_cfAcceleration*fDelta;
+	if (g_pApp->Input_KeyPressed(VK_UP)) g_fdy-=g_cfAcceleration*fDelta;
+	if (g_pApp->Input_KeyPressed(VK_DOWN)) g_fdy+=g_cfAcceleration*fDelta;
 
 	g_fdx*=g_cfFriction;
 	g_fdy*=g_cfFriction;
