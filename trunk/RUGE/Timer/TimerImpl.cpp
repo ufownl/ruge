@@ -60,12 +60,19 @@ STDMETHODIMP CTimerImpl::QueryInterface(REFIID riid, void** ppv)
 
 STDMETHODIMP_(DWORD) CTimerImpl::Start()
 {
-	m_dwTicks=GetTickCount();
+	timeBeginPeriod(1);
+	m_dwTicks=timeGetTime();
+	timeEndPeriod(1);
 	return m_dwTicks;
 }
 
 STDMETHODIMP_(DWORD) CTimerImpl::GetDelta()
 {
-	if (m_dwTicks==0xFFFFFFFF) Start();
-	return GetTickCount()-m_dwTicks;
+	DWORD dwRet;
+
+	timeBeginPeriod(1);
+	if (m_dwTicks==0xFFFFFFFF) m_dwTicks=timeGetTime();
+	dwRet=timeGetTime()-m_dwTicks;
+	timeEndPeriod(1);
+	return dwRet;
 }

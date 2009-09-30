@@ -286,18 +286,23 @@ STDMETHODIMP CApplicationImpl::System_Run()
 			{
 				static float fElapsed=0;
 				static int nFrames=0;
+				DWORD dwDelta;
 
-				m_fDelta=(float)m_pTimer->GetDelta()/1000;
+				do
+				{
+					dwDelta=m_pTimer->GetDelta();
+				} while (dwDelta==0);
 				m_pTimer->Start();
+				m_fDelta=(float)dwDelta/1000;
 				m_fTime+=m_fDelta;
 				fElapsed+=m_fDelta;
+				nFrames++;
 				if (fElapsed>=1)
 				{
 					m_nFPS=nFrames;
 					fElapsed=0;
 					nFrames=0;
 				}
-				else nFrames++;
 				if (m_pEventHandler!=NULL)
 				{
 					if (m_pEventHandler->Frame(m_fDelta)) PostQuitMessage(0);
@@ -315,6 +320,7 @@ STDMETHODIMP CApplicationImpl::System_Run()
 			GetMessage(&Msg, NULL, 0, 0);
 			TranslateMessage(&Msg);
 			DispatchMessage(&Msg);
+			m_pTimer->Start();
 		}
 	} while (Msg.message!=WM_QUIT);
 	if (m_pEventHandler!=NULL) m_pEventHandler->ReleaseResource();
