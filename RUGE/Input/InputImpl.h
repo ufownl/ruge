@@ -37,7 +37,7 @@ public:
 
 	// IInput
 	STDMETHOD_(BOOL, KeyDown)(int nVKey);
-	STDMETHOD_(BOOL, KeyPress)(int nVKey);
+	STDMETHOD_(BOOL, KeyPressed)(int nVKey);
 	STDMETHOD_(BOOL, KeyUp)(int nVKey);
 	STDMETHOD_(int, GetKey)();
 	STDMETHOD_(char, GetChar)();

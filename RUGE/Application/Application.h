@@ -113,7 +113,7 @@ typedef struct IApplication : public IUnknown
 		float z=0.0f, DWORD dwFormat=DT_TOP|DT_LEFT, DWORD dwColor=0xFFFFFFFF) PURE;
 
 	STDMETHOD_(BOOL, Input_KeyDown)(int nVKey) PURE;
-	STDMETHOD_(BOOL, Input_KeyPress)(int nVKey) PURE;
+	STDMETHOD_(BOOL, Input_KeyPressed)(int nVKey) PURE;
 	STDMETHOD_(BOOL, Input_KeyUp)(int nVKey) PURE;
 	STDMETHOD_(int, Input_GetKey)() PURE;
 	STDMETHOD_(char, Input_GetChar)() PURE;

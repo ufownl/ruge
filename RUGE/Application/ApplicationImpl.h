@@ -78,7 +78,7 @@ public:
 		float z=0.0f, DWORD dwFormat=DT_TOP|DT_LEFT, DWORD dwColor=0xFFFFFFFF);
 
 	STDMETHOD_(BOOL, Input_KeyDown)(int nVKey);
-	STDMETHOD_(BOOL, Input_KeyPress)(int nVKey);
+	STDMETHOD_(BOOL, Input_KeyPressed)(int nVKey);
 	STDMETHOD_(BOOL, Input_KeyUp)(int nVKey);
 	STDMETHOD_(int, Input_GetKey)();
 	STDMETHOD_(char, Input_GetChar)();

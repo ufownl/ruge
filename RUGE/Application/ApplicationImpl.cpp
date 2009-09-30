@@ -428,9 +428,9 @@ STDMETHODIMP_(BOOL) CApplicationImpl::Input_KeyDown(int nVKey)
 	return m_pInput->KeyDown(nVKey);
 }
 
-STDMETHODIMP_(BOOL) CApplicationImpl::Input_KeyPress(int nVKey)
+STDMETHODIMP_(BOOL) CApplicationImpl::Input_KeyPressed(int nVKey)
 {
-	return m_pInput->KeyPress(nVKey);
+	return m_pInput->KeyPressed(nVKey);
 }
 
 STDMETHODIMP_(BOOL) CApplicationImpl::Input_KeyUp(int nVKey)
