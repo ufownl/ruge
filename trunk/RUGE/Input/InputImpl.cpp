@@ -108,7 +108,7 @@ STDMETHODIMP_(BOOL) CInputImpl::KeyDown(int nVKey)
 	return m_nOldKeyStates[nVKey]<0 && nKeyState>=0;
 }
 
-STDMETHODIMP_(BOOL) CInputImpl::KeyPress(int nVKey)
+STDMETHODIMP_(BOOL) CInputImpl::KeyPressed(int nVKey)
 {
 	m_nOldKeyStates[nVKey]=GetKeyState(nVKey);
 	return m_nOldKeyStates[nVKey]<0;

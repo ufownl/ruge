@@ -31,7 +31,7 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 typedef struct IInput : public IUnknown
 {
 	STDMETHOD_(BOOL, KeyDown)(int nVKey) PURE;
-	STDMETHOD_(BOOL, KeyPress)(int nVKey) PURE;
+	STDMETHOD_(BOOL, KeyPressed)(int nVKey) PURE;
 	STDMETHOD_(BOOL, KeyUp)(int nVKey) PURE;
 	STDMETHOD_(int, GetKey)() PURE;
 	STDMETHOD_(char, GetChar)() PURE;
