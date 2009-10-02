@@ -31,11 +31,6 @@ CSceneManager::CSceneManager(PSCENE pScene)
 	SwitchScene(pScene);
 }
 
-CSceneManager::CSceneManager(CSceneManager &SceneManager)
-	: m_pScene(SceneManager.m_pScene)
-{
-}
-
 CSceneManager::~CSceneManager()
 {
 	if (m_pScene!=NULL) m_pScene->ExitScene();
@@ -44,12 +39,6 @@ CSceneManager::~CSceneManager()
 CSceneManager& CSceneManager::operator = (PSCENE pScene)
 {
 	SwitchScene(pScene);
-	return *this;
-}
-
-CSceneManager& CSceneManager::operator = (CSceneManager &SceneManager)
-{
-	m_pScene=SceneManager.m_pScene;
 	return *this;
 }
 

@@ -30,6 +30,8 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 typedef struct IInput : public IUnknown
 {
+	STDMETHOD(Initialize)(HWND hWnd) PURE;
+
 	STDMETHOD_(BOOL, KeyDown)(int nVKey) PURE;
 	STDMETHOD_(BOOL, KeyPressed)(int nVKey) PURE;
 	STDMETHOD_(BOOL, KeyUp)(int nVKey) PURE;
@@ -38,8 +40,11 @@ typedef struct IInput : public IUnknown
 	STDMETHOD_(LPCSTR, GetKeyName)(int nVKey) PURE;
 
 	STDMETHOD(GetMousePos)(float *x, float *y) PURE;
+	STDMETHOD(SetMousePos)(float x, float y) PURE;
 	STDMETHOD_(SHORT, GetMouseWheel)() PURE;
+	STDMETHOD_(BOOL, IsMouseOver)() PURE;
 
+	STDMETHOD(Update)() PURE;
 	STDMETHOD(OnWndEvent)(UINT uMsg, WPARAM wParam, LPARAM lParam) PURE;
 } *PINPUT;
 

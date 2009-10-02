@@ -260,6 +260,8 @@ STDMETHODIMP CApplicationImpl::System_Initialize()
 	if (FAILED(hr)) return hr;
 	hr=m_pAudio->Initialize();
 	if (FAILED(hr)) return hr;
+	hr=m_pInput->Initialize(m_hWnd);
+	if (FAILED(hr)) return hr;
 	if (m_pEventHandler!=NULL)
 	{
 		hr=m_pEventHandler->InitResource();
@@ -303,15 +305,17 @@ STDMETHODIMP CApplicationImpl::System_Run()
 					fElapsed=0;
 					nFrames=0;
 				}
+
+				HRESULT hr=m_pAudio->Update();
+
+				if (FAILED(hr)) PostQuitMessage(hr);
+				hr=m_pInput->Update();
+				if (FAILED(hr)) PostQuitMessage(hr);
 				if (m_pEventHandler!=NULL)
 				{
 					if (m_pEventHandler->Frame(m_fDelta)) PostQuitMessage(0);
 				}
-
-				HRESULT hr=m_pRenderer->RendererLoop();
-
-				if (FAILED(hr)) PostQuitMessage(hr);
-				hr=m_pAudio->Update();
+				hr=m_pRenderer->RendererLoop();
 				if (FAILED(hr)) PostQuitMessage(hr);
 			}
 		}
@@ -464,9 +468,19 @@ STDMETHODIMP CApplicationImpl::Input_GetMousePos(float *x, float *y)
 	return m_pInput->GetMousePos(x, y);
 }
 
+STDMETHODIMP CApplicationImpl::Input_SetMousePos(float x, float y)
+{
+	return m_pInput->SetMousePos(x, y);
+}
+
 STDMETHODIMP_(SHORT) CApplicationImpl::Input_GetMouseWheel()
 {
 	return m_pInput->GetMouseWheel();
+}
+
+STDMETHODIMP_(BOOL) CApplicationImpl::Input_IsMouseOver()
+{
+	return m_pInput->IsMouseOver();
 }
 
 STDMETHODIMP_(HAUDIO) CApplicationImpl::Effect_Load(LPCSTR lpcszPath)

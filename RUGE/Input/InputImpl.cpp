@@ -59,12 +59,15 @@ LPCSTR CInputImpl::m_lpcszKeyNames[256]={
 
 CInputImpl::CInputImpl()
 	: m_uRefCount(0)
+	, m_hWnd(NULL)
+	, m_bMouseOver(FALSE)
 	, m_fPosX(0)
 	, m_fPosY(0)
 	, m_nPosZ(0)
 	, m_nVKLast(0)
 	, m_chLast(0)
 {
+	memset(m_nKeyStates, 0, sizeof(m_nKeyStates));
 	memset(m_nOldKeyStates, 0, sizeof(m_nOldKeyStates));
 	g_uDllLockCount++;
 }
@@ -100,26 +103,28 @@ STDMETHODIMP CInputImpl::QueryInterface(REFIID riid, void** ppv)
 	return hr;
 }
 
+STDMETHODIMP CInputImpl::Initialize(HWND hWnd)
+{
+	m_hWnd=hWnd;
+	return S_OK;
+}
+
 STDMETHODIMP_(BOOL) CInputImpl::KeyDown(int nVKey)
 {
-	int nKeyState=m_nOldKeyStates[nVKey];
-
-	m_nOldKeyStates[nVKey]=GetKeyState(nVKey);
-	return m_nOldKeyStates[nVKey]<0 && nKeyState>=0;
+	if (GetFocus()!=m_hWnd) return FALSE;
+	return m_nKeyStates[nVKey]<0 && m_nOldKeyStates[nVKey]>=0;
 }
 
 STDMETHODIMP_(BOOL) CInputImpl::KeyPressed(int nVKey)
 {
-	m_nOldKeyStates[nVKey]=GetKeyState(nVKey);
-	return m_nOldKeyStates[nVKey]<0;
+	if (GetFocus()!=m_hWnd) return FALSE;
+	return m_nKeyStates[nVKey]<0;
 }
 
 STDMETHODIMP_(BOOL) CInputImpl::KeyUp(int nVKey)
 {
-	int nKeyState=m_nOldKeyStates[nVKey];
-
-	m_nOldKeyStates[nVKey]=GetKeyState(nVKey);
-	return m_nOldKeyStates[nVKey]>=0 && nKeyState<0;
+	if (GetFocus()!=m_hWnd) return FALSE;
+	return m_nKeyStates[nVKey]>=0 && m_nOldKeyStates[nVKey]<0;
 }
 
 STDMETHODIMP_(int) CInputImpl::GetKey()
@@ -150,9 +155,40 @@ STDMETHODIMP CInputImpl::GetMousePos(float *x, float *y)
 	return S_OK;
 }
 
+STDMETHODIMP CInputImpl::SetMousePos(float x, float y)
+{
+	if (GetFocus()!=m_hWnd) return -1;
+
+	POINT point={(LONG)x, (LONG)y};
+
+	ClientToScreen(m_hWnd, &point);
+	SetCursorPos(point.x, point.y);
+	return S_OK;
+}
+
 STDMETHODIMP_(SHORT) CInputImpl::GetMouseWheel()
 {
 	return m_nPosZ;
+}
+
+STDMETHODIMP_(BOOL) CInputImpl::IsMouseOver()
+{
+	return m_bMouseOver;
+}
+
+STDMETHODIMP CInputImpl::Update()
+{
+	memcpy(m_nOldKeyStates, m_nKeyStates, sizeof(m_nKeyStates));
+	for (int i=0; i<256; i++) m_nKeyStates[i]=GetKeyState(i);
+
+	POINT	point;
+	RECT	rect;
+
+	GetCursorPos(&point);
+	GetClientRect(m_hWnd, &rect);
+	MapWindowPoints(m_hWnd, NULL, (LPPOINT)&rect, 2);
+	m_bMouseOver=PtInRect(&rect, point) && WindowFromPoint(point)==m_hWnd;
+	return S_OK;
 }
 
 STDMETHODIMP CInputImpl::OnWndEvent(UINT uMsg, WPARAM wParam, LPARAM lParam)

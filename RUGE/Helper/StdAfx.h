@@ -24,7 +24,6 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #include <windows.h>
 #include <comdef.h>
 #include <math.h>
-#include <assert.h>
 
 #include "..\\Renderer\\Renderer.h"
 #include "..\\Audio\\Audio.h"
