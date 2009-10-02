@@ -85,7 +85,9 @@ public:
 	STDMETHOD_(LPCSTR, Input_GetKeyName)(int nVKey);
 
 	STDMETHOD(Input_GetMousePos)(float *x, float *y);
+	STDMETHOD(Input_SetMousePos)(float x, float y);
 	STDMETHOD_(SHORT, Input_GetMouseWheel)();
+	STDMETHOD_(BOOL, Input_IsMouseOver)();
 
 	STDMETHOD_(HAUDIO, Effect_Load)(LPCSTR lpcszPath);
 	STDMETHOD_(HCHANNEL, Effect_Play)(HAUDIO hAudio, int nVolume=100, int nPan=0, float fPitch=1.0f, BOOL bLoop=FALSE);

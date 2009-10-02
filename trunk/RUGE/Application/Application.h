@@ -120,7 +120,9 @@ typedef struct IApplication : public IUnknown
 	STDMETHOD_(LPCSTR, Input_GetKeyName)(int nVKey) PURE;
 
 	STDMETHOD(Input_GetMousePos)(float *x, float *y) PURE;
+	STDMETHOD(Input_SetMousePos)(float x, float y) PURE;
 	STDMETHOD_(SHORT, Input_GetMouseWheel)() PURE;
+	STDMETHOD_(BOOL, Input_IsMouseOver)() PURE;
 
 	STDMETHOD_(HAUDIO, Effect_Load)(LPCSTR lpcszPath) PURE;
 	STDMETHOD_(HCHANNEL, Effect_Play)(HAUDIO hAudio, int nVolume=100, int nPan=0, float fPitch=1.0f, BOOL bLoop=FALSE) PURE;

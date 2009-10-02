@@ -227,13 +227,11 @@ void CSprite::GetTextureRect(float &x, float &y, float &w, float &h) const
 
 DWORD CSprite::GetColor(int nIndex/* =0 */) const
 {
-	assert(0<=nIndex && nIndex<=3);
 	return m_quadTex.v[nIndex].dwColor;
 }
 
 float CSprite::GetZ(int nIndex/* =0 */) const
 {
-	assert(0<=nIndex && nIndex<=3);
 	return m_quadTex.v[nIndex].z;
 }
 

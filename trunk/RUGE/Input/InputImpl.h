@@ -36,6 +36,8 @@ public:
 	STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
 
 	// IInput
+	STDMETHOD(Initialize)(HWND hWnd);
+
 	STDMETHOD_(BOOL, KeyDown)(int nVKey);
 	STDMETHOD_(BOOL, KeyPressed)(int nVKey);
 	STDMETHOD_(BOOL, KeyUp)(int nVKey);
@@ -44,14 +46,19 @@ public:
 	STDMETHOD_(LPCSTR, GetKeyName)(int nVKey);
 
 	STDMETHOD(GetMousePos)(float *x, float *y);
+	STDMETHOD(SetMousePos)(float x, float y);
 	STDMETHOD_(SHORT, GetMouseWheel)();
+	STDMETHOD_(BOOL, IsMouseOver)();
 
+	STDMETHOD(Update)();
 	STDMETHOD(OnWndEvent)(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
 	ULONG m_uRefCount;
 	static LPCSTR m_lpcszKeyNames[256];
-	SHORT m_nOldKeyStates[256];
+	HWND m_hWnd;
+	SHORT m_nKeyStates[256], m_nOldKeyStates[256];
+	BOOL m_bMouseOver;
 	float m_fPosX, m_fPosY;
 	SHORT m_nPosZ;
 	int m_nVKLast;

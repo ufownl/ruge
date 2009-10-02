@@ -156,7 +156,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Control.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DistortionMesh.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GUI.cpp"
 				>
 			</File>
 			<File
@@ -214,7 +222,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Control.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DistortionMesh.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GUI.h"
 				>
 			</File>
 			<File

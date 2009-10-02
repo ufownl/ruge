@@ -29,15 +29,17 @@ class CSceneManager
 public:
 	CSceneManager();
 	CSceneManager(PSCENE pScene);
-	CSceneManager(CSceneManager &SceneManager);
 	virtual ~CSceneManager();
 
 	CSceneManager& operator = (PSCENE pScene);
-	CSceneManager& operator = (CSceneManager &SceneManager);
 
 	BOOL SwitchScene(PSCENE pScene, WPARAM wParam=0, LPARAM lParam=0);
 	BOOL Update(float fDelta);
 	void Render();
+
+protected:
+	CSceneManager(const CSceneManager &SceneManager);
+	CSceneManager& operator = (const CSceneManager &SceneManager);
 
 protected:
 	PSCENE m_pScene;
