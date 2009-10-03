@@ -44,7 +44,7 @@ HRESULT CEventHandler::InitResource()
 	g_pDis=new CDistortionMesh(g_cnRows, g_cnCols);
 	g_pDis->SetTexture(g_hTex);
 	g_pDis->SetTextureRect(0, 0, 512, 512);
-	g_pDis->SetBlendMode(BLEND_COLORADD|BLEND_ALPHABLEND|BLEND_ZWRITE);
+	g_pDis->SetBlendMode(BLEND_COLORADD|BLEND_ALPHABLEND|BLEND_NOZWRITE);
 	g_pDis->Clear(0xFF000000);
 
 	return S_OK;  // 返回S_OK表示资源初始化成功
