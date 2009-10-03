@@ -88,8 +88,7 @@ HRESULT CEventHandler::InitResource()
 	g_pSpr->SetHotSpot(32, 32);
 
 	g_pSprBg=new CSprite(g_hTexBg, 0, 0, 800, 600);
-	g_pSprBg->SetBlendMode(BLEND_COLORADD|BLEND_ALPHABLEND|BLEND_ZWRITE);
-	g_pSprBg->SetZ(1);
+	g_pSprBg->SetBlendMode(BLEND_COLORADD|BLEND_ALPHABLEND|BLEND_NOZWRITE);
 	g_pSprBg->SetColor(0xFF000000, 0);
 	g_pSprBg->SetColor(0xFF000000, 1);
 	g_pSprBg->SetColor(0xFF000040, 2);
