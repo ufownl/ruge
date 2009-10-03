@@ -258,6 +258,7 @@ STDMETHODIMP CRendererImpl::Initialize(HWND hWnd)
 	if (FAILED(hr)) return hr;
 	hr=D3DXCreateSprite(m_lpD3DDevice, &m_lpD3DSprite);
 	if (FAILED(hr)) return hr;
+	SetProjectionMatrix(m_nWidth, m_nHeight);
 	return InitLost();
 }
 
@@ -632,6 +633,7 @@ STDMETHODIMP_(int) CRendererImpl::Font_DrawText(HFONTX hFont, LPCSTR lpcszText, 
 {
 	if (hFont==NULL) return 0;
 	assert(m_lpD3DSprite!=NULL);
+	if ((dwFormat&DT_CALCRECT)==0) RenderBatch();
 
 	D3DXMATRIX matrix;
 	int nRes;
@@ -700,7 +702,7 @@ void CRendererImpl::SetBlendMode(DWORD dwBlend)
 	else m_lpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, false);
 }
 
-void CRendererImpl::RenderBatch(bool bEndRender/* =false */)
+void CRendererImpl::RenderBatch(BOOL bEndRender/* =FALSE */)
 {
 	if (m_pVertexes==NULL) return;
 	assert(m_lpD3DDevice!=NULL && m_lpD3DVertexBuf!=NULL);
