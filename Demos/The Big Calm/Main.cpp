@@ -217,10 +217,10 @@ void InitSimulation()
 
 	g_psprGlow=new CSprite(g_hTex, 128, 128, 128, 128);
 	g_psprGlow->SetHotSpot(64, 64);
-	g_psprGlow->SetBlendMode(BLEND_COLORADD|BLEND_ALPHABLEND|BLEND_ZWRITE);
+	g_psprGlow->SetBlendMode(BLEND_COLORADD|BLEND_ALPHABLEND|BLEND_NOZWRITE);
 	g_psprSeaGlow=new CSprite(g_hTex, 128, 224, 128, 32);
 	g_psprSeaGlow->SetHotSpot(64, 0);
-	g_psprSeaGlow->SetBlendMode(BLEND_COLORADD|BLEND_ALPHAADD|BLEND_ZWRITE);
+	g_psprSeaGlow->SetBlendMode(BLEND_COLORADD|BLEND_ALPHAADD|BLEND_NOZWRITE);
 
 	g_colWhite.SetColor(0xFFFFFFFF);
 	g_fTime=GetTime();
