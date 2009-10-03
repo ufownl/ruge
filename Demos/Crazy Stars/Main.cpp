@@ -63,29 +63,26 @@ HRESULT CEventHandler::InitResource()
 	g_hAudioLost=g_pApp->Effect_Load("Lost.wav");
 
 	g_pSpr=new CSprite(g_hTex, 96, 64, 32, 32);
-	g_pSpr->SetBlendMode(BLEND_COLORMUL|BLEND_ALPHABLEND|BLEND_ZWRITE);
 	g_pSpr->SetColor(0xFFFFF000);
 	g_pSpr->SetHotSpot(16, 16);
 
 	g_pSpt=new CSprite(g_hTex, 96, 64, 32, 32);
-	g_pSpt->SetBlendMode(BLEND_COLORMUL|BLEND_ALPHAADD|BLEND_ZWRITE);
+	g_pSpt->SetBlendMode(BLEND_COLORMUL|BLEND_ALPHAADD|BLEND_NOZWRITE);
 	g_pSpt->SetHotSpot(16, 16);
 
 	g_pPar=new CParticleSystem("trail.psi", g_pSpt);
     g_pPar->Fire();
 
 	g_pSprStar=new CSprite(g_hTex, 32, 32, 32, 32);
-	g_pSprStar->SetBlendMode(BLEND_COLORMUL|BLEND_ALPHABLEND|BLEND_ZWRITE);
 	g_pSprStar->SetColor(0xFFFFA000);
 	g_pSprStar->SetHotSpot(16, 16);
 
 	g_pSprBg=new CSprite(g_hTexBg, 50*cosf(0), 50*sinf(0), 800, 600);
-	g_pSprBg->SetBlendMode(BLEND_COLORADD|BLEND_ALPHABLEND|BLEND_ZWRITE);
+	g_pSprBg->SetBlendMode(BLEND_COLORADD|BLEND_ALPHABLEND|BLEND_NOZWRITE);
 	g_pSprBg->SetColor(0xFF000000, 0);
 	g_pSprBg->SetColor(0xFF000000, 1);
 	g_pSprBg->SetColor(0xFF000010, 2);
 	g_pSprBg->SetColor(0xFF000010, 3);
-	g_pSprBg->SetZ(1);
 
 	for (int i=0; i<STARCNT-3; i+=4)
 	{
