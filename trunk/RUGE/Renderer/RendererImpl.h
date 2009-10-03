@@ -104,7 +104,7 @@ public:
 protected:
 	HRESULT InitLost();
 	void SetBlendMode(DWORD dwBlend);
-	void RenderBatch(bool bEndRender=false);
+	void RenderBatch(BOOL bEndRender=FALSE);
 	void BeginScene();
 	void EndScene();
 	void SetProjectionMatrix(int nWidth, int nHeight);
