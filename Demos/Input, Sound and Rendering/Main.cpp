@@ -40,7 +40,7 @@ HRESULT CEventHandler::InitResource()
 	g_hAudio=g_pApp->Effect_Load("menu.wav");
 	
 	g_Quad.hTex=g_pApp->Texture_Load("particles.png");
-	g_Quad.dwBlend=BLEND_ALPHAADD|BLEND_COLORMUL|BLEND_ZWRITE;
+	g_Quad.dwBlend=BLEND_DEFAULT;
 	for (int i=0; i<4; i++)
 	{
 		g_Quad.v[i].z=0.5f;
