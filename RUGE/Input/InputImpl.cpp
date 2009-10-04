@@ -106,6 +106,14 @@ STDMETHODIMP CInputImpl::QueryInterface(REFIID riid, void** ppv)
 STDMETHODIMP CInputImpl::Initialize(HWND hWnd)
 {
 	m_hWnd=hWnd;
+
+	POINT	point;
+
+	GetCursorPos(&point);
+	ScreenToClient(m_hWnd, &point);
+	m_fPosX=(float)point.x;
+	m_fPosY=(float)point.y;
+
 	return S_OK;
 }
 
@@ -129,18 +137,12 @@ STDMETHODIMP_(BOOL) CInputImpl::KeyUp(int nVKey)
 
 STDMETHODIMP_(int) CInputImpl::GetKey()
 {
-	int nRet=m_nVKLast;
-
-	m_nVKLast=0;
-	return nRet;
+	return m_nVKLast;
 }
 
 STDMETHODIMP_(char) CInputImpl::GetChar()
 {
-	char chRet=m_chLast;
-
-	m_chLast=0;
-	return chRet;
+	return m_chLast;
 }
 
 STDMETHODIMP_(LPCSTR) CInputImpl::GetKeyName(int nVKey)
@@ -178,6 +180,8 @@ STDMETHODIMP_(BOOL) CInputImpl::IsMouseOver()
 
 STDMETHODIMP CInputImpl::Update()
 {
+	m_nVKLast=0;
+	m_chLast=0;
 	memcpy(m_nOldKeyStates, m_nKeyStates, sizeof(m_nKeyStates));
 	for (int i=0; i<256; i++) m_nKeyStates[i]=GetKeyState(i);
 
