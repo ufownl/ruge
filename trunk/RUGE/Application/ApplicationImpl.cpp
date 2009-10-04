@@ -305,17 +305,17 @@ STDMETHODIMP CApplicationImpl::System_Run()
 					fElapsed=0;
 					nFrames=0;
 				}
-
-				HRESULT hr=m_pAudio->Update();
-
-				if (FAILED(hr)) PostQuitMessage(hr);
-				hr=m_pInput->Update();
-				if (FAILED(hr)) PostQuitMessage(hr);
 				if (m_pEventHandler!=NULL)
 				{
 					if (m_pEventHandler->Frame(m_fDelta)) PostQuitMessage(0);
 				}
-				hr=m_pRenderer->RendererLoop();
+
+				HRESULT hr=m_pRenderer->RendererLoop();
+
+				if (FAILED(hr)) PostQuitMessage(hr);
+				hr=m_pAudio->Update();
+				if (FAILED(hr)) PostQuitMessage(hr);
+				hr=m_pInput->Update();
 				if (FAILED(hr)) PostQuitMessage(hr);
 			}
 		}
