@@ -175,7 +175,27 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\EventHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Main.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MenuItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MenuScene.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StarsScene.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StdAfx.cpp"
 				>
 			</File>
 		</Filter>
@@ -184,6 +204,26 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\EventHandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MenuItem.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MenuScene.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StarsScene.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StdAfx.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="资源文件"
