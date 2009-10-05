@@ -8,6 +8,7 @@ public:
 	CMenuScene();
 	virtual ~CMenuScene();
 
+protected:
 	virtual void Render();
 	virtual BOOL Update(float fDelta);
 
