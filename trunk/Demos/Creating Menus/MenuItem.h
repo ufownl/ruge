@@ -6,6 +6,7 @@ public:
 	CMenuItem(int nID, HFONTX hFont, HAUDIO hSound, float x, float y, float fDelay, LPSTR lpcszTitle);
 	virtual ~CMenuItem();
 
+protected:
 	virtual void Render();
 	virtual void Update(float fDelta);
 
