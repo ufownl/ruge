@@ -21,38 +21,82 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #include "SceneManager.h"
 
 CSceneManager::CSceneManager()
-	: m_pScene(NULL)
+	: m_pSceneList(NULL)
+	, m_pScene(NULL)
 {
-}
-
-CSceneManager::CSceneManager(PSCENE pScene)
-	: m_pScene(NULL)
-{
-	SwitchScene(pScene);
 }
 
 CSceneManager::~CSceneManager()
 {
-	if (m_pScene!=NULL) m_pScene->ExitScene();
+	if (m_pScene!=NULL) m_pScene->Exit();
+	while (m_pSceneList!=NULL)
+	{
+		CScene *pScene=m_pSceneList;
+
+		m_pSceneList=m_pSceneList->m_pNext;
+		if (pScene->m_bManaged) delete pScene;
+	}
 }
 
-CSceneManager& CSceneManager::operator = (PSCENE pScene)
+void CSceneManager::AddScene(CScene *pScene, BOOL bManaged/* =TRUE */)
 {
-	SwitchScene(pScene);
-	return *this;
+	pScene->m_pSceneManager=this;
+	pScene->m_bManaged=bManaged;
+	pScene->m_pNext=m_pSceneList;
+	m_pSceneList=pScene;
 }
 
-BOOL CSceneManager::SwitchScene(PSCENE pScene, WPARAM wParam/* =0 */, LPARAM lParam/* =0 */)
+void CSceneManager::DelScene(int nID)
 {
-	if (m_pScene!=NULL) m_pScene->ExitScene();
-	m_pScene=pScene;
-	if (m_pScene!=NULL) return m_pScene->EnterScene(wParam, lParam);
-	return TRUE;
+	if (m_pSceneList->m_nID==nID)
+	{
+		CScene *pScene=m_pSceneList;
+
+		m_pSceneList=m_pSceneList->m_pNext;
+		if (pScene->m_bManaged) delete pScene;
+	}
+	else
+	{
+		for (CScene *p=m_pSceneList; p->m_pNext!=NULL; p=p->m_pNext)
+		{
+			if (p->m_pNext->m_nID==nID)
+			{
+				CScene *pScene=p->m_pNext;
+
+				p->m_pNext=pScene->m_pNext;
+				if (pScene->m_bManaged) delete pScene;
+				break;
+			}
+		}
+	}
+}
+
+CScene* CSceneManager::GetScene(int nID) const
+{
+	for (CScene *p=m_pSceneList; p!=NULL; p=p->m_pNext)
+	{
+		if (p->m_nID==nID) return p;
+	}
+	return NULL;
+}
+
+CScene* CSceneManager::Switch(int nID, WPARAM wParam/* =0 */, LPARAM lParam/* =0 */)
+{
+	CScene *pScene=GetScene(nID);
+
+	if (pScene==NULL) return NULL;
+	if (m_pScene!=NULL) m_pScene->Exit();
+	if (pScene->Enter(wParam, lParam))
+	{
+		m_pScene=pScene;
+		return m_pScene;
+	}
+	return NULL;
 }
 
 BOOL CSceneManager::Update(float fDelta)
 {
-	if (m_pScene!=NULL) return m_pScene->Update(this, fDelta);
+	if (m_pScene!=NULL) return m_pScene->Update(fDelta);
 	return FALSE;
 }
 

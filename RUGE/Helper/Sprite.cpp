@@ -149,6 +149,32 @@ void CSprite::Render(float x, float y, float fRot/* =0.0f */, float fHScale/* =1
 	m_pApp->Gfx_RenderQuad(&m_quadTex);
 }
 
+void CSprite::RenderStretch(float x1, float y1, float x2, float y2)
+{
+	m_quadTex.v[0].x=x1;
+	m_quadTex.v[0].y=y1;
+	m_quadTex.v[1].x=x2;
+	m_quadTex.v[1].y=y1;
+	m_quadTex.v[2].x=x2;
+	m_quadTex.v[2].y=y2;
+	m_quadTex.v[3].x=x1;
+	m_quadTex.v[3].y=y2;
+	m_pApp->Gfx_RenderQuad(&m_quadTex);
+}
+
+void CSprite::Render4V(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3)
+{
+	m_quadTex.v[0].x=x0;
+	m_quadTex.v[0].y=y0;
+	m_quadTex.v[1].x=x1;
+	m_quadTex.v[1].y=y1;
+	m_quadTex.v[2].x=x2;
+	m_quadTex.v[2].y=y2;
+	m_quadTex.v[3].x=x3;
+	m_quadTex.v[3].y=y3;
+	m_pApp->Gfx_RenderQuad(&m_quadTex);
+}
+
 void CSprite::SetTexture(HTEXTURE hTex)
 {
 	m_quadTex.hTex=hTex;

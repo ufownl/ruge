@@ -22,14 +22,27 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _SCENE_H_
 #define _SCENE_H_
 
-class CSceneManager;
-
-typedef struct IScene
+class CScene
 {
-	virtual BOOL EnterScene(WPARAM wParam, LPARAM lParam)=0;
-	virtual void ExitScene()=0;
-	virtual BOOL Update(CSceneManager *pSceneManager, float fDelta)=0;
+	friend class CSceneManager;
+
+public:
+	CScene(int nID);
+	virtual ~CScene();
+
+protected:
 	virtual void Render()=0;
-} *PSCENE;
+	virtual BOOL Update(float fDelta);
+
+	virtual BOOL Enter(WPARAM wParam, LPARAM lParam);
+	virtual void Exit();
+
+protected:
+	PAPPLICATION m_pApp;
+	CSceneManager *m_pSceneManager;
+	int m_nID;
+	BOOL m_bManaged;
+	CScene *m_pNext;
+};
 
 #endif  // _SCENE_H_
