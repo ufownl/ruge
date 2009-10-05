@@ -4,7 +4,6 @@
 CEventHandler::CEventHandler()
 	: m_pApp(GetRUGE())
 	, m_pSpr(NULL)
-	, m_pscMenu(NULL)
 	, m_pSceneManager(NULL)
 	, m_hFont(NULL)
 {
@@ -36,7 +35,6 @@ void CEventHandler::ReleaseResource()
 	// 在此添加资源释放代码
 	// 引擎内部管理系统可以自动释放纹理、字体及声音资源
 	delete m_pSceneManager;
-	delete m_pscMenu;
 	delete m_pSpr;
 }
 

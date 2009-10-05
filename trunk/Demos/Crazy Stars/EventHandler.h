@@ -17,7 +17,6 @@ public:
 
 protected:
 	PAPPLICATION m_pApp;
-	CMenuScene *m_pscMenu;
 	CSceneManager *m_pSceneManager;
 
 	HFONTX m_hFont;
