@@ -28,12 +28,13 @@ class CSceneManager
 {
 public:
 	CSceneManager();
-	CSceneManager(PSCENE pScene);
 	virtual ~CSceneManager();
 
-	CSceneManager& operator = (PSCENE pScene);
+	void AddScene(CScene *pScene, BOOL bManaged=TRUE);
+	void DelScene(int nID);
+	CScene* GetScene(int nID) const;
+	CScene* Switch(int nID, WPARAM wParam=0, LPARAM lParam=0);
 
-	BOOL SwitchScene(PSCENE pScene, WPARAM wParam=0, LPARAM lParam=0);
 	BOOL Update(float fDelta);
 	void Render();
 
@@ -42,7 +43,7 @@ protected:
 	CSceneManager& operator = (const CSceneManager &SceneManager);
 
 protected:
-	PSCENE m_pScene;
+	CScene *m_pSceneList, *m_pScene;
 };
 
 #endif  // _SCENEMANAGER_H_

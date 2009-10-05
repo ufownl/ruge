@@ -35,6 +35,8 @@ public:
 
 	void Flip(BOOL bx, BOOL by, BOOL bHotSpot=FALSE);
 	void Render(float x, float y, float fRot=0.0f, float fHScale=1.0f, float fVScale=0.0f);
+	void RenderStretch(float x1, float y1, float x2, float y2);
+	void Render4V(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 
 	void SetTexture(HTEXTURE hTex);
 	void SetTextureRect(float x, float y, float w, float h);

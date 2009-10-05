@@ -176,6 +176,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Scene.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SceneManager.cpp"
 				>
 			</File>

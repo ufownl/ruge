@@ -85,7 +85,7 @@ void CGUI::DelCtrl(int nID)
 			else m_pCtrlList=p->m_pNext;
 			if (p->m_pNext!=NULL) p->m_pNext->m_pPrev=p->m_pPrev;
 			if (p->m_bManaged) delete p;
-			return;
+			break;
 		}
 	}
 }
