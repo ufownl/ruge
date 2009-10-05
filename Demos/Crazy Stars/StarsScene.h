@@ -16,6 +16,7 @@ public:
 	CStarsScene();
 	virtual ~CStarsScene();
 
+protected:
 	virtual void Render();
 	virtual BOOL Update(float fDelta);
 
