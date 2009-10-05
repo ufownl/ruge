@@ -16,3 +16,6 @@
 
 #include <time.h>
 #include <math.h>
+
+#define SCENE_MENU	1
+#define SCENE_STARS	2

@@ -10,21 +10,19 @@ struct STARINFO
 	float fx, fy, fdx, fdy, fRot;
 };
 
-class CStarsScene : public IScene
+class CStarsScene : public CScene
 {
 public:
-	CStarsScene(IScene *pscPar);
+	CStarsScene();
 	virtual ~CStarsScene();
 
-	virtual BOOL EnterScene(WPARAM wParam, LPARAM lParam);
-	virtual void ExitScene();
-	virtual BOOL Update(CSceneManager *pSceneManager, float fDelta);
 	virtual void Render();
+	virtual BOOL Update(float fDelta);
+
+	virtual BOOL Enter(WPARAM wParam, LPARAM lParam);
+	virtual void Exit();
 
 protected:
-	PAPPLICATION m_pApp;
-	IScene *m_pscParent;
-
 	BOOL m_bGameOver;
 	float m_fRes;
 

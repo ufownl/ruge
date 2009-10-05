@@ -1,9 +1,8 @@
 #include "StdAfx.h"
 #include "StarsScene.h"
 
-CStarsScene::CStarsScene(IScene *pscPar)
-	: m_pApp(GetRUGE())
-	, m_pscParent(pscPar)
+CStarsScene::CStarsScene()
+	: CScene(SCENE_STARS)
 	, m_bGameOver(TRUE)
 	, m_fRes(0)
 	, m_hFont(NULL)
@@ -26,81 +25,29 @@ CStarsScene::CStarsScene(IScene *pscPar)
 
 CStarsScene::~CStarsScene()
 {
-	m_pApp->Release();
 }
 
-BOOL CStarsScene::EnterScene(WPARAM wParam, LPARAM lParam)
+void CStarsScene::Render()
 {
-	m_pApp->Random_Seed((DWORD)time(NULL));
+	m_pSpr->Render(m_fx, m_fy);
+	m_pPar->Render();
+	for (int i=0; i<STARCNT; i++) m_psprStar->Render(m_StarInfo[i].fx, m_StarInfo[i].fy, m_StarInfo[i].fRot);
 
-	m_hFont=m_pApp->Font_Create(100, 0, 0, FALSE, "Î¢ÈíÑÅºÚ");
-	m_hTex=m_pApp->Texture_Load("particles.png");
-	m_hMusic=m_pApp->Music_Load("Background.mid");
-	m_hSound=m_pApp->Effect_Load("Lost.wav");
-
-	m_pSpr=new CSprite(m_hTex, 96, 64, 32, 32);
-	m_pSpr->SetColor(0xFFFFF000);
-	m_pSpr->SetHotSpot(16, 16);
-
-	m_pSpt=new CSprite(m_hTex, 96, 64, 32, 32);
-	m_pSpt->SetBlendMode(BLEND_COLORMUL|BLEND_ALPHAADD|BLEND_NOZWRITE);
-	m_pSpt->SetHotSpot(16, 16);
-
-	m_pPar=new CParticleSystem("trail.psi", m_pSpt);
-    m_pPar->Fire();
-
-	m_psprStar=new CSprite(m_hTex, 32, 32, 32, 32);
-	m_psprStar->SetColor(0xFFFFA000);
-	m_psprStar->SetHotSpot(16, 16);
-
-	switch (wParam)
+	if (m_bGameOver)
 	{
-	case ENTER_RESUME:
-		if (!m_bGameOver) break;
-	case ENTER_START:
-		m_bGameOver=FALSE;
-		m_fRes=0;
-		m_fx=400;
-		m_fy=300;
-		for (int i=0; i<STARCNT-3; i+=4)
-		{
-			m_StarInfo[i].fx=m_pApp->Random_Float(0, 800);
-			m_StarInfo[i].fy=m_pApp->Random_Float(-128, -16);
+		RECT rect={0, 0, 800, 600};
+		char szBuf[256];
 
-			m_StarInfo[i+1].fx=m_pApp->Random_Float(0, 800);
-			m_StarInfo[i+1].fy=m_pApp->Random_Float(616, 728);
-
-			m_StarInfo[i+2].fx=m_pApp->Random_Float(-128, -16);
-			m_StarInfo[i+2].fy=m_pApp->Random_Float(0, 600);
-
-			m_StarInfo[i+3].fx=m_pApp->Random_Float(816, 928);
-			m_StarInfo[i+3].fy=m_pApp->Random_Float(0, 600);
-		}
-		break;
+		sprintf(szBuf, "ÓÎÏ·½áÊø\nÄúµÄ³É¼¨: %f", m_fRes);
+		m_pApp->Font_DrawText(m_hFont, szBuf, &rect, 0, DT_CENTER|DT_VCENTER);
 	}
-
-	m_hChannel=m_pApp->Music_Play(m_hMusic);
-
-	return TRUE;
 }
 
-void CStarsScene::ExitScene()
-{
-	delete m_psprStar;
-	delete m_pPar;
-	delete m_pSpt;
-	delete m_pSpr;
-	m_pApp->Audio_Free(m_hSound);
-	m_pApp->Audio_Free(m_hMusic);
-	m_pApp->Texture_Free(m_hTex);
-	m_pApp->Font_Free(m_hFont);
-}
-
-BOOL CStarsScene::Update(CSceneManager *pSceneManager, float fDelta)
+BOOL CStarsScene::Update(float fDelta)
 {
 	if (m_pApp->Input_KeyPressed(VK_ESCAPE))
 	{
-		pSceneManager->SwitchScene(m_pscParent);
+		m_pSceneManager->Switch(SCENE_MENU);
 		return FALSE;
 	}
 
@@ -108,7 +55,7 @@ BOOL CStarsScene::Update(CSceneManager *pSceneManager, float fDelta)
 	{
 		if (m_pApp->Input_KeyPressed(VK_RETURN))
 		{
-			pSceneManager->SwitchScene(m_pscParent);
+			m_pSceneManager->Switch(SCENE_MENU);
 			return FALSE;
 		}
 	}
@@ -165,18 +112,69 @@ BOOL CStarsScene::Update(CSceneManager *pSceneManager, float fDelta)
 	return FALSE;
 }
 
-void CStarsScene::Render()
+BOOL CStarsScene::Enter(WPARAM wParam, LPARAM lParam)
 {
-	m_pSpr->Render(m_fx, m_fy);
-	m_pPar->Render();
-	for (int i=0; i<STARCNT; i++) m_psprStar->Render(m_StarInfo[i].fx, m_StarInfo[i].fy, m_StarInfo[i].fRot);
+	m_pApp->Random_Seed((DWORD)time(NULL));
 
-	if (m_bGameOver)
+	m_hFont=m_pApp->Font_Create(100, 0, 0, FALSE, "Î¢ÈíÑÅºÚ");
+	m_hTex=m_pApp->Texture_Load("particles.png");
+	m_hMusic=m_pApp->Music_Load("Background.mid");
+	m_hSound=m_pApp->Effect_Load("Lost.wav");
+
+	m_pSpr=new CSprite(m_hTex, 96, 64, 32, 32);
+	m_pSpr->SetColor(0xFFFFF000);
+	m_pSpr->SetHotSpot(16, 16);
+
+	m_pSpt=new CSprite(m_hTex, 96, 64, 32, 32);
+	m_pSpt->SetBlendMode(BLEND_COLORMUL|BLEND_ALPHAADD|BLEND_NOZWRITE);
+	m_pSpt->SetHotSpot(16, 16);
+
+	m_pPar=new CParticleSystem("trail.psi", m_pSpt);
+    m_pPar->Fire();
+
+	m_psprStar=new CSprite(m_hTex, 32, 32, 32, 32);
+	m_psprStar->SetColor(0xFFFFA000);
+	m_psprStar->SetHotSpot(16, 16);
+
+	switch (wParam)
 	{
-		RECT rect={0, 0, 800, 600};
-		char szBuf[256];
+	case ENTER_RESUME:
+		if (!m_bGameOver) break;
+	case ENTER_START:
+		m_bGameOver=FALSE;
+		m_fRes=0;
+		m_fx=400;
+		m_fy=300;
+		for (int i=0; i<STARCNT-3; i+=4)
+		{
+			m_StarInfo[i].fx=m_pApp->Random_Float(0, 800);
+			m_StarInfo[i].fy=m_pApp->Random_Float(-128, -16);
 
-		sprintf(szBuf, "ÓÎÏ·½áÊø\nÄúµÄ³É¼¨: %f", m_fRes);
-		m_pApp->Font_DrawText(m_hFont, szBuf, &rect, 0, DT_CENTER|DT_VCENTER);
+			m_StarInfo[i+1].fx=m_pApp->Random_Float(0, 800);
+			m_StarInfo[i+1].fy=m_pApp->Random_Float(616, 728);
+
+			m_StarInfo[i+2].fx=m_pApp->Random_Float(-128, -16);
+			m_StarInfo[i+2].fy=m_pApp->Random_Float(0, 600);
+
+			m_StarInfo[i+3].fx=m_pApp->Random_Float(816, 928);
+			m_StarInfo[i+3].fy=m_pApp->Random_Float(0, 600);
+		}
+		break;
 	}
+
+	m_hChannel=m_pApp->Music_Play(m_hMusic);
+
+	return TRUE;
+}
+
+void CStarsScene::Exit()
+{
+	delete m_psprStar;
+	delete m_pPar;
+	delete m_pSpt;
+	delete m_pSpr;
+	m_pApp->Audio_Free(m_hSound);
+	m_pApp->Audio_Free(m_hMusic);
+	m_pApp->Texture_Free(m_hTex);
+	m_pApp->Font_Free(m_hFont);
 }

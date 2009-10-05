@@ -3,8 +3,7 @@
 #include "MenuItem.h"
 
 CMenuScene::CMenuScene()
-	: m_pApp(GetRUGE())
-	, m_pscStars(NULL)
+	: CScene(SCENE_MENU)
 	, m_nLastID(0)
 	, m_hTex(NULL)
 	, m_hSound(NULL)
@@ -12,16 +11,51 @@ CMenuScene::CMenuScene()
 	, m_pGUI(NULL)
 	, m_pSpr(NULL)
 {
-	m_pscStars=new CStarsScene(this);
 }
 
 CMenuScene::~CMenuScene()
 {
-	delete m_pscStars;
-	m_pApp->Release();
 }
 
-BOOL CMenuScene::EnterScene(WPARAM wParam, LPARAM lParam)
+void CMenuScene::Render()
+{
+	m_pGUI->Render();
+}
+
+BOOL CMenuScene::Update(float fDelta)
+{
+	if (m_pApp->Input_GetKey()==VK_ESCAPE)
+	{
+		m_nLastID=3;
+		m_pGUI->Exit();
+	}
+
+	int nID=m_pGUI->Update(fDelta);
+
+	if (nID==-1)
+	{
+		switch (m_nLastID)
+		{
+		case 1:
+			m_pSceneManager->Switch(SCENE_STARS, ENTER_START);
+			return FALSE;
+		case 2:
+			m_pSceneManager->Switch(SCENE_STARS, ENTER_RESUME);
+			return FALSE;
+		case 3:
+			return TRUE;
+		}
+	}
+	else if (nID>0)
+	{
+		m_nLastID=nID;
+		m_pGUI->Exit();
+	}
+
+	return FALSE;
+}
+
+BOOL CMenuScene::Enter(WPARAM wParam, LPARAM lParam)
 {
 	m_hTex=m_pApp->Texture_Load("cursor.png");
 	m_hSound=m_pApp->Effect_Load("menu.wav");
@@ -43,49 +77,11 @@ BOOL CMenuScene::EnterScene(WPARAM wParam, LPARAM lParam)
 	return TRUE;
 }
 
-void CMenuScene::ExitScene()
+void CMenuScene::Exit()
 {
 	delete m_pGUI;
 	delete m_pSpr;
 	m_pApp->Font_Free(m_hFont);
 	m_pApp->Audio_Free(m_hSound);
 	m_pApp->Texture_Free(m_hTex);
-}
-
-BOOL CMenuScene::Update(CSceneManager *pSceneManager, float fDelta)
-{
-	if (m_pApp->Input_GetKey()==VK_ESCAPE)
-	{
-		m_nLastID=3;
-		m_pGUI->Exit();
-	}
-
-	int nID=m_pGUI->Update(fDelta);
-
-	if (nID==-1)
-	{
-		switch (m_nLastID)
-		{
-		case 1:
-			pSceneManager->SwitchScene(m_pscStars, ENTER_START);
-			return FALSE;
-		case 2:
-			pSceneManager->SwitchScene(m_pscStars, ENTER_RESUME);
-			return FALSE;
-		case 3:
-			return TRUE;
-		}
-	}
-	else if (nID>0)
-	{
-		m_nLastID=nID;
-		m_pGUI->Exit();
-	}
-
-	return FALSE;
-}
-
-void CMenuScene::Render()
-{
-	m_pGUI->Render();
 }
