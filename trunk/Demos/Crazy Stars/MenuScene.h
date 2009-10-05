@@ -2,21 +2,19 @@
 
 #include "StarsScene.h"
 
-class CMenuScene : public IScene
+class CMenuScene : public CScene
 {
 public:
 	CMenuScene();
 	virtual ~CMenuScene();
 
-	virtual BOOL EnterScene(WPARAM wParam, LPARAM lParam);
-	virtual void ExitScene();
-	virtual BOOL Update(CSceneManager *pSceneManager, float fDelta);
 	virtual void Render();
+	virtual BOOL Update(float fDelta);
+
+	virtual BOOL Enter(WPARAM wParam, LPARAM lParam);
+	virtual void Exit();
 
 protected:
-	PAPPLICATION m_pApp;
-	CStarsScene *m_pscStars;
-
 	int m_nLastID;
 
 	HTEXTURE m_hTex;

@@ -23,8 +23,10 @@ HRESULT CEventHandler::InitResource()
 	
 	m_pSpr=new CSprite(m_hTex, 0, 0, 800, 600);
 
-	m_pscMenu=new CMenuScene;
-	m_pSceneManager=new CSceneManager(m_pscMenu);
+	m_pSceneManager=new CSceneManager();
+	m_pSceneManager->AddScene(new CMenuScene());
+	m_pSceneManager->AddScene(new CStarsScene());
+	m_pSceneManager->Switch(SCENE_MENU);
 
 	return S_OK;  // 返回S_OK表示资源初始化成功
 }
