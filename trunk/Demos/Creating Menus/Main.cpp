@@ -1,17 +1,17 @@
 #include "StdAfx.h"
 #include "MenuItem.h"
 
-PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
+RUGE::PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
 
-QUAD g_Quad;
-HTEXTURE g_hTex;
-HAUDIO g_hSound;
-HFONTX g_hFont;
+RUGE::QUAD g_Quad;
+RUGE::HTEXTURE g_hTex;
+RUGE::HAUDIO g_hSound;
+RUGE::HFONT g_hFont;
 
-CGUI *g_pGUI;
-CSprite *g_pSpr;
+RUGE::CGUI *g_pGUI;
+RUGE::CSprite *g_pSpr;
 
-class CEventHandler : public IApplicationEventHandler  // 实现RUGE Application事件处理接口
+class CEventHandler : public RUGE::IApplicationEventHandler  // 实现RUGE Application事件处理接口
 {
 public:
 	virtual HRESULT InitResource();
@@ -45,9 +45,9 @@ HRESULT CEventHandler::InitResource()
 	g_hSound=g_pApp->Effect_Load("menu.wav");
 	g_hFont=g_pApp->Font_Create(40, 0, 0, FALSE, "微软雅黑");
 
-	g_pSpr=new CSprite(g_hTex, 0, 0, 32, 32);
+	g_pSpr=new RUGE::CSprite(g_hTex, 0, 0, 32, 32);
 
-	g_pGUI=new CGUI;
+	g_pGUI=new RUGE::CGUI;
 	g_pGUI->AddCtrl(new CMenuItem(1, g_hFont, g_hSound, 400, 200, 0.0f, "Play"));
 	g_pGUI->AddCtrl(new CMenuItem(2, g_hFont, g_hSound, 400, 240, 0.1f, "Options"));
 	g_pGUI->AddCtrl(new CMenuItem(3, g_hFont, g_hSound, 400, 280, 0.2f, "Instructions"));
@@ -154,17 +154,17 @@ int main(int argc, char *argv[])
 	HRESULT hr=0;  // 程序返回值
 
 	CoInitialize(NULL);  // 初始化COM库
-	g_pApp=GetRUGE();  // 获取RUGE Application对象
+	g_pApp=RUGE::GetRUGE();  // 获取RUGE Application对象
 	if (g_pApp==NULL)
 	{
 		puts("Error: RUGE Application对象获取失败");
 		system("Pause");
 		return -1;
 	}
-	g_pApp->System_SetState(RUGE_EVENTHANDLER, &CEventHandler());  // 设置事件处理对象
-	g_pApp->System_SetState(RUGE_CAPTION, "Creating Menus");  // 设置窗口标题
-	g_pApp->System_SetState(RUGE_HIDECURSOR, TRUE);  // 隐藏系统鼠标指针
-	g_pApp->System_SetState(RUGE_VSYNC, VSYNC_ONE);  // 开启垂直同步
+	g_pApp->System_SetState(RUGE::APP_EVENTHANDLER, &CEventHandler());  // 设置事件处理对象
+	g_pApp->System_SetState(RUGE::APP_CAPTION, "Creating Menus");  // 设置窗口标题
+	g_pApp->System_SetState(RUGE::APP_HIDECURSOR, TRUE);  // 隐藏系统鼠标指针
+	g_pApp->System_SetState(RUGE::APP_VSYNC, VSYNC_ONE);  // 开启垂直同步
 	hr=g_pApp->System_Initialize();  // 初始化RUGE Application对象
 	if (SUCCEEDED(hr)) hr=g_pApp->System_Run();  // 进入主循环
 	else

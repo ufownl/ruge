@@ -1,9 +1,9 @@
 #pragma once
 
-class CMenuItem : public CControl
+class CMenuItem : public RUGE::CControl
 {
 public:
-	CMenuItem(int nID, HFONTX hFont, HAUDIO hSound, float x, float y, float fDelay, LPSTR lpcszTitle);
+	CMenuItem(int nID, RUGE::HFONT hFont, RUGE::HAUDIO hSound, float x, float y, float fDelay, LPSTR lpcszTitle);
 	virtual ~CMenuItem();
 
 protected:
@@ -16,17 +16,17 @@ protected:
 	virtual void Focus(BOOL bFocused);
 	virtual void MouseOver(BOOL bOver);
 
-	virtual BOOL MouseLBtn(BOOL bDown);
+	virtual BOOL MouseLBtn(BOOL bDown, float x, float y);
 	virtual BOOL KeyClick(int nVKey, char chChar);
 
 protected:
-	HFONTX m_hFont;
-	HAUDIO m_hSound;
+	RUGE::HFONT m_hFont;
+	RUGE::HAUDIO m_hSound;
 	float m_fDelay;
 	LPCSTR m_lpcszTitle;
 
-	CColor m_colSrc, m_colDelta, m_colSrc2, m_colDelta2, m_colShadowSrc, m_colShadowDelta;
-	CColor m_colColor, m_colShadow;
+	RUGE::CColor m_colSrc, m_colDelta, m_colSrc2, m_colDelta2, m_colShadowSrc, m_colShadowDelta;
+	RUGE::CColor m_colColor, m_colShadow;
 	float m_fOffsetSrc, m_fOffsetDelta, m_fOffset;
 	float m_fTime, m_fTime2;
 };
