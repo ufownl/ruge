@@ -106,9 +106,8 @@ namespace RUGE
 				{
 				case ANIM_FWD:
 				case ANIM_REV|ANIM_PINGPONG:
-					m_bPlaying = FALSE;
+					m_bPlaying=FALSE;
 					break;
-
 				case ANIM_FWD|ANIM_PINGPONG:
 				case ANIM_FWD|ANIM_PINGPONG|ANIM_LOOP:
 				case ANIM_REV|ANIM_PINGPONG|ANIM_LOOP:
@@ -122,9 +121,8 @@ namespace RUGE
 				{
 				case ANIM_REV:
 				case ANIM_FWD|ANIM_PINGPONG:
-					m_bPlaying = FALSE;
+					m_bPlaying=FALSE;
 					break;
-
 				case ANIM_REV|ANIM_PINGPONG:
 				case ANIM_REV|ANIM_PINGPONG|ANIM_LOOP:
 				case ANIM_FWD|ANIM_PINGPONG|ANIM_LOOP:
