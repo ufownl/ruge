@@ -16,14 +16,11 @@
 
 #include <math.h>
 
-PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
+RUGE::PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
 
-HFONTX g_hFont;
+RUGE::HFONT g_hFont;
 
 int g_nSpeed=-1;
-
-#define M_PI	3.14159265358979323846f
-#define M_PI_2	1.57079632679489661923f
 
 #define SCREEN_WIDTH	800
 #define SCREEN_HEIGHT	600
@@ -41,11 +38,11 @@ DWORD g_dwSeaBtmColors[]={0xFF1E394C, 0xFF2F4E64, 0xFF2F4E64};
 
 int g_nSeq[]={0, 0, 1, 2, 2, 2, 1, 0, 0};
 
-HTEXTURE g_hTex;
+RUGE::HTEXTURE g_hTex;
 
-CSprite	*g_psprSky, *g_psprSun, *g_psprMoon, *g_psprGlow, *g_psprSeaGlow, *g_psprStar;
-CDistortionMesh *g_pdisSea;
-CColor	g_colWhite;
+RUGE::CSprite *g_psprSky, *g_psprSun, *g_psprMoon, *g_psprGlow, *g_psprSeaGlow, *g_psprStar;
+RUGE::CDistortionMesh *g_pdisSea;
+RUGE::CColor g_colWhite;
 
 float g_fTime, g_fSpeed;
 
@@ -54,8 +51,8 @@ float g_fSeqResidue;
 float g_fStarX[NUM_STARS], g_fStarY[NUM_STARS], g_fStarS[NUM_STARS], g_fStarA[NUM_STARS];
 float g_fSeaP[SEA_SUBDIVISION];
 
-CColor g_colSkyTop, g_colSkyBtm, g_colSeaTop, g_colSeaBtm;
-CColor g_colSun, g_colSunGlow, g_colMoon, g_colMoonGlow, g_colSeaGlow;
+RUGE::CColor g_colSkyTop, g_colSkyBtm, g_colSeaTop, g_colSeaBtm;
+RUGE::CColor g_colSun, g_colSunGlow, g_colMoon, g_colMoonGlow, g_colSeaGlow;
 
 float g_fSunX, g_fSunY, g_fSunS, g_SunGlowS;
 float g_fMoonX, g_fMoonY, g_fMoonS, g_fMoonGlowS;
@@ -66,7 +63,7 @@ void DoneSimulation();
 void UpdateSimulation(float fDelta);
 void RenderSimulation();
 
-class CEventHandler : public IApplicationEventHandler  // 实现RUGE Application事件处理接口
+class CEventHandler : public RUGE::IApplicationEventHandler  // 实现RUGE Application事件处理接口
 {
 public:
 	virtual HRESULT InitResource();
@@ -163,18 +160,18 @@ int main(int argc, char *argv[])
 	HRESULT hr=0;  // 程序返回值
 
 	CoInitialize(NULL);  // 初始化COM库
-	g_pApp=GetRUGE();  // 获取RUGE Application对象
+	g_pApp=RUGE::GetRUGE();  // 获取RUGE Application对象
 	if (g_pApp==NULL)
 	{
 		puts("Error: RUGE Application对象获取失败");
 		system("Pause");
 		return -1;
 	}
-	g_pApp->System_SetState(RUGE_EVENTHANDLER, &CEventHandler());  // 设置事件处理对象
-	g_pApp->System_SetState(RUGE_CAPTION, "The Big Calm");  // 设置窗口标题
-	g_pApp->System_SetState(RUGE_VSYNC, VSYNC_ONE);  // 开启垂直同步
-	g_pApp->System_SetState(RUGE_MAGFILTER, TEXF_LINEAR);
-	g_pApp->System_SetState(RUGE_MINFILTER, TEXF_LINEAR);
+	g_pApp->System_SetState(RUGE::APP_EVENTHANDLER, &CEventHandler());  // 设置事件处理对象
+	g_pApp->System_SetState(RUGE::APP_CAPTION, "The Big Calm");  // 设置窗口标题
+	g_pApp->System_SetState(RUGE::APP_VSYNC, VSYNC_ONE);  // 开启垂直同步
+	g_pApp->System_SetState(RUGE::APP_MAGFILTER, TEXF_LINEAR);
+	g_pApp->System_SetState(RUGE::APP_MINFILTER, TEXF_LINEAR);
 	hr=g_pApp->System_Initialize();  // 初始化RUGE Application对象
 	if (SUCCEEDED(hr)) hr=g_pApp->System_Run();  // 进入主循环
 	else
@@ -204,21 +201,21 @@ void InitSimulation()
 {
 	g_hTex=g_pApp->Texture_Load("objects.png");
 
-	g_psprSky=new CSprite(NULL, 0, 0, SCREEN_WIDTH, SKY_HEIGHT);
-	g_pdisSea=new CDistortionMesh(SEA_SUBDIVISION, SEA_SUBDIVISION);
+	g_psprSky=new RUGE::CSprite(NULL, 0, 0, SCREEN_WIDTH, SKY_HEIGHT);
+	g_pdisSea=new RUGE::CDistortionMesh(SEA_SUBDIVISION, SEA_SUBDIVISION);
 	g_pdisSea->SetTextureRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT-SKY_HEIGHT);
 
-	g_psprSun=new CSprite(g_hTex, 81, 0, 114, 114);
+	g_psprSun=new RUGE::CSprite(g_hTex, 81, 0, 114, 114);
 	g_psprSun->SetHotSpot(57, 57);
-	g_psprMoon=new CSprite(g_hTex, 0, 0, 81, 81);
+	g_psprMoon=new RUGE::CSprite(g_hTex, 0, 0, 81, 81);
 	g_psprMoon->SetHotSpot(40, 40);
-	g_psprStar=new CSprite(g_hTex, 72, 81, 9, 9);
+	g_psprStar=new RUGE::CSprite(g_hTex, 72, 81, 9, 9);
 	g_psprStar->SetHotSpot(5, 5);
 
-	g_psprGlow=new CSprite(g_hTex, 128, 128, 128, 128);
+	g_psprGlow=new RUGE::CSprite(g_hTex, 128, 128, 128, 128);
 	g_psprGlow->SetHotSpot(64, 64);
 	g_psprGlow->SetBlendMode(BLEND_COLORADD|BLEND_ALPHABLEND|BLEND_NOZWRITE);
-	g_psprSeaGlow=new CSprite(g_hTex, 128, 224, 128, 32);
+	g_psprSeaGlow=new RUGE::CSprite(g_hTex, 128, 224, 128, 32);
 	g_psprSeaGlow->SetHotSpot(64, 0);
 	g_psprSeaGlow->SetBlendMode(BLEND_COLORADD|BLEND_ALPHAADD|BLEND_NOZWRITE);
 
@@ -259,7 +256,7 @@ void UpdateSimulation(float fDelta)
 	g_nSeqID=(int)(g_fTime/3);
 	g_fSeqResidue=g_fTime/3-g_nSeqID;
 
-	CColor col1, col2;
+	RUGE::CColor col1, col2;
 
 	col1.SetColor(g_dwSkyTopColors[g_nSeq[g_nSeqID]]);
 	col2.SetColor(g_dwSkyTopColors[g_nSeq[g_nSeqID+1]]);
@@ -443,21 +440,21 @@ void RenderSimulation()
 		for(int i=0; i<NUM_STARS; i++)
 		{
 			g_psprStar->SetColor((DWORD(g_fStarA[i]*255.0f)<<24)|0xFFFFFF);
-			g_psprStar->Render(g_fStarX[i], g_fStarY[i], 0.0f, g_fStarS[i]);
+			g_psprStar->RenderEx(g_fStarX[i], g_fStarY[i], 0.0f, g_fStarS[i]);
 		}
 	}
 
 	g_psprGlow->SetColor(g_colSunGlow.GetColor());
-	g_psprGlow->Render(g_fSunX, g_fSunY, 0.0f, g_SunGlowS);
+	g_psprGlow->RenderEx(g_fSunX, g_fSunY, 0.0f, g_SunGlowS);
 	g_psprSun->SetColor(g_colSun.GetColor());
-	g_psprSun->Render(g_fSunX, g_fSunY, 0.0f, g_fSunS);
+	g_psprSun->RenderEx(g_fSunX, g_fSunY, 0.0f, g_fSunS);
 
 	g_psprGlow->SetColor(g_colMoonGlow.GetColor());
-	g_psprGlow->Render(g_fMoonX, g_fMoonY, 0.0f, g_fMoonGlowS);
+	g_psprGlow->RenderEx(g_fMoonX, g_fMoonY, 0.0f, g_fMoonGlowS);
 	g_psprMoon->SetColor(g_colMoon.GetColor());
-	g_psprMoon->Render(g_fMoonX, g_fMoonY, 0.0f, g_fMoonS);
+	g_psprMoon->RenderEx(g_fMoonX, g_fMoonY, 0.0f, g_fMoonS);
 
 	g_pdisSea->Render(0, SKY_HEIGHT);
 	g_psprSeaGlow->SetColor(g_colSeaGlow.GetColor());
-	g_psprSeaGlow->Render(g_fSeaGlowX, SKY_HEIGHT, 0.0f, g_fSeaGlowSX, g_fSeaGlowSY);
+	g_psprSeaGlow->RenderEx(g_fSeaGlowX, SKY_HEIGHT, 0.0f, g_fSeaGlowSX, g_fSeaGlowSY);
 }
