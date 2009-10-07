@@ -14,17 +14,17 @@
 
 #include <math.h>
 
-PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
+RUGE::PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
 
-HFONTX g_hFont;
-HTEXTURE g_hTex;
+RUGE::HFONT g_hFont;
+RUGE::HTEXTURE g_hTex;
 
-CDistortionMesh *g_pDis;
+RUGE::CDistortionMesh *g_pDis;
 
 const int g_cnRows=16, g_cnCols=16;
 const float g_cfCellW=512.0f/(g_cnCols-1), g_cfCellH=512.0f/(g_cnRows-1), g_cfDisX=144, g_cfDisY=44;
 
-class CEventHandler : public IApplicationEventHandler  // 实现RUGE Application事件处理接口
+class CEventHandler : public RUGE::IApplicationEventHandler  // 实现RUGE Application事件处理接口
 {
 public:
 	virtual HRESULT InitResource();
@@ -41,7 +41,7 @@ HRESULT CEventHandler::InitResource()
 	g_hFont=g_pApp->Font_Create(20, 0, 0, FALSE, "微软雅黑");
 	g_hTex=g_pApp->Texture_Load("texture.jpg");
 
-	g_pDis=new CDistortionMesh(g_cnRows, g_cnCols);
+	g_pDis=new RUGE::CDistortionMesh(g_cnRows, g_cnCols);
 	g_pDis->SetTexture(g_hTex);
 	g_pDis->SetTextureRect(0, 0, 512, 512);
 	g_pDis->SetBlendMode(BLEND_COLORADD|BLEND_ALPHABLEND|BLEND_NOZWRITE);
@@ -153,16 +153,16 @@ int main(int argc, char *argv[])
 	HRESULT hr=0;  // 程序返回值
 
 	CoInitialize(NULL);  // 初始化COM库
-	g_pApp=GetRUGE();  // 获取RUGE Application对象
+	g_pApp=RUGE::GetRUGE();  // 获取RUGE Application对象
 	if (g_pApp==NULL)
 	{
 		puts("Error: RUGE Application对象获取失败");
 		system("Pause");
 		return -1;
 	}
-	g_pApp->System_SetState(RUGE_EVENTHANDLER, &CEventHandler());  // 设置事件处理对象
-	g_pApp->System_SetState(RUGE_CAPTION, "Using Distortion Mesh");  // 设置窗口标题
-	g_pApp->System_SetState(RUGE_VSYNC, VSYNC_ONE);  // 开启垂直同步
+	g_pApp->System_SetState(RUGE::APP_EVENTHANDLER, &CEventHandler());  // 设置事件处理对象
+	g_pApp->System_SetState(RUGE::APP_CAPTION, "Using Distortion Mesh");  // 设置窗口标题
+	g_pApp->System_SetState(RUGE::APP_VSYNC, VSYNC_ONE);  // 开启垂直同步
 	hr=g_pApp->System_Initialize();  // 初始化RUGE Application对象
 	if (SUCCEEDED(hr)) hr=g_pApp->System_Run();  // 进入主循环
 	else
