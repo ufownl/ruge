@@ -19,31 +19,36 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _RECT_H_
-#define _RECT_H_
+#ifndef _RUGE_RECT_H_
+#define _RUGE_RECT_H_
 
-class CRect
+namespace RUGE
 {
-public:
-	CRect();
-	CRect(const CRect &rect);
-	CRect(float fLeft, float fTop, float fRight, float fBottom);
 
-	CRect& operator=(const CRect &rect);
+	class CRect
+	{
+	public:
+		CRect();
+		CRect(const CRect &rect);
+		CRect(float fLeft, float fTop, float fRight, float fBottom);
 
-	void Clear();
-	BOOL IsClean();
-	void Set(float fLeft, float fTop, float fRight, float fBottom);
-	void SetRadius(float x, float y, float r);
-	void Encapsulate(float x, float y);
-	BOOL TestPoint(float x, float y) const;
-	BOOL Intersect(const CRect &rect) const;
+		CRect& operator=(const CRect &rect);
 
-public:
-	float x1, y1, x2, y2;
+		void Clear();
+		BOOL IsClean();
+		void Set(float fLeft, float fTop, float fRight, float fBottom);
+		void SetRadius(float x, float y, float r);
+		void Encapsulate(float x, float y);
+		BOOL TestPoint(float x, float y) const;
+		BOOL Intersect(const CRect *pRect) const;
 
-protected:
-	BOOL m_bClean;
-};
+	public:
+		float x1, y1, x2, y2;
 
-#endif  // _RECT_H_
+	protected:
+		BOOL m_bClean;
+	};
+
+}
+
+#endif  // _RUGE_RECT_H_

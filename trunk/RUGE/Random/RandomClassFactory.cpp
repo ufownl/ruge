@@ -21,59 +21,64 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #include "RandomClassFactory.h"
 #include "RandomImpl.h"
 
-CRandomClassFactory::CRandomClassFactory()
-	: m_uRefCount(0)
+namespace RUGE
 {
-	g_uDllLockCount++;
-}
 
-CRandomClassFactory::~CRandomClassFactory()
-{
-	g_uDllLockCount--;
-}
+	CRandomClassFactory::CRandomClassFactory()
+		: m_uRefCount(0)
+	{
+		g_uDllLockCount++;
+	}
 
-STDMETHODIMP_(ULONG) CRandomClassFactory::AddRef()
-{
-	return ++m_uRefCount;
-}
+	CRandomClassFactory::~CRandomClassFactory()
+	{
+		g_uDllLockCount--;
+	}
 
-STDMETHODIMP_(ULONG) CRandomClassFactory::Release()
-{
-	ULONG uRet=--m_uRefCount;
+	STDMETHODIMP_(ULONG) CRandomClassFactory::AddRef()
+	{
+		return ++m_uRefCount;
+	}
 
-	if (m_uRefCount==0) delete this;
-	return uRet;
-}
+	STDMETHODIMP_(ULONG) CRandomClassFactory::Release()
+	{
+		ULONG uRet=--m_uRefCount;
 
-STDMETHODIMP CRandomClassFactory::QueryInterface(REFIID riid, void** ppv)
-{
-	HRESULT hr=S_OK;
+		if (m_uRefCount==0) delete this;
+		return uRet;
+	}
 
-	if (IsBadWritePtr(ppv, sizeof(void*))) return E_POINTER;
-	*ppv=NULL;
-	if (InlineIsEqualGUID(riid, IID_IUnknown )) *ppv=(IUnknown*)this;
-	else if (InlineIsEqualGUID(riid, IID_IClassFactory)) *ppv=(IClassFactory*)this;
-	else hr=E_NOINTERFACE;
-	if (hr==S_OK) ((IUnknown*)*ppv)->AddRef();
-	return hr;
-}
+	STDMETHODIMP CRandomClassFactory::QueryInterface(REFIID riid, void** ppv)
+	{
+		HRESULT hr=S_OK;
 
-STDMETHODIMP CRandomClassFactory::CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv)
-{
-	HRESULT hr;
-	CRandomImpl* pImpl;
+		if (IsBadWritePtr(ppv, sizeof(void*))) return E_POINTER;
+		*ppv=NULL;
+		if (InlineIsEqualGUID(riid, IID_IUnknown )) *ppv=(IUnknown*)this;
+		else if (InlineIsEqualGUID(riid, IID_IClassFactory)) *ppv=(IClassFactory*)this;
+		else hr=E_NOINTERFACE;
+		if (hr==S_OK) ((IUnknown*)*ppv)->AddRef();
+		return hr;
+	}
 
-	if (pUnkOuter!=NULL) return CLASS_E_NOAGGREGATION;
-	if (IsBadWritePtr(ppv, sizeof(void*))) return E_POINTER;
-	*ppv=NULL;
-	pImpl=new CRandomImpl;
-	hr=pImpl->QueryInterface(riid, ppv);
-	if (FAILED(hr)) delete pImpl;
-	return hr;
-}
+	STDMETHODIMP CRandomClassFactory::CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv)
+	{
+		HRESULT hr;
+		CRandomImpl* pImpl;
 
-STDMETHODIMP CRandomClassFactory::LockServer (BOOL bLock)
-{
-	bLock ? g_uDllLockCount++ : g_uDllLockCount--;
-	return S_OK;
+		if (pUnkOuter!=NULL) return CLASS_E_NOAGGREGATION;
+		if (IsBadWritePtr(ppv, sizeof(void*))) return E_POINTER;
+		*ppv=NULL;
+		pImpl=new CRandomImpl;
+		hr=pImpl->QueryInterface(riid, ppv);
+		if (FAILED(hr)) delete pImpl;
+		return hr;
+	}
+
+	STDMETHODIMP CRandomClassFactory::LockServer (BOOL bLock)
+	{
+		bLock ? g_uDllLockCount++ : g_uDllLockCount--;
+		return S_OK;
+	}
+
 }

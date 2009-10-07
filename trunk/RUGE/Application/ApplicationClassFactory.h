@@ -19,26 +19,31 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _APPLICATIONCLASSFACTORY_H_
-#define _APPLICATIONCLASSFACTORY_H_
+#ifndef _RUGE_APPLICATIONCLASSFACTORY_H_
+#define _RUGE_APPLICATIONCLASSFACTORY_H_
 
-class CApplicationClassFactory : public IClassFactory
+namespace RUGE
 {
-public:
-	CApplicationClassFactory();
-	virtual ~CApplicationClassFactory();
 
-	// IUnknown
-	STDMETHOD_(ULONG, AddRef)();
-	STDMETHOD_(ULONG, Release)();
-	STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
+	class CApplicationClassFactory : public IClassFactory
+	{
+	public:
+		CApplicationClassFactory();
+		virtual ~CApplicationClassFactory();
 
-	// IClassFactory
-	STDMETHOD(CreateInstance)(IUnknown* pUnkOuter, REFIID riid, void** ppv);
-	STDMETHOD(LockServer)(BOOL fLock);
+		// IUnknown
+		STDMETHOD_(ULONG, AddRef)();
+		STDMETHOD_(ULONG, Release)();
+		STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
 
-protected:
-	ULONG m_uRefCount;
-};
+		// IClassFactory
+		STDMETHOD(CreateInstance)(IUnknown* pUnkOuter, REFIID riid, void** ppv);
+		STDMETHOD(LockServer)(BOOL fLock);
 
-#endif  // _APPLICATIONCLASSFACTORY_H_
+	protected:
+		ULONG m_uRefCount;
+	};
+
+}
+
+#endif  // _RUGE_APPLICATIONCLASSFACTORY_H_

@@ -19,10 +19,15 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _TIMERCOMDEF_H_
-#define _TIMERCOMDEF_H_
+#ifndef _RUGE_TIMERCOMDEF_H_
+#define _RUGE_TIMERCOMDEF_H_
 
-struct __declspec(uuid("{2A892422-4CDC-4583-8CD9-2305ED2616DB}")) ITimer;
-class __declspec(uuid("{2A892422-4CDC-4583-8CD9-2305ED2616DB}")) CTimerImpl;
+namespace RUGE
+{
 
-#endif  // _TIMERCOMDEF_H_
+	struct __declspec(uuid("{2A892422-4CDC-4583-8CD9-2305ED2616DB}")) ITimer;
+	class __declspec(uuid("{2A892422-4CDC-4583-8CD9-2305ED2616DB}")) CTimerImpl;
+
+}
+
+#endif  // _RUGE_TIMERCOMDEF_H_

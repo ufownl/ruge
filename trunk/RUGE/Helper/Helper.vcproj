@@ -44,7 +44,7 @@
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
@@ -105,7 +105,7 @@
 				Name="VCCLCompilerTool"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="0"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
@@ -152,6 +152,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Button.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Color.cpp"
 				>
 			</File>
@@ -168,6 +172,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Listbox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ParticleSystem.cpp"
 				>
 			</File>
@@ -181,6 +189,10 @@
 			</File>
 			<File
 				RelativePath=".\SceneManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Slider.cpp"
 				>
 			</File>
 			<File
@@ -208,6 +220,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\Text.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Vector.cpp"
 				>
 			</File>
@@ -219,6 +235,10 @@
 			>
 			<File
 				RelativePath=".\Animation.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Button.h"
 				>
 			</File>
 			<File
@@ -238,6 +258,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Listbox.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ParticleSystem.h"
 				>
 			</File>
@@ -254,11 +278,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Slider.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Sprite.h"
 				>
 			</File>
 			<File
 				RelativePath=".\StdAfx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Text.h"
 				>
 			</File>
 			<File

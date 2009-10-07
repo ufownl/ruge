@@ -19,124 +19,129 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _APPLICATIONIMPL_H_
-#define _APPLICATIONIMPL_H_
+#ifndef _RUGE_APPLICATIONIMPL_H_
+#define _RUGE_APPLICATIONIMPL_H_
 
 #include "Application.h"
 
-class CApplicationImpl : public IApplication
+namespace RUGE
 {
-public:
-	CApplicationImpl();
-	virtual ~CApplicationImpl();
 
-	// IUnknown
-	STDMETHOD_(ULONG, AddRef)();
-	STDMETHOD_(ULONG, Release)();
-	STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
+	class CApplicationImpl : public IApplication
+	{
+	public:
+		CApplicationImpl();
+		virtual ~CApplicationImpl();
 
-	// IApplication
-	STDMETHOD(System_SetState)(RUGEStringState State, LPCSTR lpcszVal);
-	STDMETHOD(System_SetState)(RUGEIntState State, int nVal);
-	STDMETHOD(System_SetState)(RUGEBoolState State, BOOL bVal);
-	STDMETHOD(System_SetState)(RUGEDwordState State, DWORD dwVal);
-	STDMETHOD(System_SetState)(RUGEEventHandlerState State, PAPPLICATIONEVENTHANDLER pVal);
+		// IUnknown
+		STDMETHOD_(ULONG, AddRef)();
+		STDMETHOD_(ULONG, Release)();
+		STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
 
-	STDMETHOD_(LPCSTR, System_GetState)(RUGEStringState State);
-	STDMETHOD_(int, System_GetState)(RUGEIntState State);
-	STDMETHOD_(BOOL, System_GetState)(RUGEBoolState State);
-	STDMETHOD_(DWORD, System_GetState)(RUGEDwordState State);
-	STDMETHOD_(PAPPLICATIONEVENTHANDLER, System_GetState)(RUGEEventHandlerState State);
-	STDMETHOD_(HANDLE, System_GetState)(RUGEHandleState State);
+		// IApplication
+		STDMETHOD(System_SetState)(AppStringState State, LPCSTR lpcszVal);
+		STDMETHOD(System_SetState)(AppIntState State, int nVal);
+		STDMETHOD(System_SetState)(AppBoolState State, BOOL bVal);
+		STDMETHOD(System_SetState)(AppDwordState State, DWORD dwVal);
+		STDMETHOD(System_SetState)(AppEventHandlerState State, PAPPLICATIONEVENTHANDLER pVal);
 
-	STDMETHOD(System_Initialize)();
-	STDMETHOD(System_Run)();
+		STDMETHOD_(LPCSTR, System_GetState)(AppStringState State);
+		STDMETHOD_(int, System_GetState)(AppIntState State);
+		STDMETHOD_(BOOL, System_GetState)(AppBoolState State);
+		STDMETHOD_(DWORD, System_GetState)(AppDwordState State);
+		STDMETHOD_(PAPPLICATIONEVENTHANDLER, System_GetState)(AppEventHandlerState State);
+		STDMETHOD_(HANDLE, System_GetState)(AppHandleState State);
 
-	STDMETHOD(Gfx_BeginTarget)(HTARGET hTarg);
-	STDMETHOD(Gfx_EndTarget)();
-	STDMETHOD(Gfx_Clear)(DWORD dwColor=0);
-	STDMETHOD(Gfx_RenderLine)(PVERTEX pV1, PVERTEX pV2, DWORD dwBlend=BLEND_DEFAULT);
-	STDMETHOD(Gfx_RenderTriangle)(PTRIANGLE pTriangle);
-	STDMETHOD(Gfx_RenderQuad)(PQUAD pQuad);
-	STDMETHOD(Gfx_Shotsnap)(LPCSTR lpcszPath, DWORD dwIFF=IFF_BMP);
+		STDMETHOD(System_Initialize)();
+		STDMETHOD(System_Run)();
 
-	STDMETHOD_(HTEXTURE, Texture_Create)(int nWidth, int nHeight);
-	STDMETHOD_(HTEXTURE, Texture_Load)(LPCSTR lpcszPath);
-	STDMETHOD(Texture_Free)(HTEXTURE hTex);
-	STDMETHOD_(void*, Texture_Lock)(HTEXTURE hTex, BOOL bReadOnly=TRUE, int x=0, int y=0, int w=0, int h=0);
-	STDMETHOD(Texture_Unlock)(HTEXTURE hTex);
-	STDMETHOD_(int, Texture_GetWidth)(HTEXTURE hTex);
-	STDMETHOD_(int, Texture_GetHeight)(HTEXTURE hTex);
+		STDMETHOD(Gfx_BeginTarget)(HTARGET hTarg);
+		STDMETHOD(Gfx_EndTarget)();
+		STDMETHOD(Gfx_Clear)(DWORD dwColor=0);
+		STDMETHOD(Gfx_RenderLine)(PVERTEX pV1, PVERTEX pV2, DWORD dwBlend=BLEND_DEFAULT);
+		STDMETHOD(Gfx_RenderTriangle)(PTRIANGLE pTriangle);
+		STDMETHOD(Gfx_RenderQuad)(PQUAD pQuad);
+		STDMETHOD(Gfx_Shotsnap)(LPCSTR lpcszPath, DWORD dwIFF=IFF_BMP);
 
-	STDMETHOD_(HTARGET, Target_Create)(int nWidth, int nHeight);
-	STDMETHOD(Target_Free)(HTARGET hTarg);
-	STDMETHOD_(HTEXTURE, Target_GetTexture)(HTARGET hTarg);
+		STDMETHOD_(HTEXTURE, Texture_Create)(int nWidth, int nHeight);
+		STDMETHOD_(HTEXTURE, Texture_Load)(LPCSTR lpcszPath);
+		STDMETHOD(Texture_Free)(HTEXTURE hTex);
+		STDMETHOD_(void*, Texture_Lock)(HTEXTURE hTex, BOOL bReadOnly=TRUE, int x=0, int y=0, int w=0, int h=0);
+		STDMETHOD(Texture_Unlock)(HTEXTURE hTex);
+		STDMETHOD_(int, Texture_GetWidth)(HTEXTURE hTex);
+		STDMETHOD_(int, Texture_GetHeight)(HTEXTURE hTex);
 
-	STDMETHOD_(HFONTX, Font_Create)(int nHeight, int nWidth, int nWeight, BOOL bItalic, LPCSTR lpcszFont);
-	STDMETHOD(Font_Free)(HFONTX hFont);
-	STDMETHOD_(int, Font_DrawText)(HFONTX hFont, LPCSTR lpcszText, LPRECT lpRect,
-		float z=0.0f, DWORD dwFormat=DT_TOP|DT_LEFT, DWORD dwColor=0xFFFFFFFF);
+		STDMETHOD_(HTARGET, Target_Create)(int nWidth, int nHeight);
+		STDMETHOD(Target_Free)(HTARGET hTarg);
+		STDMETHOD_(HTEXTURE, Target_GetTexture)(HTARGET hTarg);
 
-	STDMETHOD_(BOOL, Input_KeyDown)(int nVKey);
-	STDMETHOD_(BOOL, Input_KeyPressed)(int nVKey);
-	STDMETHOD_(BOOL, Input_KeyUp)(int nVKey);
-	STDMETHOD_(int, Input_GetKey)();
-	STDMETHOD_(char, Input_GetChar)();
-	STDMETHOD_(LPCSTR, Input_GetKeyName)(int nVKey);
+		STDMETHOD_(HFONT, Font_Create)(int nHeight, int nWidth, int nWeight, BOOL bItalic, LPCSTR lpcszFont);
+		STDMETHOD(Font_Free)(HFONT hFont);
+		STDMETHOD_(int, Font_DrawText)(HFONT hFont, LPCSTR lpcszText, LPRECT lpRect,
+			float z=0.0f, DWORD dwFormat=DT_TOP|DT_LEFT, DWORD dwColor=0xFFFFFFFF);
 
-	STDMETHOD(Input_GetMousePos)(float *x, float *y);
-	STDMETHOD(Input_SetMousePos)(float x, float y);
-	STDMETHOD_(SHORT, Input_GetMouseWheel)();
-	STDMETHOD_(BOOL, Input_IsMouseOver)();
+		STDMETHOD_(BOOL, Input_KeyDown)(int nVKey);
+		STDMETHOD_(BOOL, Input_KeyPressed)(int nVKey);
+		STDMETHOD_(BOOL, Input_KeyUp)(int nVKey);
+		STDMETHOD_(int, Input_GetKey)();
+		STDMETHOD_(char, Input_GetChar)();
+		STDMETHOD_(LPCSTR, Input_GetKeyName)(int nVKey);
 
-	STDMETHOD_(HAUDIO, Effect_Load)(LPCSTR lpcszPath);
-	STDMETHOD_(HCHANNEL, Effect_Play)(HAUDIO hAudio, int nVolume=100, int nPan=0, float fPitch=1.0f, BOOL bLoop=FALSE);
+		STDMETHOD(Input_GetMousePos)(float *x, float *y);
+		STDMETHOD(Input_SetMousePos)(float x, float y);
+		STDMETHOD_(SHORT, Input_GetMouseWheel)();
+		STDMETHOD_(BOOL, Input_IsMouseOver)();
 
-	STDMETHOD_(HAUDIO, Music_Load)(LPCSTR lpcszPath);
-	STDMETHOD_(HCHANNEL, Music_Play)(HAUDIO hAudio, int nVolume=100, float fStart=0.0f, BOOL bLoop=TRUE);
+		STDMETHOD_(HAUDIO, Effect_Load)(LPCSTR lpcszPath);
+		STDMETHOD_(HCHANNEL, Effect_Play)(HAUDIO hAudio, int nVolume=100, int nPan=0, float fPitch=1.0f, BOOL bLoop=FALSE);
 
-	STDMETHOD_(float, Audio_GetLength)(HAUDIO hAudio);
-	STDMETHOD(Audio_Free)(HAUDIO hAudio);
+		STDMETHOD_(HAUDIO, Music_Load)(LPCSTR lpcszPath);
+		STDMETHOD_(HCHANNEL, Music_Play)(HAUDIO hAudio, int nVolume=100, float fStart=0.0f, BOOL bLoop=TRUE);
 
-	STDMETHOD(Channel_Pause)(HCHANNEL hChannel);
-	STDMETHOD(Channel_Resume)(HCHANNEL hChannel);
-	STDMETHOD(Channel_Stop)(HCHANNEL hChannel);
-	STDMETHOD_(BOOL, Channel_IsPlaying)(HCHANNEL hChannel);
+		STDMETHOD_(float, Audio_GetLength)(HAUDIO hAudio);
+		STDMETHOD(Audio_Free)(HAUDIO hAudio);
 
-	STDMETHOD(Channel_SetVolume)(HCHANNEL hChannel, int nVolume);
-	STDMETHOD(Channel_SetPan)(HCHANNEL hChannel, int nPan);
-	STDMETHOD(Channel_SetPitch)(HCHANNEL hChannel, float fPitch);
-	STDMETHOD(Channel_SetPosition)(HCHANNEL hChannel, float fPos);
+		STDMETHOD(Channel_Pause)(HCHANNEL hChannel);
+		STDMETHOD(Channel_Resume)(HCHANNEL hChannel);
+		STDMETHOD(Channel_Stop)(HCHANNEL hChannel);
+		STDMETHOD_(BOOL, Channel_IsPlaying)(HCHANNEL hChannel);
 
-	STDMETHOD_(int, Channel_GetVolume)(HCHANNEL hChannel);
-	STDMETHOD_(int, Channel_GetPan)(HCHANNEL hChannel);
-	STDMETHOD_(float, Channel_GetPosition)(HCHANNEL hChannel);
+		STDMETHOD(Channel_SetVolume)(HCHANNEL hChannel, int nVolume);
+		STDMETHOD(Channel_SetPan)(HCHANNEL hChannel, int nPan);
+		STDMETHOD(Channel_SetPitch)(HCHANNEL hChannel, float fPitch);
+		STDMETHOD(Channel_SetPosition)(HCHANNEL hChannel, float fPos);
 
-	STDMETHOD(Random_Seed)(DWORD dwSeed);
-	STDMETHOD_(int, Random_Int)(int nMax, int nMin);
-	STDMETHOD_(float, Random_Float)(float fMax, float fMin);
+		STDMETHOD_(int, Channel_GetVolume)(HCHANNEL hChannel);
+		STDMETHOD_(int, Channel_GetPan)(HCHANNEL hChannel);
+		STDMETHOD_(float, Channel_GetPosition)(HCHANNEL hChannel);
 
-	STDMETHOD_(float, Timer_GetTime)();
-	STDMETHOD_(float, Timer_GetDelta)();
-	STDMETHOD_(int, Timer_GetFPS)();
+		STDMETHOD(Random_Seed)(DWORD dwSeed);
+		STDMETHOD_(int, Random_Int)(int nMax, int nMin);
+		STDMETHOD_(float, Random_Float)(float fMax, float fMin);
 
-protected:
-	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		STDMETHOD_(float, Timer_GetTime)();
+		STDMETHOD_(float, Timer_GetDelta)();
+		STDMETHOD_(int, Timer_GetFPS)();
 
-protected:
-	static CApplicationImpl *m_pThis;
-	ULONG m_uRefCount;
-	LPCSTR m_lpcszCaption, m_lpcszIcon;
-	BOOL m_bHideCursor, m_bActive, m_bNotSuspend;
-	PAPPLICATIONEVENTHANDLER m_pEventHandler;
-	HWND m_hWnd;
-	float m_fTime, m_fDelta;
-	int m_nFPS;
-	IRendererPtr m_pRenderer;
-	IAudioPtr m_pAudio;
-	IInputPtr m_pInput;
-	ITimerPtr m_pTimer;
-	IRandomPtr m_pRand;
-};
+	protected:
+		static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-#endif  // _APPLICATIONIMPL_H_
+	protected:
+		static CApplicationImpl *m_pThis;
+		ULONG m_uRefCount;
+		LPCSTR m_lpcszCaption, m_lpcszIcon;
+		BOOL m_bHideCursor, m_bActive, m_bNotSuspend;
+		PAPPLICATIONEVENTHANDLER m_pEventHandler;
+		HWND m_hWnd;
+		float m_fTime, m_fDelta;
+		int m_nFPS;
+		IRendererPtr m_pRenderer;
+		IAudioPtr m_pAudio;
+		IInputPtr m_pInput;
+		ITimerPtr m_pTimer;
+		IRandomPtr m_pRand;
+	};
+
+}
+
+#endif  // _RUGE_APPLICATIONIMPL_H_

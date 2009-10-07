@@ -19,26 +19,31 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _TIMERCLASSFACTORY_H_
-#define _TIMERCLASSFACTORY_H_
+#ifndef _RUGE_TIMERCLASSFACTORY_H_
+#define _RUGE_TIMERCLASSFACTORY_H_
 
-class CTimerClassFactory : public IClassFactory
+namespace RUGE
 {
-public:
-	CTimerClassFactory();
-	virtual ~CTimerClassFactory();
 
-	// IUnknown
-	STDMETHOD_(ULONG, AddRef)();
-	STDMETHOD_(ULONG, Release)();
-	STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
+	class CTimerClassFactory : public IClassFactory
+	{
+	public:
+		CTimerClassFactory();
+		virtual ~CTimerClassFactory();
 
-	// IClassFactory
-	STDMETHOD(CreateInstance)(IUnknown* pUnkOuter, REFIID riid, void** ppv);
-	STDMETHOD(LockServer)(BOOL fLock);
+		// IUnknown
+		STDMETHOD_(ULONG, AddRef)();
+		STDMETHOD_(ULONG, Release)();
+		STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
 
-protected:
-	ULONG m_uRefCount;
-};
+		// IClassFactory
+		STDMETHOD(CreateInstance)(IUnknown* pUnkOuter, REFIID riid, void** ppv);
+		STDMETHOD(LockServer)(BOOL fLock);
 
-#endif  // _TIMERCLASSFACTORY_H_
+	protected:
+		ULONG m_uRefCount;
+	};
+
+}
+
+#endif  // _RUGE_TIMERCLASSFACTORY_H_

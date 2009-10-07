@@ -19,26 +19,31 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _RANDOMCLASSFACTORY_H_
-#define _RANDOMCLASSFACTORY_H_
+#ifndef _RUGE_RANDOMCLASSFACTORY_H_
+#define _RUGE_RANDOMCLASSFACTORY_H_
 
-class CRandomClassFactory : public IClassFactory
+namespace RUGE
 {
-public:
-	CRandomClassFactory();
-	virtual ~CRandomClassFactory();
 
-	// IUnknown
-	STDMETHOD_(ULONG, AddRef)();
-	STDMETHOD_(ULONG, Release)();
-	STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
+	class CRandomClassFactory : public IClassFactory
+	{
+	public:
+		CRandomClassFactory();
+		virtual ~CRandomClassFactory();
 
-	// IClassFactory
-	STDMETHOD(CreateInstance)(IUnknown* pUnkOuter, REFIID riid, void** ppv);
-	STDMETHOD(LockServer)(BOOL fLock);
+		// IUnknown
+		STDMETHOD_(ULONG, AddRef)();
+		STDMETHOD_(ULONG, Release)();
+		STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
 
-protected:
-	ULONG m_uRefCount;
-};
+		// IClassFactory
+		STDMETHOD(CreateInstance)(IUnknown* pUnkOuter, REFIID riid, void** ppv);
+		STDMETHOD(LockServer)(BOOL fLock);
 
-#endif  // _RANDOMCLASSFACTORY_H_
+	protected:
+		ULONG m_uRefCount;
+	};
+
+}
+
+#endif  // _RUGE_RANDOMCLASSFACTORY_H_

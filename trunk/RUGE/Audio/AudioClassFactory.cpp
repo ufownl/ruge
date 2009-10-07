@@ -21,59 +21,64 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #include "AudioClassFactory.h"
 #include "AudioImpl.h"
 
-CAudioClassFactory::CAudioClassFactory()
-	: m_uRefCount(0)
+namespace RUGE
 {
-	g_uDllLockCount++;
-}
 
-CAudioClassFactory::~CAudioClassFactory()
-{
-	g_uDllLockCount--;
-}
+	CAudioClassFactory::CAudioClassFactory()
+		: m_uRefCount(0)
+	{
+		g_uDllLockCount++;
+	}
 
-STDMETHODIMP_(ULONG) CAudioClassFactory::AddRef()
-{
-	return ++m_uRefCount;
-}
+	CAudioClassFactory::~CAudioClassFactory()
+	{
+		g_uDllLockCount--;
+	}
 
-STDMETHODIMP_(ULONG) CAudioClassFactory::Release()
-{
-	ULONG uRet=--m_uRefCount;
+	STDMETHODIMP_(ULONG) CAudioClassFactory::AddRef()
+	{
+		return ++m_uRefCount;
+	}
 
-	if (m_uRefCount==0) delete this;
-	return uRet;
-}
+	STDMETHODIMP_(ULONG) CAudioClassFactory::Release()
+	{
+		ULONG uRet=--m_uRefCount;
 
-STDMETHODIMP CAudioClassFactory::QueryInterface(REFIID riid, void** ppv)
-{
-	HRESULT hr=S_OK;
+		if (m_uRefCount==0) delete this;
+		return uRet;
+	}
 
-	if (IsBadWritePtr(ppv, sizeof(void*))) return E_POINTER;
-	*ppv=NULL;
-	if (InlineIsEqualGUID(riid, IID_IUnknown )) *ppv=(IUnknown*)this;
-	else if (InlineIsEqualGUID(riid, IID_IClassFactory)) *ppv=(IClassFactory*)this;
-	else hr=E_NOINTERFACE;
-	if (hr==S_OK) ((IUnknown*)*ppv)->AddRef();
-	return hr;
-}
+	STDMETHODIMP CAudioClassFactory::QueryInterface(REFIID riid, void** ppv)
+	{
+		HRESULT hr=S_OK;
 
-STDMETHODIMP CAudioClassFactory::CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv)
-{
-	HRESULT hr;
-	CAudioImpl* pImpl;
+		if (IsBadWritePtr(ppv, sizeof(void*))) return E_POINTER;
+		*ppv=NULL;
+		if (InlineIsEqualGUID(riid, IID_IUnknown )) *ppv=(IUnknown*)this;
+		else if (InlineIsEqualGUID(riid, IID_IClassFactory)) *ppv=(IClassFactory*)this;
+		else hr=E_NOINTERFACE;
+		if (hr==S_OK) ((IUnknown*)*ppv)->AddRef();
+		return hr;
+	}
 
-	if (pUnkOuter!=NULL) return CLASS_E_NOAGGREGATION;
-	if (IsBadWritePtr(ppv, sizeof(void*))) return E_POINTER;
-	*ppv=NULL;
-	pImpl=new CAudioImpl;
-	hr=pImpl->QueryInterface(riid, ppv);
-	if (FAILED(hr)) delete pImpl;
-	return hr;
-}
+	STDMETHODIMP CAudioClassFactory::CreateInstance(IUnknown* pUnkOuter, REFIID riid, void** ppv)
+	{
+		HRESULT hr;
+		CAudioImpl* pImpl;
 
-STDMETHODIMP CAudioClassFactory::LockServer (BOOL bLock)
-{
-	bLock ? g_uDllLockCount++ : g_uDllLockCount--;
-	return S_OK;
+		if (pUnkOuter!=NULL) return CLASS_E_NOAGGREGATION;
+		if (IsBadWritePtr(ppv, sizeof(void*))) return E_POINTER;
+		*ppv=NULL;
+		pImpl=new CAudioImpl;
+		hr=pImpl->QueryInterface(riid, ppv);
+		if (FAILED(hr)) delete pImpl;
+		return hr;
+	}
+
+	STDMETHODIMP CAudioClassFactory::LockServer (BOOL bLock)
+	{
+		bLock ? g_uDllLockCount++ : g_uDllLockCount--;
+		return S_OK;
+	}
+
 }

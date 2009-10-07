@@ -35,6 +35,11 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #define RUGE_EXPORT _declspec(dllimport)
 #endif  // RUGE_EXPORT
 
-RUGE_EXPORT PAPPLICATION GetRUGE();
+namespace RUGE
+{
+
+	RUGE_EXPORT PAPPLICATION GetRUGE();
+
+}
 
 #endif  // _RUGE_H_

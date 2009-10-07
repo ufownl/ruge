@@ -41,12 +41,12 @@ BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD dwReason, LPVOID lpReserved)
 STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void** ppv)
 {
 	HRESULT hr;
-	CTimerClassFactory* pFactory;
+	RUGE::CTimerClassFactory *pFactory;
 
-	if (!InlineIsEqualGUID(rclsid, __uuidof(CTimerImpl))) return CLASS_E_CLASSNOTAVAILABLE;
+	if (!InlineIsEqualGUID(rclsid, __uuidof(RUGE::CTimerImpl))) return CLASS_E_CLASSNOTAVAILABLE;
 	if (IsBadWritePtr(ppv, sizeof(void*))) return E_POINTER;
 	*ppv=NULL;
-	pFactory=new CTimerClassFactory;
+	pFactory=new RUGE::CTimerClassFactory;
 	pFactory->AddRef();
 	hr=pFactory->QueryInterface(riid, ppv);
 	pFactory->Release();

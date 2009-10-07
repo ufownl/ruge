@@ -19,70 +19,75 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _AUDIOIMPL_H_
-#define _AUDIOIMPL_H_
+#ifndef _RUGE_AUDIOIMPL_H_
+#define _RUGE_AUDIOIMPL_H_
 
 #include "Audio.h"
 
-typedef struct SOUNDLIST
+namespace RUGE
 {
-	FMOD::Sound *pSound;
-	SOUNDLIST *pNext;
-} *PSOUNDLIST;
 
-class CAudioImpl : public IAudio
-{
-public:
-	CAudioImpl();
-	virtual ~CAudioImpl();
+	typedef struct SOUNDLIST
+	{
+		FMOD::Sound *pSound;
+		SOUNDLIST *pNext;
+	} *PSOUNDLIST;
 
-	// IUnknown
-	STDMETHOD_(ULONG, AddRef)();
-	STDMETHOD_(ULONG, Release)();
-	STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
+	class CAudioImpl : public IAudio
+	{
+	public:
+		CAudioImpl();
+		virtual ~CAudioImpl();
 
-	// IAudio
-	STDMETHOD(SetState)(AudioIntState State, int nMaxChannels);
+		// IUnknown
+		STDMETHOD_(ULONG, AddRef)();
+		STDMETHOD_(ULONG, Release)();
+		STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
 
-	STDMETHOD_(int, GetState)(AudioIntState State);
+		// IAudio
+		STDMETHOD(SetState)(AudioIntState State, int nMaxChannels);
 
-	STDMETHOD(Initialize)();
-	STDMETHOD(Shutdown)();
-	STDMETHOD(Update)();
+		STDMETHOD_(int, GetState)(AudioIntState State);
 
-	STDMETHOD_(HAUDIO, Effect_Load)(LPCSTR lpcszPath);
-	STDMETHOD_(HCHANNEL, Effect_Play)(HAUDIO hAudio, int nVolume=100, int nPan=0, float fPitch=1.0f, BOOL bLoop=FALSE);
+		STDMETHOD(Initialize)();
+		STDMETHOD(Shutdown)();
+		STDMETHOD(Update)();
 
-	STDMETHOD_(HAUDIO, Music_Load)(LPCSTR lpcszPath);
-	STDMETHOD_(HCHANNEL, Music_Play)(HAUDIO hAudio, int nVolume=100, float fStart=0.0f, BOOL bLoop=TRUE);
+		STDMETHOD_(HAUDIO, Effect_Load)(LPCSTR lpcszPath);
+		STDMETHOD_(HCHANNEL, Effect_Play)(HAUDIO hAudio, int nVolume=100, int nPan=0, float fPitch=1.0f, BOOL bLoop=FALSE);
 
-	STDMETHOD_(float, Audio_GetLength)(HAUDIO hAudio);
-	STDMETHOD(Audio_Free)(HAUDIO hAudio);
+		STDMETHOD_(HAUDIO, Music_Load)(LPCSTR lpcszPath);
+		STDMETHOD_(HCHANNEL, Music_Play)(HAUDIO hAudio, int nVolume=100, float fStart=0.0f, BOOL bLoop=TRUE);
 
-	STDMETHOD(Channel_Pause)(HCHANNEL hChannel);
-	STDMETHOD(Channel_Resume)(HCHANNEL hChannel);
-	STDMETHOD(Channel_Stop)(HCHANNEL hChannel);
-	STDMETHOD_(BOOL, Channel_IsPlaying)(HCHANNEL hChannel);
+		STDMETHOD_(float, Audio_GetLength)(HAUDIO hAudio);
+		STDMETHOD(Audio_Free)(HAUDIO hAudio);
 
-	STDMETHOD(Channel_SetVolume)(HCHANNEL hChannel, int nVolume);
-	STDMETHOD(Channel_SetPan)(HCHANNEL hChannel, int nPan);
-	STDMETHOD(Channel_SetPitch)(HCHANNEL hChannel, float fPitch);
-	STDMETHOD(Channel_SetPosition)(HCHANNEL hChannel, float fPos);
+		STDMETHOD(Channel_Pause)(HCHANNEL hChannel);
+		STDMETHOD(Channel_Resume)(HCHANNEL hChannel);
+		STDMETHOD(Channel_Stop)(HCHANNEL hChannel);
+		STDMETHOD_(BOOL, Channel_IsPlaying)(HCHANNEL hChannel);
 
-	STDMETHOD_(int, Channel_GetVolume)(HCHANNEL hChannel);
-	STDMETHOD_(int, Channel_GetPan)(HCHANNEL hChannel);
-	STDMETHOD_(float, Channel_GetPosition)(HCHANNEL hChannel);
+		STDMETHOD(Channel_SetVolume)(HCHANNEL hChannel, int nVolume);
+		STDMETHOD(Channel_SetPan)(HCHANNEL hChannel, int nPan);
+		STDMETHOD(Channel_SetPitch)(HCHANNEL hChannel, float fPitch);
+		STDMETHOD(Channel_SetPosition)(HCHANNEL hChannel, float fPos);
 
-protected:
-	void Append(FMOD::Sound *pSound);
-	void Remove(FMOD::Sound *pSound);
-	void RemoveAll();
+		STDMETHOD_(int, Channel_GetVolume)(HCHANNEL hChannel);
+		STDMETHOD_(int, Channel_GetPan)(HCHANNEL hChannel);
+		STDMETHOD_(float, Channel_GetPosition)(HCHANNEL hChannel);
 
-protected:
-	ULONG m_uRefCount;
-	int m_nMaxChannels;
-	FMOD::System *m_pFmod;
-	PSOUNDLIST m_pSndList;
-};
+	protected:
+		void Append(FMOD::Sound *pSound);
+		void Remove(FMOD::Sound *pSound);
+		void RemoveAll();
 
-#endif  // _AUDIOIMPL_H_
+	protected:
+		ULONG m_uRefCount;
+		int m_nMaxChannels;
+		FMOD::System *m_pFmod;
+		PSOUNDLIST m_pSndList;
+	};
+
+}
+
+#endif  // _RUGE_AUDIOIMPL_H_

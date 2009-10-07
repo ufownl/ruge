@@ -19,8 +19,8 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _ANIMATION_H_
-#define _ANIMATION_H_
+#ifndef _RUGE_ANIMATION_H_
+#define _RUGE_ANIMATION_H_
 
 #include "sprite.h"
 
@@ -32,36 +32,41 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #define ANIM_NOLOOP		0L
 #define ANIM_DEFAULT	(ANIM_FWD|ANIM_LOOP)
 
-class CAnimation : public CSprite
+namespace RUGE
 {
-public:
-	CAnimation(HTEXTURE hTex, int nFrames, float FPS, float x, float y, float w, float h);
-	CAnimation(const CAnimation &Anim);
-	virtual ~CAnimation();
 
-	CAnimation& CAnimation::operator = (const CAnimation &Anim);
+	class CAnimation : public CSprite
+	{
+	public:
+		CAnimation(HTEXTURE hTex, int nFrames, float FPS, float x, float y, float w, float h);
+		CAnimation(const CAnimation &Anim);
+		virtual ~CAnimation();
 
-	void Play();
-	void Stop();
-	void Resume();
-	void Update(float fDeltaTime);
-	bool IsPlaying() const;
+		CAnimation& CAnimation::operator = (const CAnimation &Anim);
 
-	void SetMode(DWORD dwMode);
-	void SetSpeed(float FPS);
-	void SetFrame(int n);
-	void SetFrames(int n);
+		void Play();
+		void Stop();
+		void Resume();
+		void Update(float fDelta);
+		BOOL IsPlaying() const;
 
-	DWORD GetMode() const;
-	float GetSpeed() const;
-	int GetFrame() const;
-	int GetFrames() const;
+		void SetMode(DWORD dwMode);
+		void SetSpeed(float FPS);
+		void SetFrame(int n);
+		void SetFrames(int n);
 
-protected:
-	bool m_bPlaying;
-	float m_fSpeed, m_fSinceLastFrame;
-	DWORD m_dwMode;
-	int m_nDelta, m_nFrames, m_nCurFrame;
-};
+		DWORD GetMode() const;
+		float GetSpeed() const;
+		int GetFrame() const;
+		int GetFrames() const;
 
-#endif  // _ANIMATION_H_
+	protected:
+		BOOL m_bPlaying;
+		float m_fSpeed, m_fSinceLastFrame;
+		DWORD m_dwMode;
+		int m_nDelta, m_nFrames, m_nCurFrame;
+	};
+
+}
+
+#endif  // _RUGE_ANIMATION_H_

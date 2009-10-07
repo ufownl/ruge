@@ -19,26 +19,31 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _AUDIOCLASSFACTORY_H_
-#define _AUDIOCLASSFACTORY_H_
+#ifndef _RUGE_AUDIOCLASSFACTORY_H_
+#define _RUGE_AUDIOCLASSFACTORY_H_
 
-class CAudioClassFactory : public IClassFactory
+namespace RUGE
 {
-public:
-	CAudioClassFactory();
-	virtual ~CAudioClassFactory();
 
-	// IUnknown
-	STDMETHOD_(ULONG, AddRef)();
-	STDMETHOD_(ULONG, Release)();
-	STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
+	class CAudioClassFactory : public IClassFactory
+	{
+	public:
+		CAudioClassFactory();
+		virtual ~CAudioClassFactory();
 
-	// IClassFactory
-	STDMETHOD(CreateInstance)(IUnknown* pUnkOuter, REFIID riid, void** ppv);
-	STDMETHOD(LockServer)(BOOL fLock);
+		// IUnknown
+		STDMETHOD_(ULONG, AddRef)();
+		STDMETHOD_(ULONG, Release)();
+		STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
 
-protected:
-	ULONG m_uRefCount;
-};
+		// IClassFactory
+		STDMETHOD(CreateInstance)(IUnknown* pUnkOuter, REFIID riid, void** ppv);
+		STDMETHOD(LockServer)(BOOL fLock);
 
-#endif  // _AUDIOCLASSFACTORY_H_
+	protected:
+		ULONG m_uRefCount;
+	};
+
+}
+
+#endif  // _RUGE_AUDIOCLASSFACTORY_H_

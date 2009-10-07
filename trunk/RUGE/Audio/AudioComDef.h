@@ -19,10 +19,15 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _AUDIOCOMDEF_H_
-#define _AUDIOCOMDEF_H_
+#ifndef _RUGE_AUDIOCOMDEF_H_
+#define _RUGE_AUDIOCOMDEF_H_
 
-struct __declspec(uuid("{09D26750-ECD1-4641-A767-3771A5838ADE}")) IAudio;
-class __declspec(uuid("{09D26750-ECD1-4641-A767-3771A5838ADE}")) CAudioImpl;
+namespace RUGE
+{
 
-#endif  // _AUDIOCOMDEF_H_
+	struct __declspec(uuid("{09D26750-ECD1-4641-A767-3771A5838ADE}")) IAudio;
+	class __declspec(uuid("{09D26750-ECD1-4641-A767-3771A5838ADE}")) CAudioImpl;
+
+}
+
+#endif  // _RUGE_AUDIOCOMDEF_H_

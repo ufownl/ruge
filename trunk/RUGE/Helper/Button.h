@@ -19,34 +19,35 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _RUGE_TIMERIMPL_H_
-#define _RUGE_TIMERIMPL_H_
+#ifndef _RUGE_BUTTON_H_
+#define _RUGE_BUTTON_H_
 
-#include "Timer.h"
+#include "GUI.h"
 
 namespace RUGE
 {
 
-	class CTimerImpl : public ITimer
+	class CButton : public CControl
 	{
 	public:
-		CTimerImpl();
-		virtual ~CTimerImpl();
+		CButton(int nID, float x, float y, float w, float h, HTEXTURE hTex, float tx, float ty);
+		virtual ~CButton();
 
-		// IUnknown
-		STDMETHOD_(ULONG, AddRef)();
-		STDMETHOD_(ULONG, Release)();
-		STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
+		virtual void SetColor(DWORD dwColor);
 
-		// ITimer
-		STDMETHOD_(DWORD, Start)();
-		STDMETHOD_(DWORD, GetDelta)();
+		void SetMode(BOOL bTrigger);
+		void SetState(BOOL bPressed);
+		BOOL GetState() const;
 
 	protected:
-		ULONG m_uRefCount;
-		DWORD m_dwTicks;
+		virtual void Render();
+		virtual BOOL MouseLBtn(BOOL bDown, float x, float y);
+
+	protected:
+		BOOL m_bTrigger, m_bPressed, m_bOldState;
+		CSprite *m_psprUp, *m_psprDown;
 	};
 
 }
 
-#endif  // _RUGE_TIMERIMPL_H_
+#endif  // _RUGE_BUTTON_H_
