@@ -2,8 +2,8 @@
 #include "MenuScene.h"
 #include "MenuItem.h"
 
-CMenuScene::CMenuScene()
-	: CScene(SCENE_MENU)
+CMenuScene::CMenuScene(int nID)
+	: RUGE::CScene(nID)
 	, m_nLastID(0)
 	, m_hTex(NULL)
 	, m_hSound(NULL)
@@ -61,9 +61,9 @@ BOOL CMenuScene::Enter(WPARAM wParam, LPARAM lParam)
 	m_hSound=m_pApp->Effect_Load("menu.wav");
 	m_hFont=m_pApp->Font_Create(40, 0, 0, FALSE, "Î¢ÈíÑÅºÚ");
 
-	m_pSpr=new CSprite(m_hTex, 0, 0, 32, 32);
+	m_pSpr=new RUGE::CSprite(m_hTex, 0, 0, 32, 32);
 
-	m_pGUI=new CGUI;
+	m_pGUI=new RUGE::CGUI;
 	m_pGUI->AddCtrl(new CMenuItem(1, m_hFont, m_hSound, 400, 240, 0.1f, "Start"));
 	m_pGUI->AddCtrl(new CMenuItem(2, m_hFont, m_hSound, 400, 280, 0.2f, "Resume"));
 	m_pGUI->AddCtrl(new CMenuItem(3, m_hFont, m_hSound, 400, 320, 0.3f, "Exit"));

@@ -2,7 +2,7 @@
 #include "EventHandler.h"
 
 CEventHandler::CEventHandler()
-	: m_pApp(GetRUGE())
+	: m_pApp(RUGE::GetRUGE())
 	, m_pSpr(NULL)
 	, m_pSceneManager(NULL)
 	, m_hFont(NULL)
@@ -20,11 +20,11 @@ HRESULT CEventHandler::InitResource()
 	m_hFont=m_pApp->Font_Create(20, 0, 0, FALSE, "Fixedsys");
 	m_hTex=m_pApp->Texture_Load("bg.png");
 	
-	m_pSpr=new CSprite(m_hTex, 0, 0, 800, 600);
+	m_pSpr=new RUGE::CSprite(m_hTex, 0, 0, 800, 600);
 
-	m_pSceneManager=new CSceneManager();
-	m_pSceneManager->AddScene(new CMenuScene());
-	m_pSceneManager->AddScene(new CStarsScene());
+	m_pSceneManager=new RUGE::CSceneManager();
+	m_pSceneManager->AddScene(new CMenuScene(SCENE_MENU));
+	m_pSceneManager->AddScene(new CStarsScene(SCENE_STARS));
 	m_pSceneManager->Switch(SCENE_MENU);
 
 	return S_OK;  // 返回S_OK表示资源初始化成功

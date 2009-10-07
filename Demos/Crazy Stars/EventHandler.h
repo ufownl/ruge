@@ -2,7 +2,7 @@
 
 #include "MenuScene.h"
 
-class CEventHandler : public IApplicationEventHandler  // 实现RUGE Application事件处理接口
+class CEventHandler : public RUGE::IApplicationEventHandler  // 实现RUGE Application事件处理接口
 {
 public:
 	CEventHandler();
@@ -16,11 +16,11 @@ public:
 	virtual void WndEvent(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
-	PAPPLICATION m_pApp;
-	CSceneManager *m_pSceneManager;
+	RUGE::PAPPLICATION m_pApp;
+	RUGE::CSceneManager *m_pSceneManager;
 
-	HFONTX m_hFont;
-	HTEXTURE m_hTex;
+	RUGE::HFONT m_hFont;
+	RUGE::HTEXTURE m_hTex;
 
-	CSprite *m_pSpr;
+	RUGE::CSprite *m_pSpr;
 };
