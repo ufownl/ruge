@@ -5,14 +5,14 @@
 #pragma comment(lib, "RUGE.lib")
 #endif  // _DEBUG
 
-PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
+RUGE::PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
 
 int main(int argc, char *argv[])
 {
 	HRESULT hr=0;  // 程序返回值
 
 	CoInitialize(NULL);  // 初始化COM库
-	g_pApp=GetRUGE();  // 获取RUGE Application对象
+	g_pApp=RUGE::GetRUGE();  // 获取RUGE Application对象
 	if (g_pApp==NULL)
 	{
 		puts("Error: RUGE Application对象获取失败");
