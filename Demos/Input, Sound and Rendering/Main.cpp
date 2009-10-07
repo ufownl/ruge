@@ -5,11 +5,11 @@
 #pragma comment(lib, "RUGE.lib")
 #endif  // _DEBUG
 
-PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
+RUGE::PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
 
-HFONTX g_hFont;
-HAUDIO g_hAudio;
-QUAD g_Quad;
+RUGE::HFONT g_hFont;
+RUGE::HAUDIO g_hAudio;
+RUGE::QUAD g_Quad;
 
 float g_fx=100.0f, g_fy=100.0f, g_fdx, g_fdy;
 const float g_cfAcceleration=90.0f, g_cfFriction=0.98f;
@@ -22,7 +22,7 @@ void Boom()
 	g_pApp->Effect_Play(g_hAudio, 100, nPan, fPitch);
 }
 
-class CEventHandler : public IApplicationEventHandler  // 实现RUGE Application事件处理接口
+class CEventHandler : public RUGE::IApplicationEventHandler  // 实现RUGE Application事件处理接口
 {
 public:
 	virtual HRESULT InitResource();
@@ -157,16 +157,16 @@ int main(int argc, char *argv[])
 	HRESULT hr=0;  // 程序返回值
 
 	CoInitialize(NULL);  // 初始化COM库
-	g_pApp=GetRUGE();  // 获取RUGE Application对象
+	g_pApp=RUGE::GetRUGE();  // 获取RUGE Application对象
 	if (g_pApp==NULL)
 	{
 		puts("Error: RUGE Application对象获取失败");
 		system("Pause");
 		return -1;
 	}
-	g_pApp->System_SetState(RUGE_EVENTHANDLER, &CEventHandler());  // 设置事件处理对象
-	g_pApp->System_SetState(RUGE_CAPTION, "Input, Sound and Rendering");  // 设置窗口标题
-	g_pApp->System_SetState(RUGE_VSYNC, VSYNC_ONE);  // 开启垂直同步
+	g_pApp->System_SetState(RUGE::APP_EVENTHANDLER, &CEventHandler());  // 设置事件处理对象
+	g_pApp->System_SetState(RUGE::APP_CAPTION, "Input, Sound and Rendering");  // 设置窗口标题
+	g_pApp->System_SetState(RUGE::APP_VSYNC, VSYNC_ONE);  // 开启垂直同步
 	hr=g_pApp->System_Initialize();  // 初始化RUGE Application对象
 	if (SUCCEEDED(hr)) hr=g_pApp->System_Run();  // 进入主循环
 	else
