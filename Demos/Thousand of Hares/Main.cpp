@@ -14,8 +14,7 @@
 
 #include <math.h>
 
-PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
-IRandomPtr g_pRand;
+RUGE::PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
 
 #define SCREEN_WIDTH	800
 #define SCREEN_HEIGHT	600
@@ -32,9 +31,9 @@ typedef struct SPROBJ
 PSPROBJ g_pObjs;
 int g_nObjs, g_nBlend;
 
-HFONTX g_hFont;
-HTEXTURE g_hTex, g_hTexBg;
-CSprite *g_pSpr, *g_pSprBg;
+RUGE::HFONT g_hFont;
+RUGE::HTEXTURE g_hTex, g_hTexBg;
+RUGE::CSprite *g_pSpr, *g_pSprBg;
 
 DWORD g_dwFntColor[5]={0xFFFFFFFF, 0xFF000000, 0xFFFFFFFF, 0xFF000000, 0xFFFFFFFF};
 
@@ -61,10 +60,10 @@ void SetBlend(int nBlend)
 	nBlend%=5;
 	g_nBlend=nBlend;
 	g_pSpr->SetBlendMode(dwBlend[nBlend]);
-	for (int i=0; i<MAX_OBJS; i++) g_pObjs[i].dwColor=dwColor[nBlend][g_pRand->Integer(0, 4)];
+	for (int i=0; i<MAX_OBJS; i++) g_pObjs[i].dwColor=dwColor[nBlend][g_pApp->Random_Int(0, 4)];
 }
 
-class CEventHandler : public IApplicationEventHandler  // 实现RUGE Application事件处理接口
+class CEventHandler : public RUGE::IApplicationEventHandler  // 实现RUGE Application事件处理接口
 {
 public:
 	virtual HRESULT InitResource();
@@ -78,16 +77,14 @@ public:
 HRESULT CEventHandler::InitResource()
 {
 	// 在此添加资源初始化代码
-	g_pRand.CreateInstance(__uuidof(CRandomImpl));
-
 	g_hFont=g_pApp->Font_Create(20, 0, 0, FALSE, "Fixedsys");
 	g_hTex=g_pApp->Texture_Load("zazaka.png");
 	g_hTexBg=g_pApp->Texture_Load("bg2.png");
 
-	g_pSpr=new CSprite(g_hTex, 0, 0, 64, 64);
+	g_pSpr=new RUGE::CSprite(g_hTex, 0, 0, 64, 64);
 	g_pSpr->SetHotSpot(32, 32);
 
-	g_pSprBg=new CSprite(g_hTexBg, 0, 0, 800, 600);
+	g_pSprBg=new RUGE::CSprite(g_hTexBg, 0, 0, 800, 600);
 	g_pSprBg->SetBlendMode(BLEND_COLORADD|BLEND_ALPHABLEND|BLEND_NOZWRITE);
 	g_pSprBg->SetColor(0xFF000000, 0);
 	g_pSprBg->SetColor(0xFF000000, 1);
@@ -101,14 +98,14 @@ HRESULT CEventHandler::InitResource()
 	{
 		static const float fPi=acosf(-1);
 
-		g_pObjs[i].fx=g_pRand->Float(0, SCREEN_WIDTH);
-		g_pObjs[i].fy=g_pRand->Float(0, SCREEN_HEIGHT);
-		g_pObjs[i].fdx=g_pRand->Float(-200, 200);
-		g_pObjs[i].fdy=g_pRand->Float(-200, 200);
-		g_pObjs[i].fScale=g_pRand->Float(0.5f, 2.0f);
-		g_pObjs[i].fdScale=g_pRand->Float(-1.0f, 1.0f);
-		g_pObjs[i].fRot=g_pRand->Float(0, fPi*2);
-		g_pObjs[i].fdRot=g_pRand->Float(-1.0f, 1.0f);
+		g_pObjs[i].fx=g_pApp->Random_Float(0, SCREEN_WIDTH);
+		g_pObjs[i].fy=g_pApp->Random_Float(0, SCREEN_HEIGHT);
+		g_pObjs[i].fdx=g_pApp->Random_Float(-200, 200);
+		g_pObjs[i].fdy=g_pApp->Random_Float(-200, 200);
+		g_pObjs[i].fScale=g_pApp->Random_Float(0.5f, 2.0f);
+		g_pObjs[i].fdScale=g_pApp->Random_Float(-1.0f, 1.0f);
+		g_pObjs[i].fRot=g_pApp->Random_Float(0, fPi*2);
+		g_pObjs[i].fdRot=g_pApp->Random_Float(-1.0f, 1.0f);
 	}
 
 	SetBlend(0);
@@ -123,8 +120,6 @@ void CEventHandler::ReleaseResource()
 	delete[] g_pObjs;
 	delete g_pSprBg;
 	delete g_pSpr;
-	g_pRand.Release();
-	
 }
 
 // float fDelta: 上一帧和当前帧的时间间隔，以秒为单位
@@ -174,7 +169,7 @@ void CEventHandler::Render()
 	for(int i=0; i<g_nObjs; i++)
 	{
 		g_pSpr->SetColor(g_pObjs[i].dwColor); 
-		g_pSpr->Render(g_pObjs[i].fx, g_pObjs[i].fy, g_pObjs[i].fRot, g_pObjs[i].fScale);
+		g_pSpr->RenderEx(g_pObjs[i].fx, g_pObjs[i].fy, g_pObjs[i].fRot, g_pObjs[i].fScale);
 	}
 	g_pApp->Font_DrawText(g_hFont, szBuf, &Rect, 0, DT_TOP|DT_LEFT, g_dwFntColor[g_nBlend]);
 }
@@ -200,16 +195,16 @@ int main(int argc, char *argv[])
 	HRESULT hr=0;  // 程序返回值
 
 	CoInitialize(NULL);  // 初始化COM库
-	g_pApp=GetRUGE();  // 获取RUGE Application对象
+	g_pApp=RUGE::GetRUGE();  // 获取RUGE Application对象
 	if (g_pApp==NULL)
 	{
 		puts("Error: RUGE Application对象获取失败");
 		system("Pause");
 		return -1;
 	}
-	g_pApp->System_SetState(RUGE_EVENTHANDLER, &CEventHandler());  // 设置事件处理对象
-	g_pApp->System_SetState(RUGE_CAPTION, "Thousand of Hares");  // 设置窗口标题
-	g_pApp->System_SetState(RUGE_VSYNC, VSYNC_IMMEDIATE);  // 关闭垂直同步
+	g_pApp->System_SetState(RUGE::APP_EVENTHANDLER, &CEventHandler());  // 设置事件处理对象
+	g_pApp->System_SetState(RUGE::APP_CAPTION, "Thousand of Hares");  // 设置窗口标题
+	g_pApp->System_SetState(RUGE::APP_VSYNC, VSYNC_IMMEDIATE);  // 关闭垂直同步
 	hr=g_pApp->System_Initialize();  // 初始化RUGE Application对象
 	if (SUCCEEDED(hr)) hr=g_pApp->System_Run();  // 进入主循环
 	else
