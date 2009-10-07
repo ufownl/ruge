@@ -13,14 +13,14 @@
 #pragma comment(lib, "Helper.lib")
 #endif  // _DEBUG
 
-PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
+RUGE::PAPPLICATION g_pApp;  // 定义RUGE Application接口指针
 
-HFONTX g_hFont;
-HAUDIO g_hAudio;
-HTEXTURE g_hTex;
+RUGE::HFONT g_hFont;
+RUGE::HAUDIO g_hAudio;
+RUGE::HTEXTURE g_hTex;
 
-CSprite *g_pSpr, *g_pSpt;
-CParticleSystem *g_pPar;
+RUGE::CSprite *g_pSpr, *g_pSpt;
+RUGE::CParticleSystem *g_pPar;
 
 float g_fx=100.0f, g_fy=100.0f, g_fdx, g_fdy;
 const float g_cfAcceleration=90.0f, g_cfFriction=0.98f;
@@ -33,7 +33,7 @@ void Boom()
 	g_pApp->Effect_Play(g_hAudio, 100, nPan, fPitch);
 }
 
-class CEventHandler : public IApplicationEventHandler  // 实现RUGE Application事件处理接口
+class CEventHandler : public RUGE::IApplicationEventHandler  // 实现RUGE Application事件处理接口
 {
 public:
 	virtual HRESULT InitResource();
@@ -51,15 +51,15 @@ HRESULT CEventHandler::InitResource()
 	g_hAudio=g_pApp->Effect_Load("menu.wav");
 	g_hTex=g_pApp->Texture_Load("particles.png");
 	
-	g_pSpr=new CSprite(g_hTex, 96, 64, 32, 32);
+	g_pSpr=new RUGE::CSprite(g_hTex, 96, 64, 32, 32);
 	g_pSpr->SetColor(0xFFFFA000);
 	g_pSpr->SetHotSpot(16, 16);
 
-	g_pSpt=new CSprite(g_hTex, 96, 64, 32, 32);
+	g_pSpt=new RUGE::CSprite(g_hTex, 96, 64, 32, 32);
 	g_pSpt->SetBlendMode(BLEND_COLORMUL|BLEND_ALPHAADD|BLEND_NOZWRITE);
 	g_pSpt->SetHotSpot(16, 16);
 
-	g_pPar=new CParticleSystem("trail.psi", g_pSpt);
+	g_pPar=new RUGE::CParticleSystem("trail.psi", g_pSpt);
     g_pPar->Fire();
 
 	return S_OK;  // 返回S_OK表示资源初始化成功
@@ -156,16 +156,16 @@ int main(int argc, char *argv[])
 	HRESULT hr=0;  // 程序返回值
 
 	CoInitialize(NULL);  // 初始化COM库
-	g_pApp=GetRUGE();  // 获取RUGE Application对象
+	g_pApp=RUGE::GetRUGE();  // 获取RUGE Application对象
 	if (g_pApp==NULL)
 	{
 		puts("Error: RUGE Application对象获取失败");
 		system("Pause");
 		return -1;
 	}
-	g_pApp->System_SetState(RUGE_EVENTHANDLER, &CEventHandler());  // 设置事件处理对象
-	g_pApp->System_SetState(RUGE_CAPTION, "Using Helper Classes");  // 设置窗口标题
-	g_pApp->System_SetState(RUGE_VSYNC, VSYNC_ONE);  // 开启垂直同步
+	g_pApp->System_SetState(RUGE::APP_EVENTHANDLER, &CEventHandler());  // 设置事件处理对象
+	g_pApp->System_SetState(RUGE::APP_CAPTION, "Using Helper Classes");  // 设置窗口标题
+	g_pApp->System_SetState(RUGE::APP_VSYNC, VSYNC_ONE);  // 开启垂直同步
 	hr=g_pApp->System_Initialize();  // 初始化RUGE Application对象
 	if (SUCCEEDED(hr)) hr=g_pApp->System_Run();  // 进入主循环
 	else
