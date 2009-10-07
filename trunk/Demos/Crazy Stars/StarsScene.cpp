@@ -1,8 +1,8 @@
 #include "StdAfx.h"
 #include "StarsScene.h"
 
-CStarsScene::CStarsScene()
-	: CScene(SCENE_STARS)
+CStarsScene::CStarsScene(int nID)
+	: RUGE::CScene(nID)
 	, m_bGameOver(TRUE)
 	, m_fRes(0)
 	, m_hFont(NULL)
@@ -31,7 +31,7 @@ void CStarsScene::Render()
 {
 	m_pSpr->Render(m_fx, m_fy);
 	m_pPar->Render();
-	for (int i=0; i<STARCNT; i++) m_psprStar->Render(m_StarInfo[i].fx, m_StarInfo[i].fy, m_StarInfo[i].fRot);
+	for (int i=0; i<STARCNT; i++) m_psprStar->RenderEx(m_StarInfo[i].fx, m_StarInfo[i].fy, m_StarInfo[i].fRot);
 
 	if (m_bGameOver)
 	{
@@ -121,18 +121,18 @@ BOOL CStarsScene::Enter(WPARAM wParam, LPARAM lParam)
 	m_hMusic=m_pApp->Music_Load("Background.mid");
 	m_hSound=m_pApp->Effect_Load("Lost.wav");
 
-	m_pSpr=new CSprite(m_hTex, 96, 64, 32, 32);
+	m_pSpr=new RUGE::CSprite(m_hTex, 96, 64, 32, 32);
 	m_pSpr->SetColor(0xFFFFF000);
 	m_pSpr->SetHotSpot(16, 16);
 
-	m_pSpt=new CSprite(m_hTex, 96, 64, 32, 32);
+	m_pSpt=new RUGE::CSprite(m_hTex, 96, 64, 32, 32);
 	m_pSpt->SetBlendMode(BLEND_COLORMUL|BLEND_ALPHAADD|BLEND_NOZWRITE);
 	m_pSpt->SetHotSpot(16, 16);
 
-	m_pPar=new CParticleSystem("trail.psi", m_pSpt);
+	m_pPar=new RUGE::CParticleSystem("trail.psi", m_pSpt);
     m_pPar->Fire();
 
-	m_psprStar=new CSprite(m_hTex, 32, 32, 32, 32);
+	m_psprStar=new RUGE::CSprite(m_hTex, 32, 32, 32, 32);
 	m_psprStar->SetColor(0xFFFFA000);
 	m_psprStar->SetHotSpot(16, 16);
 

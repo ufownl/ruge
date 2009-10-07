@@ -10,10 +10,10 @@ struct STARINFO
 	float fx, fy, fdx, fdy, fRot;
 };
 
-class CStarsScene : public CScene
+class CStarsScene : public RUGE::CScene
 {
 public:
-	CStarsScene();
+	CStarsScene(int nID);
 	virtual ~CStarsScene();
 
 protected:
@@ -27,13 +27,13 @@ protected:
 	BOOL m_bGameOver;
 	float m_fRes;
 
-	HFONTX m_hFont;
-	HTEXTURE m_hTex;
-	HAUDIO m_hMusic, m_hSound;
-	HCHANNEL m_hChannel;
+	RUGE::HFONT m_hFont;
+	RUGE::HTEXTURE m_hTex;
+	RUGE::HAUDIO m_hMusic, m_hSound;
+	RUGE::HCHANNEL m_hChannel;
 
-	CSprite *m_pSpr, *m_pSpt, *m_psprStar;
-	CParticleSystem *m_pPar;
+	RUGE::CSprite *m_pSpr, *m_pSpt, *m_psprStar;
+	RUGE::CParticleSystem *m_pPar;
 
 	float m_fx, m_fy, m_fdx, m_fdy;
 	const float m_cfSpeed;

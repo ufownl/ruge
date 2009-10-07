@@ -2,10 +2,10 @@
 
 #include "StarsScene.h"
 
-class CMenuScene : public CScene
+class CMenuScene : public RUGE::CScene
 {
 public:
-	CMenuScene();
+	CMenuScene(int nID);
 	virtual ~CMenuScene();
 
 protected:
@@ -18,10 +18,10 @@ protected:
 protected:
 	int m_nLastID;
 
-	HTEXTURE m_hTex;
-	HAUDIO m_hSound;
-	HFONTX m_hFont;
+	RUGE::HTEXTURE m_hTex;
+	RUGE::HAUDIO m_hSound;
+	RUGE::HFONT m_hFont;
 
-	CGUI *m_pGUI;
-	CSprite *m_pSpr;
+	RUGE::CGUI *m_pGUI;
+	RUGE::CSprite *m_pSpr;
 };

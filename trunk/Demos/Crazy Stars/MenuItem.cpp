@@ -1,8 +1,8 @@
 #include "StdAfx.h"
 #include "MenuItem.h"
 
-CMenuItem::CMenuItem(int nID, HFONTX hFont, HAUDIO hSound, float x, float y, float fDelay, LPSTR lpcszTitle)
-	: CControl(nID)
+CMenuItem::CMenuItem(int nID, RUGE::HFONT hFont, RUGE::HAUDIO hSound, float x, float y, float fDelay, LPSTR lpcszTitle)
+	: RUGE::CControl(nID)
 	, m_hFont(hFont)
 	, m_hSound(hSound)
 	, m_fDelay(fDelay)
@@ -87,7 +87,7 @@ void CMenuItem::Update(float fDelta)
 
 void CMenuItem::Enter()
 {
-	CColor colTemp;
+	RUGE::CColor colTemp;
 
 	m_colSrc2.SetColor(0x00FFE060);
 	colTemp.SetColor(0xFFFFE060);
@@ -100,7 +100,7 @@ void CMenuItem::Enter()
 
 void CMenuItem::Exit()
 {
-	CColor colTemp;
+	RUGE::CColor colTemp;
 
 	m_colSrc2.SetColor(0xFFFFE060);
 	colTemp.SetColor(0x00FFE060);
@@ -119,7 +119,7 @@ BOOL CMenuItem::IsDone()
 
 void CMenuItem::Focus(BOOL bFocused)
 {
-	CColor colTemp;
+	RUGE::CColor colTemp;
 	
 	if(bFocused)
 	{
@@ -145,7 +145,7 @@ void CMenuItem::MouseOver(BOOL bOver)
 	if (bOver) m_pGUI->SetFocus(m_nID);
 }
 
-BOOL CMenuItem::MouseLBtn(BOOL bDown)
+BOOL CMenuItem::MouseLBtn(BOOL bDown, float x, float y)
 {
 	if (bDown)
 	{
@@ -164,8 +164,8 @@ BOOL CMenuItem::KeyClick(int nVKey, char chChar)
 {
 	if (nVKey==VK_RETURN)
 	{
-		MouseLBtn(TRUE);
-		return MouseLBtn(FALSE);
+		MouseLBtn(TRUE, 0, 0);
+		return MouseLBtn(FALSE, 0, 0);
 	}
 	return FALSE;
 }
