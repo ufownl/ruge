@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Particle System Editor", "Particle System Editor.vcproj", "{DA8C64EF-7B70-4B3D-BCBE-F5832D29A872}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DA8C64EF-7B70-4B3D-BCBE-F5832D29A872}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DA8C64EF-7B70-4B3D-BCBE-F5832D29A872}.Debug|Win32.Build.0 = Debug|Win32
+		{DA8C64EF-7B70-4B3D-BCBE-F5832D29A872}.Release|Win32.ActiveCfg = Release|Win32
+		{DA8C64EF-7B70-4B3D-BCBE-F5832D29A872}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
