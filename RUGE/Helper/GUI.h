@@ -19,8 +19,8 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _GUI_H_
-#define _GUI_H_
+#ifndef _RUGE_GUI_H_
+#define _RUGE_GUI_H_
 
 #include "Control.h"
 #include "Sprite.h"
@@ -30,48 +30,53 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #define NAV_UPDOWN		2
 #define NAV_CYCLED		4
 
-class CGUI
+namespace RUGE
 {
-public:
-	CGUI();
-	virtual ~CGUI();
 
-	void AddCtrl(CControl *pCtrl, BOOL bManaged=TRUE);
-	void DelCtrl(int nID);
-	CControl* GetCtrl(int nID) const;
-	CControl* MoveCtrl(int nID, float x, float y);
-	CControl* ShowCtrl(int nID, BOOL bVisible=TRUE);
-	CControl* EnableCtrl(int nID, BOOL bEnabled=TRUE);
+	class CGUI
+	{
+	public:
+		CGUI();
+		virtual ~CGUI();
 
-	void SetNavMode(DWORD dwNavMode);
-	void SetCursor(CSprite *psprCursor);
-	void SetColor(DWORD dwColor);
-	void SetFocus(int nID);
-	int GetFocus() const;
+		void AddCtrl(CControl *pCtrl, BOOL bManaged=TRUE);
+		void DelCtrl(int nID);
+		CControl* GetCtrl(int nID) const;
+		CControl* MoveCtrl(int nID, float x, float y);
+		CControl* ShowCtrl(int nID, BOOL bVisible=TRUE);
+		CControl* EnableCtrl(int nID, BOOL bEnabled=TRUE);
 
-	void Enter();
-	void Exit();
-	void Reset();
-	void Move(float dx, float dy);
+		void SetNavMode(DWORD dwNavMode);
+		void SetCursor(CSprite *psprCursor);
+		void SetColor(DWORD dwColor);
+		void SetFocus(int nID);
+		int GetFocus() const;
 
-	int Update(float fDelta);
-	void Render();
+		void Enter();
+		void Exit();
+		void Reset();
+		void Move(float dx, float dy);
 
-protected:
-	CGUI(const CGUI&);
-	CGUI& operator = (const CGUI&);
+		int Update(float fDelta);
+		void Render();
 
-	BOOL ProcessCtrl(CControl *pCtrl);
+	protected:
+		CGUI(const CGUI&);
+		CGUI& operator = (const CGUI&);
 
-protected:
-	PAPPLICATION m_pApp;
-	CControl *m_pCtrlList, *m_pCtrlLock, *m_pCtrlFocus, *m_pCtrlOver;
-	DWORD m_dwNavMode;
-	int m_nEnterExit;
-	CSprite *m_psprCursor;
-	float m_fCurX, m_fCurY, m_fOldX, m_fOldY;
-	SHORT m_nWheel, m_nWheelOld;
-	BOOL m_bLPressed, m_bLReleased, m_bRPressed, m_bRReleased;
-};
+		BOOL ProcessCtrl(CControl *pCtrl);
 
-#endif  // _GUI_H_
+	protected:
+		PAPPLICATION m_pApp;
+		CControl *m_pCtrlList, *m_pCtrlLock, *m_pCtrlFocus, *m_pCtrlOver;
+		DWORD m_dwNavMode;
+		int m_nEnterExit;
+		CSprite *m_psprCursor;
+		float m_fCurX, m_fCurY, m_fOldX, m_fOldY;
+		SHORT m_nWheel, m_nWheelOld;
+		BOOL m_bLPressed, m_bLReleased, m_bRPressed, m_bRReleased;
+	};
+
+}
+
+#endif  // _RUGE_GUI_H_

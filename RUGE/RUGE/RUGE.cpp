@@ -22,17 +22,22 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #define RUGE_EXPORT _declspec(dllexport)
 #include "RUGE.h"
 
-PAPPLICATION g_pApp;
+RUGE::PAPPLICATION g_pApp;
 
-PAPPLICATION GetRUGE()
+namespace RUGE
 {
-	if (g_pApp==NULL)
-	{
-		IApplicationPtr pApp;
 
-		if (FAILED(pApp.CreateInstance(__uuidof(CApplicationImpl)))) return NULL;
-		g_pApp=pApp.Detach();
+	PAPPLICATION GetRUGE()
+	{
+		if (g_pApp==NULL)
+		{
+			IApplicationPtr pApp;
+
+			if (FAILED(pApp.CreateInstance(__uuidof(CApplicationImpl)))) return NULL;
+			g_pApp=pApp.Detach();
+		}
+		else g_pApp->AddRef();
+		return g_pApp;
 	}
-	else g_pApp->AddRef();
-	return g_pApp;
+
 }

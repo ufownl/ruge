@@ -17,36 +17,44 @@ You should have received a copy of the GNU Lesser General Public License
 along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-
-#ifndef _RUGE_TIMERIMPL_H_
-#define _RUGE_TIMERIMPL_H_
-
-#include "Timer.h"
+#include "StdAfx.h"
+#include "Text.h"
 
 namespace RUGE
 {
 
-	class CTimerImpl : public ITimer
+	CText::CText(int nID, float x, float y, float w, float h, HFONT hFont)
+		: CControl(nID)
+		, m_hFont(hFont)
+		, m_dwMode(DT_TOP|DT_LEFT)
 	{
-	public:
-		CTimerImpl();
-		virtual ~CTimerImpl();
+		m_bStatic=TRUE;
+		m_bVisible=TRUE;
+		m_bEnabled=TRUE;
+		m_Rect.Set(x, y, x+w, y+h);
 
-		// IUnknown
-		STDMETHOD_(ULONG, AddRef)();
-		STDMETHOD_(ULONG, Release)();
-		STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
+		memset(m_szText, 0, sizeof(m_szText));
+	}
 
-		// ITimer
-		STDMETHOD_(DWORD, Start)();
-		STDMETHOD_(DWORD, GetDelta)();
+	CText::~CText()
+	{
+	}
 
-	protected:
-		ULONG m_uRefCount;
-		DWORD m_dwTicks;
-	};
+	void CText::SetMode(DWORD dwMode)
+	{
+		m_dwMode=dwMode;
+	}
+
+	void CText::SetText(LPCSTR lpcszText)
+	{
+		strcpy(m_szText, lpcszText);
+	}
+
+	void CText::Render()
+	{
+		RECT rect={(LONG)m_Rect.x1, (LONG)m_Rect.y1, (LONG)m_Rect.x2, (LONG)m_Rect.y2};
+
+		m_pApp->Font_DrawText(m_hFont, m_szText, &rect, 0, m_dwMode, m_dwColor);
+	}
 
 }
-
-#endif  // _RUGE_TIMERIMPL_H_

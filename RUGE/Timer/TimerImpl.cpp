@@ -20,59 +20,64 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #include "StdAfx.h"
 #include "TimerImpl.h"
 
-CTimerImpl::CTimerImpl()
-	: m_uRefCount(0)
-	, m_dwTicks(0xFFFFFFFF)
+namespace RUGE
 {
-	g_uDllLockCount++;
-}
 
-CTimerImpl::~CTimerImpl()
-{
-	g_uDllLockCount--;
-}
+	CTimerImpl::CTimerImpl()
+		: m_uRefCount(0)
+		, m_dwTicks(0xFFFFFFFF)
+	{
+		g_uDllLockCount++;
+	}
 
-STDMETHODIMP_(ULONG) CTimerImpl::AddRef()
-{
-	return ++m_uRefCount;
-}
+	CTimerImpl::~CTimerImpl()
+	{
+		g_uDllLockCount--;
+	}
 
-STDMETHODIMP_(ULONG) CTimerImpl::Release()
-{
-	ULONG uRet=--m_uRefCount;
+	STDMETHODIMP_(ULONG) CTimerImpl::AddRef()
+	{
+		return ++m_uRefCount;
+	}
 
-	if (m_uRefCount==0) delete this;
-	return uRet;
-}
+	STDMETHODIMP_(ULONG) CTimerImpl::Release()
+	{
+		ULONG uRet=--m_uRefCount;
 
-STDMETHODIMP CTimerImpl::QueryInterface(REFIID riid, void** ppv)
-{
-	HRESULT hr=S_OK;
+		if (m_uRefCount==0) delete this;
+		return uRet;
+	}
 
-	if (IsBadWritePtr(ppv, sizeof(void*))) return E_POINTER;
-	*ppv=NULL;
-	if (InlineIsEqualGUID(riid, IID_IUnknown )) *ppv=(IUnknown*)this;
-	else if (InlineIsEqualGUID(riid, __uuidof(ITimer))) *ppv=(ITimer*)this;
-	else hr=E_NOINTERFACE;
-	if (hr==S_OK) ((IUnknown*)*ppv)->AddRef();
-	return hr;
-}
+	STDMETHODIMP CTimerImpl::QueryInterface(REFIID riid, void** ppv)
+	{
+		HRESULT hr=S_OK;
 
-STDMETHODIMP_(DWORD) CTimerImpl::Start()
-{
-	timeBeginPeriod(1);
-	m_dwTicks=timeGetTime();
-	timeEndPeriod(1);
-	return m_dwTicks;
-}
+		if (IsBadWritePtr(ppv, sizeof(void*))) return E_POINTER;
+		*ppv=NULL;
+		if (InlineIsEqualGUID(riid, IID_IUnknown )) *ppv=(IUnknown*)this;
+		else if (InlineIsEqualGUID(riid, __uuidof(ITimer))) *ppv=(ITimer*)this;
+		else hr=E_NOINTERFACE;
+		if (hr==S_OK) ((IUnknown*)*ppv)->AddRef();
+		return hr;
+	}
 
-STDMETHODIMP_(DWORD) CTimerImpl::GetDelta()
-{
-	DWORD dwRet;
+	STDMETHODIMP_(DWORD) CTimerImpl::Start()
+	{
+		timeBeginPeriod(1);
+		m_dwTicks=timeGetTime();
+		timeEndPeriod(1);
+		return m_dwTicks;
+	}
 
-	timeBeginPeriod(1);
-	if (m_dwTicks==0xFFFFFFFF) m_dwTicks=timeGetTime();
-	dwRet=timeGetTime()-m_dwTicks;
-	timeEndPeriod(1);
-	return dwRet;
+	STDMETHODIMP_(DWORD) CTimerImpl::GetDelta()
+	{
+		DWORD dwRet;
+
+		timeBeginPeriod(1);
+		if (m_dwTicks==0xFFFFFFFF) m_dwTicks=timeGetTime();
+		dwRet=timeGetTime()-m_dwTicks;
+		timeEndPeriod(1);
+		return dwRet;
+	}
+
 }

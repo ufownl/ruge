@@ -19,10 +19,15 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _RANDOMCOMDEF_H_
-#define _RANDOMCOMDEF_H_
+#ifndef _RUGE_RANDOMCOMDEF_H_
+#define _RUGE_RANDOMCOMDEF_H_
 
-struct __declspec(uuid("{8F5DBFC5-DAB8-429a-9D71-63353E022903}")) IRandom;
-class __declspec(uuid("{8F5DBFC5-DAB8-429a-9D71-63353E022903}")) CRandomImpl;
+namespace RUGE
+{
 
-#endif  // _RANDOMCOMDEF_H_
+	struct __declspec(uuid("{8F5DBFC5-DAB8-429a-9D71-63353E022903}")) IRandom;
+	class __declspec(uuid("{8F5DBFC5-DAB8-429a-9D71-63353E022903}")) CRandomImpl;
+
+}
+
+#endif  // _RUGE_RANDOMCOMDEF_H_

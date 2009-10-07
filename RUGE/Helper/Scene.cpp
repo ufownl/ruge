@@ -17,36 +17,38 @@ You should have received a copy of the GNU Lesser General Public License
 along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-
-#ifndef _RUGE_TIMERIMPL_H_
-#define _RUGE_TIMERIMPL_H_
-
-#include "Timer.h"
+#include "StdAfx.h"
+#include "Scene.h"
 
 namespace RUGE
 {
 
-	class CTimerImpl : public ITimer
+	CScene::CScene(int nID)
+		: m_pApp(GetRUGE())
+		, m_pSceneManager(NULL)
+		, m_nID(nID)
+		, m_bManaged(FALSE)
+		, m_pNext(NULL)
 	{
-	public:
-		CTimerImpl();
-		virtual ~CTimerImpl();
+	}
 
-		// IUnknown
-		STDMETHOD_(ULONG, AddRef)();
-		STDMETHOD_(ULONG, Release)();
-		STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
+	CScene::~CScene()
+	{
+		m_pApp->Release();
+	}
 
-		// ITimer
-		STDMETHOD_(DWORD, Start)();
-		STDMETHOD_(DWORD, GetDelta)();
+	BOOL CScene::Update(float fDelta)
+	{
+		return FALSE;
+	}
 
-	protected:
-		ULONG m_uRefCount;
-		DWORD m_dwTicks;
-	};
+	BOOL CScene::Enter(WPARAM wParam, LPARAM lParam)
+	{
+		return TRUE;
+	}
+
+	void CScene::Exit()
+	{
+	}
 
 }
-
-#endif  // _RUGE_TIMERIMPL_H_

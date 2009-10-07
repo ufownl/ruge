@@ -19,30 +19,35 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _SCENE_H_
-#define _SCENE_H_
+#ifndef _RUGE_SCENE_H_
+#define _RUGE_SCENE_H_
 
-class CScene
+namespace RUGE
 {
-	friend class CSceneManager;
 
-public:
-	CScene(int nID);
-	virtual ~CScene();
+	class CScene
+	{
+		friend class CSceneManager;
 
-protected:
-	virtual void Render()=0;
-	virtual BOOL Update(float fDelta);
+	public:
+		CScene(int nID);
+		virtual ~CScene();
 
-	virtual BOOL Enter(WPARAM wParam, LPARAM lParam);
-	virtual void Exit();
+	protected:
+		virtual void Render()=0;
+		virtual BOOL Update(float fDelta);
 
-protected:
-	PAPPLICATION m_pApp;
-	CSceneManager *m_pSceneManager;
-	int m_nID;
-	BOOL m_bManaged;
-	CScene *m_pNext;
-};
+		virtual BOOL Enter(WPARAM wParam, LPARAM lParam);
+		virtual void Exit();
 
-#endif  // _SCENE_H_
+	protected:
+		PAPPLICATION m_pApp;
+		CSceneManager *m_pSceneManager;
+		int m_nID;
+		BOOL m_bManaged;
+		CScene *m_pNext;
+	};
+
+}
+
+#endif  // _RUGE_SCENE_H_

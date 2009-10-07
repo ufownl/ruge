@@ -19,34 +19,32 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _RUGE_TIMERIMPL_H_
-#define _RUGE_TIMERIMPL_H_
+#ifndef _RUGE_TEXT_H_
+#define _RUGE_TEXT_H_
 
-#include "Timer.h"
+#include "GUI.h"
 
 namespace RUGE
 {
 
-	class CTimerImpl : public ITimer
+	class CText : public CControl
 	{
 	public:
-		CTimerImpl();
-		virtual ~CTimerImpl();
+		CText(int nID, float x, float y, float w, float h, HFONT hFont);
+		virtual ~CText();
 
-		// IUnknown
-		STDMETHOD_(ULONG, AddRef)();
-		STDMETHOD_(ULONG, Release)();
-		STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
-
-		// ITimer
-		STDMETHOD_(DWORD, Start)();
-		STDMETHOD_(DWORD, GetDelta)();
+		void SetMode(DWORD dwMode);
+		void SetText(LPCSTR lpcszText);
 
 	protected:
-		ULONG m_uRefCount;
-		DWORD m_dwTicks;
+		virtual void Render();
+
+	protected:
+		HFONT m_hFont;
+		DWORD m_dwMode;
+		char m_szText[256];
 	};
 
 }
 
-#endif  // _RUGE_TIMERIMPL_H_
+#endif  // _RUGE_TEXT_H_

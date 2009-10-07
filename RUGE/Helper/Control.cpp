@@ -20,80 +20,85 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #include "StdAfx.h"
 #include "Control.h"
 
-CControl::CControl(int nID)
-	: m_pApp(GetRUGE())
-	, m_pGUI(NULL)
-	, m_nID(nID)
-	, m_bStatic(FALSE)
-	, m_bVisible(TRUE)
-	, m_bEnabled(TRUE)
-	, m_bManaged(FALSE)
-	, m_dwColor(0xFFFFFFFF)
-	, m_pPrev(NULL)
-	, m_pNext(NULL)
+namespace RUGE
 {
-}
 
-CControl::~CControl()
-{
-	m_pApp->Release();
-}
+	CControl::CControl(int nID)
+		: m_pApp(GetRUGE())
+		, m_pGUI(NULL)
+		, m_nID(nID)
+		, m_bStatic(FALSE)
+		, m_bVisible(TRUE)
+		, m_bEnabled(TRUE)
+		, m_bManaged(FALSE)
+		, m_dwColor(0xFFFFFFFF)
+		, m_pPrev(NULL)
+		, m_pNext(NULL)
+	{
+	}
 
-void CControl::Update(float fDelta)
-{
-}
+	CControl::~CControl()
+	{
+		m_pApp->Release();
+	}
 
-void CControl::Enter()
-{
-}
+	void CControl::SetColor(DWORD dwColor)
+	{
+		m_dwColor=dwColor;
+	}
 
-void CControl::Exit()
-{
-}
+	void CControl::Update(float fDelta)
+	{
+	}
 
-void CControl::Reset()
-{
-}
+	void CControl::Enter()
+	{
+	}
 
-BOOL CControl::IsDone()
-{
-	return TRUE;
-}
+	void CControl::Exit()
+	{
+	}
 
-void CControl::Focus(BOOL bFocused)
-{
-}
+	void CControl::Reset()
+	{
+	}
 
-void CControl::MouseOver(BOOL bOver)
-{
-}
+	BOOL CControl::IsDone()
+	{
+		return TRUE;
+	}
 
-BOOL CControl::MouseMove(float x, float y)
-{
-	return FALSE;
-}
+	void CControl::Focus(BOOL bFocused)
+	{
+	}
 
-BOOL CControl::MouseLBtn(BOOL bDown)
-{
-	return FALSE;
-}
+	void CControl::MouseOver(BOOL bOver)
+	{
+	}
 
-BOOL CControl::MouseRBtn(BOOL bDown)
-{
-	return FALSE;
-}
+	BOOL CControl::MouseMove(float x, float y)
+	{
+		return FALSE;
+	}
 
-BOOL CControl::MouseWheel(SHORT nWheel)
-{
-	return FALSE;
-}
+	BOOL CControl::MouseLBtn(BOOL bDown, float x, float y)
+	{
+		return FALSE;
+	}
 
-BOOL CControl::KeyClick(int nVKey, char chChar)
-{
-	return FALSE;
-}
+	BOOL CControl::MouseRBtn(BOOL bDown, float x, float y)
+	{
+		return FALSE;
+	}
 
-void CControl::SetColor(DWORD dwColor)
-{
-	m_dwColor=dwColor;
+	BOOL CControl::MouseWheel(SHORT nWheel)
+	{
+		return FALSE;
+	}
+
+	BOOL CControl::KeyClick(int nVKey, char chChar)
+	{
+		return FALSE;
+	}
+
 }

@@ -19,8 +19,8 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _INPUT_H_
-#define _INPUT_H_
+#ifndef _RUGE_INPUT_H_
+#define _RUGE_INPUT_H_
 
 #ifndef _RUGE_IMPL_
 #include <windows.h>
@@ -28,26 +28,31 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #endif  // _RUGE_IMPL
 #include "InputComDef.h"
 
-typedef struct IInput : public IUnknown
+namespace RUGE
 {
-	STDMETHOD(Initialize)(HWND hWnd) PURE;
 
-	STDMETHOD_(BOOL, KeyDown)(int nVKey) PURE;
-	STDMETHOD_(BOOL, KeyPressed)(int nVKey) PURE;
-	STDMETHOD_(BOOL, KeyUp)(int nVKey) PURE;
-	STDMETHOD_(int, GetKey)() PURE;
-	STDMETHOD_(char, GetChar)() PURE;
-	STDMETHOD_(LPCSTR, GetKeyName)(int nVKey) PURE;
+	typedef struct IInput : public IUnknown
+	{
+		STDMETHOD(Initialize)(HWND hWnd) PURE;
 
-	STDMETHOD(GetMousePos)(float *x, float *y) PURE;
-	STDMETHOD(SetMousePos)(float x, float y) PURE;
-	STDMETHOD_(SHORT, GetMouseWheel)() PURE;
-	STDMETHOD_(BOOL, IsMouseOver)() PURE;
+		STDMETHOD_(BOOL, KeyDown)(int nVKey) PURE;
+		STDMETHOD_(BOOL, KeyPressed)(int nVKey) PURE;
+		STDMETHOD_(BOOL, KeyUp)(int nVKey) PURE;
+		STDMETHOD_(int, GetKey)() PURE;
+		STDMETHOD_(char, GetChar)() PURE;
+		STDMETHOD_(LPCSTR, GetKeyName)(int nVKey) PURE;
 
-	STDMETHOD(Update)() PURE;
-	STDMETHOD(OnWndEvent)(UINT uMsg, WPARAM wParam, LPARAM lParam) PURE;
-} *PINPUT;
+		STDMETHOD(GetMousePos)(float *x, float *y) PURE;
+		STDMETHOD(SetMousePos)(float x, float y) PURE;
+		STDMETHOD_(SHORT, GetMouseWheel)() PURE;
+		STDMETHOD_(BOOL, IsMouseOver)() PURE;
 
-_COM_SMARTPTR_TYPEDEF(IInput, __uuidof(IInput));
+		STDMETHOD(Update)() PURE;
+		STDMETHOD(OnWndEvent)(UINT uMsg, WPARAM wParam, LPARAM lParam) PURE;
+	} *PINPUT;
 
-#endif  // _INPUT_H_
+	_COM_SMARTPTR_TYPEDEF(IInput, __uuidof(IInput));
+
+}
+
+#endif  // _RUGE_INPUT_H_

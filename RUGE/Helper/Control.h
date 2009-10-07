@@ -19,49 +19,54 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _CONTROL_H_
-#define _CONTROL_H_
+#ifndef _RUGE_CONTROL_H_
+#define _RUGE_CONTROL_H_
 
 #include "Rect.h"
 
-class CControl
+namespace RUGE
 {
-	friend class CGUI;
 
-public:
-	CControl(int nID);
-	virtual ~CControl();
+	class CControl
+	{
+		friend class CGUI;
 
-protected:
-	CControl(const CControl&);
-	CControl& operator = (const CControl&);
+	public:
+		CControl(int nID);
+		virtual ~CControl();
 
-	virtual void Render()=0;
-	virtual void Update(float fDelta);
+		virtual void SetColor(DWORD dwColor);
 
-	virtual void Enter();
-	virtual void Exit();
-	virtual void Reset();
-	virtual BOOL IsDone();
-	virtual void Focus(BOOL bFocused);
-	virtual void MouseOver(BOOL bOver);
+	protected:
+		CControl(const CControl&);
+		CControl& operator = (const CControl&);
 
-	virtual BOOL MouseMove(float x, float y);
-	virtual BOOL MouseLBtn(BOOL bDown);
-	virtual BOOL MouseRBtn(BOOL bDown);
-	virtual BOOL MouseWheel(SHORT nWheel);
-	virtual BOOL KeyClick(int nVKey, char chChar);
+		virtual void Render()=0;
+		virtual void Update(float fDelta);
 
-	virtual void SetColor(DWORD dwColor);
+		virtual void Enter();
+		virtual void Exit();
+		virtual void Reset();
+		virtual BOOL IsDone();
+		virtual void Focus(BOOL bFocused);
+		virtual void MouseOver(BOOL bOver);
 
-protected:
-	PAPPLICATION m_pApp;
-	CGUI *m_pGUI;
-	int m_nID;
-	BOOL m_bStatic, m_bVisible, m_bEnabled, m_bManaged;
-	CRect m_Rect;
-	DWORD m_dwColor;
-	CControl *m_pPrev, *m_pNext;
-};
+		virtual BOOL MouseMove(float x, float y);
+		virtual BOOL MouseLBtn(BOOL bDown, float x, float y);
+		virtual BOOL MouseRBtn(BOOL bDown, float x, float y);
+		virtual BOOL MouseWheel(SHORT nWheel);
+		virtual BOOL KeyClick(int nVKey, char chChar);
 
-#endif  // _CONTROL_H_
+	protected:
+		PAPPLICATION m_pApp;
+		CGUI *m_pGUI;
+		int m_nID;
+		BOOL m_bStatic, m_bVisible, m_bEnabled, m_bManaged;
+		CRect m_Rect;
+		DWORD m_dwColor;
+		CControl *m_pPrev, *m_pNext;
+	};
+
+}
+
+#endif  // _RUGE_CONTROL_H_

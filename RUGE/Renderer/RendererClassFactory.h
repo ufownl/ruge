@@ -19,26 +19,31 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _RENDERERCLASSFACTORY_H_
-#define _RENDERERCLASSFACTORY_H_
+#ifndef _RUGE_RENDERERCLASSFACTORY_H_
+#define _RUGE_RENDERERCLASSFACTORY_H_
 
-class CRendererClassFactory : public IClassFactory
+namespace RUGE
 {
-public:
-	CRendererClassFactory();
-	virtual ~CRendererClassFactory();
 
-	// IUnknown
-	STDMETHOD_(ULONG, AddRef)();
-	STDMETHOD_(ULONG, Release)();
-	STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
+	class CRendererClassFactory : public IClassFactory
+	{
+	public:
+		CRendererClassFactory();
+		virtual ~CRendererClassFactory();
 
-	// IClassFactory
-	STDMETHOD(CreateInstance)(IUnknown* pUnkOuter, REFIID riid, void** ppv);
-	STDMETHOD(LockServer)(BOOL fLock);
+		// IUnknown
+		STDMETHOD_(ULONG, AddRef)();
+		STDMETHOD_(ULONG, Release)();
+		STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
 
-protected:
-	ULONG m_uRefCount;
-};
+		// IClassFactory
+		STDMETHOD(CreateInstance)(IUnknown* pUnkOuter, REFIID riid, void** ppv);
+		STDMETHOD(LockServer)(BOOL fLock);
 
-#endif  // _RENDERERCLASSFACTORY_H_
+	protected:
+		ULONG m_uRefCount;
+	};
+
+}
+
+#endif  // _RUGE_RENDERERCLASSFACTORY_H_

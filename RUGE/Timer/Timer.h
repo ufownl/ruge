@@ -19,8 +19,8 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _TIMER_H_
-#define _TIMER_H_
+#ifndef _RUGE_TIMER_H_
+#define _RUGE_TIMER_H_
 
 #ifndef _RUGE_IMPL_
 #include <windows.h>
@@ -28,12 +28,17 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #endif  // _RUGE_IMPL_
 #include "TimerComDef.h"
 
-typedef struct ITimer : public IUnknown
+namespace RUGE
 {
-	STDMETHOD_(DWORD, Start)() PURE;
-	STDMETHOD_(DWORD, GetDelta)() PURE;
-} *PTIMER;
 
-_COM_SMARTPTR_TYPEDEF(ITimer, __uuidof(ITimer));
+	typedef struct ITimer : public IUnknown
+	{
+		STDMETHOD_(DWORD, Start)() PURE;
+		STDMETHOD_(DWORD, GetDelta)() PURE;
+	} *PTIMER;
 
-#endif  // _TIMER_H_
+	_COM_SMARTPTR_TYPEDEF(ITimer, __uuidof(ITimer));
+
+}
+
+#endif  // _RUGE_TIMER_H_

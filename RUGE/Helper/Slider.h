@@ -19,36 +19,42 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _RUGE_SCENEMANAGER_H_
-#define _RUGE_SCENEMANAGER_H_
+#ifndef _RUGE_SLIDER_H_
+#define _RUGE_SLIDER_H_
 
-#include "Scene.h"
+#include "GUI.h"
+
+#define SLIDER_BAR			0
+#define SLIDER_BARRELATIVE	1
+#define SLIDER_SLIDER		2
 
 namespace RUGE
 {
 
-	class CSceneManager
+	class CSlider : public CControl
 	{
 	public:
-		CSceneManager();
-		virtual ~CSceneManager();
+		CSlider(int nID, float x, float y, float w, float h, HTEXTURE hTex, float tx, float ty, float sw, float sh, BOOL bVertical=FALSE);
+		virtual ~CSlider();
 
-		void AddScene(CScene *pScene, BOOL bManaged=TRUE);
-		void DelScene(int nID);
-		CScene* GetScene(int nID) const;
-		CScene* Switch(int nID, WPARAM wParam=0, LPARAM lParam=0);
+		virtual void SetColor(DWORD dwColor);
 
-		BOOL Update(float fDelta);
-		void Render();
+		void SetMode(float fMin, float fMax, DWORD dwMode);
+		void SetValue(float fVal);
+		float GetValue() const;
 
 	protected:
-		CSceneManager(const CSceneManager &SceneManager);
-		CSceneManager& operator = (const CSceneManager &SceneManager);
+		virtual void Render();
+		virtual BOOL MouseLBtn(BOOL bDown, float x, float y);
+		virtual BOOL MouseMove(float x, float y);
 
 	protected:
-		CScene *m_pSceneList, *m_pScene;
+		BOOL m_bPressed, m_bVertical;
+		DWORD m_dwMode;
+		float m_fMin, m_fMax, m_fVal, m_fSliderWidth, m_fSliderHeight;
+		CSprite *m_psprSlider;
 	};
 
 }
 
-#endif  // _RUGE_SCENEMANAGER_H_
+#endif  // _RUGE_SLIDER_H_

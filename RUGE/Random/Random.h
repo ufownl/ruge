@@ -19,8 +19,8 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _RANDOM_H_
-#define _RANDOM_H_
+#ifndef _RUGE_RANDOM_H_
+#define _RUGE_RANDOM_H_
 
 #ifndef _RUGE_IMPL_
 #include <windows.h>
@@ -28,13 +28,18 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #endif  // _RUGE_IMPL_
 #include "RandomComDef.h"
 
-typedef struct IRandom : public IUnknown
+namespace RUGE
 {
-	STDMETHOD(Randomize)(DWORD dwSeed) PURE;
-	STDMETHOD_(int, Integer)(int nMin, int nMax) PURE;
-	STDMETHOD_(float, Float)(float fMin, float fMax) PURE;
-} *PRANDOM;
 
-_COM_SMARTPTR_TYPEDEF(IRandom, __uuidof(IRandom));
+	typedef struct IRandom : public IUnknown
+	{
+		STDMETHOD(Randomize)(DWORD dwSeed) PURE;
+		STDMETHOD_(int, Integer)(int nMin, int nMax) PURE;
+		STDMETHOD_(float, Float)(float fMin, float fMax) PURE;
+	} *PRANDOM;
 
-#endif  // _RANDOM_H_
+	_COM_SMARTPTR_TYPEDEF(IRandom, __uuidof(IRandom));
+
+}
+
+#endif  // _RUGE_RANDOM_H_

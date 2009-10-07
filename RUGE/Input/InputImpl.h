@@ -19,50 +19,55 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _INPUTIMPL_H_
-#define _INPUTIMPL_H_
+#ifndef _RUGE_INPUTIMPL_H_
+#define _RUGE_INPUTIMPL_H_
 
 #include "Input.h"
 
-class CInputImpl : public IInput
+namespace RUGE
 {
-public:
-	CInputImpl();
-	virtual ~CInputImpl();
 
-	// IUnknown
-	STDMETHOD_(ULONG, AddRef)();
-	STDMETHOD_(ULONG, Release)();
-	STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
+	class CInputImpl : public IInput
+	{
+	public:
+		CInputImpl();
+		virtual ~CInputImpl();
 
-	// IInput
-	STDMETHOD(Initialize)(HWND hWnd);
+		// IUnknown
+		STDMETHOD_(ULONG, AddRef)();
+		STDMETHOD_(ULONG, Release)();
+		STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
 
-	STDMETHOD_(BOOL, KeyDown)(int nVKey);
-	STDMETHOD_(BOOL, KeyPressed)(int nVKey);
-	STDMETHOD_(BOOL, KeyUp)(int nVKey);
-	STDMETHOD_(int, GetKey)();
-	STDMETHOD_(char, GetChar)();
-	STDMETHOD_(LPCSTR, GetKeyName)(int nVKey);
+		// IInput
+		STDMETHOD(Initialize)(HWND hWnd);
 
-	STDMETHOD(GetMousePos)(float *x, float *y);
-	STDMETHOD(SetMousePos)(float x, float y);
-	STDMETHOD_(SHORT, GetMouseWheel)();
-	STDMETHOD_(BOOL, IsMouseOver)();
+		STDMETHOD_(BOOL, KeyDown)(int nVKey);
+		STDMETHOD_(BOOL, KeyPressed)(int nVKey);
+		STDMETHOD_(BOOL, KeyUp)(int nVKey);
+		STDMETHOD_(int, GetKey)();
+		STDMETHOD_(char, GetChar)();
+		STDMETHOD_(LPCSTR, GetKeyName)(int nVKey);
 
-	STDMETHOD(Update)();
-	STDMETHOD(OnWndEvent)(UINT uMsg, WPARAM wParam, LPARAM lParam);
+		STDMETHOD(GetMousePos)(float *x, float *y);
+		STDMETHOD(SetMousePos)(float x, float y);
+		STDMETHOD_(SHORT, GetMouseWheel)();
+		STDMETHOD_(BOOL, IsMouseOver)();
 
-protected:
-	ULONG m_uRefCount;
-	static LPCSTR m_lpcszKeyNames[256];
-	HWND m_hWnd;
-	SHORT m_nKeyStates[256], m_nOldKeyStates[256];
-	BOOL m_bMouseOver;
-	float m_fPosX, m_fPosY;
-	SHORT m_nPosZ;
-	int m_nVKLast;
-	char m_chLast;
-};
+		STDMETHOD(Update)();
+		STDMETHOD(OnWndEvent)(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-#endif  // _INPUTIMPL_H_
+	protected:
+		ULONG m_uRefCount;
+		static LPCSTR m_lpcszKeyNames[256];
+		HWND m_hWnd;
+		SHORT m_nKeyStates[256], m_nOldKeyStates[256];
+		BOOL m_bMouseOver;
+		float m_fPosX, m_fPosY;
+		SHORT m_nPosZ;
+		int m_nVKLast;
+		char m_chLast;
+	};
+
+}
+
+#endif  // _RUGE_INPUTIMPL_H_

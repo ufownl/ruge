@@ -20,87 +20,92 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #include "StdAfx.h"
 #include "SceneManager.h"
 
-CSceneManager::CSceneManager()
-	: m_pSceneList(NULL)
-	, m_pScene(NULL)
+namespace RUGE
 {
-}
 
-CSceneManager::~CSceneManager()
-{
-	if (m_pScene!=NULL) m_pScene->Exit();
-	while (m_pSceneList!=NULL)
+	CSceneManager::CSceneManager()
+		: m_pSceneList(NULL)
+		, m_pScene(NULL)
 	{
-		CScene *pScene=m_pSceneList;
-
-		m_pSceneList=m_pSceneList->m_pNext;
-		if (pScene->m_bManaged) delete pScene;
 	}
-}
 
-void CSceneManager::AddScene(CScene *pScene, BOOL bManaged/* =TRUE */)
-{
-	pScene->m_pSceneManager=this;
-	pScene->m_bManaged=bManaged;
-	pScene->m_pNext=m_pSceneList;
-	m_pSceneList=pScene;
-}
-
-void CSceneManager::DelScene(int nID)
-{
-	if (m_pSceneList->m_nID==nID)
+	CSceneManager::~CSceneManager()
 	{
-		CScene *pScene=m_pSceneList;
-
-		m_pSceneList=m_pSceneList->m_pNext;
-		if (pScene->m_bManaged) delete pScene;
-	}
-	else
-	{
-		for (CScene *p=m_pSceneList; p->m_pNext!=NULL; p=p->m_pNext)
+		if (m_pScene!=NULL) m_pScene->Exit();
+		while (m_pSceneList!=NULL)
 		{
-			if (p->m_pNext->m_nID==nID)
-			{
-				CScene *pScene=p->m_pNext;
+			CScene *pScene=m_pSceneList;
 
-				p->m_pNext=pScene->m_pNext;
-				if (pScene->m_bManaged) delete pScene;
-				break;
+			m_pSceneList=m_pSceneList->m_pNext;
+			if (pScene->m_bManaged) delete pScene;
+		}
+	}
+
+	void CSceneManager::AddScene(CScene *pScene, BOOL bManaged/* =TRUE */)
+	{
+		pScene->m_pSceneManager=this;
+		pScene->m_bManaged=bManaged;
+		pScene->m_pNext=m_pSceneList;
+		m_pSceneList=pScene;
+	}
+
+	void CSceneManager::DelScene(int nID)
+	{
+		if (m_pSceneList->m_nID==nID)
+		{
+			CScene *pScene=m_pSceneList;
+
+			m_pSceneList=m_pSceneList->m_pNext;
+			if (pScene->m_bManaged) delete pScene;
+		}
+		else
+		{
+			for (CScene *p=m_pSceneList; p->m_pNext!=NULL; p=p->m_pNext)
+			{
+				if (p->m_pNext->m_nID==nID)
+				{
+					CScene *pScene=p->m_pNext;
+
+					p->m_pNext=pScene->m_pNext;
+					if (pScene->m_bManaged) delete pScene;
+					break;
+				}
 			}
 		}
 	}
-}
 
-CScene* CSceneManager::GetScene(int nID) const
-{
-	for (CScene *p=m_pSceneList; p!=NULL; p=p->m_pNext)
+	CScene* CSceneManager::GetScene(int nID) const
 	{
-		if (p->m_nID==nID) return p;
+		for (CScene *p=m_pSceneList; p!=NULL; p=p->m_pNext)
+		{
+			if (p->m_nID==nID) return p;
+		}
+		return NULL;
 	}
-	return NULL;
-}
 
-CScene* CSceneManager::Switch(int nID, WPARAM wParam/* =0 */, LPARAM lParam/* =0 */)
-{
-	CScene *pScene=GetScene(nID);
-
-	if (pScene==NULL) return NULL;
-	if (m_pScene!=NULL) m_pScene->Exit();
-	if (pScene->Enter(wParam, lParam))
+	CScene* CSceneManager::Switch(int nID, WPARAM wParam/* =0 */, LPARAM lParam/* =0 */)
 	{
-		m_pScene=pScene;
-		return m_pScene;
+		CScene *pScene=GetScene(nID);
+
+		if (pScene==NULL) return NULL;
+		if (m_pScene!=NULL) m_pScene->Exit();
+		if (pScene->Enter(wParam, lParam))
+		{
+			m_pScene=pScene;
+			return m_pScene;
+		}
+		return NULL;
 	}
-	return NULL;
-}
 
-BOOL CSceneManager::Update(float fDelta)
-{
-	if (m_pScene!=NULL) return m_pScene->Update(fDelta);
-	return FALSE;
-}
+	BOOL CSceneManager::Update(float fDelta)
+	{
+		if (m_pScene!=NULL) return m_pScene->Update(fDelta);
+		return FALSE;
+	}
 
-void CSceneManager::Render()
-{
-	if (m_pScene!=NULL) m_pScene->Render();
+	void CSceneManager::Render()
+	{
+		if (m_pScene!=NULL) m_pScene->Render();
+	}
+
 }

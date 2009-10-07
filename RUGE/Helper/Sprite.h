@@ -19,47 +19,53 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _SPRITE_H_
-#define _SPRITE_H_
+#ifndef _RUGE_SPRITE_H_
+#define _RUGE_SPRITE_H_
 
 #include "Rect.h"
 
-class CSprite
+namespace RUGE
 {
-public:
-	CSprite(HTEXTURE hTex, float x, float y, float w, float h);
-	CSprite(const CSprite &Spr);
-	virtual ~CSprite();
 
-	CSprite& operator = (const CSprite &Spr);
+	class CSprite
+	{
+	public:
+		CSprite(HTEXTURE hTex, float x, float y, float w, float h);
+		CSprite(const CSprite &Spr);
+		virtual ~CSprite();
 
-	void Flip(BOOL bx, BOOL by, BOOL bHotSpot=FALSE);
-	void Render(float x, float y, float fRot=0.0f, float fHScale=1.0f, float fVScale=0.0f);
-	void RenderStretch(float x1, float y1, float x2, float y2);
-	void Render4V(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
+		CSprite& operator = (const CSprite &Spr);
 
-	void SetTexture(HTEXTURE hTex);
-	void SetTextureRect(float x, float y, float w, float h);
-	void SetColor(DWORD dwColor, int nIndex=-1);
-	void SetZ(float z, int nIndex=-1);
-	void SetBlendMode(DWORD dwBlend);
-	void SetHotSpot(float x, float y);
+		void Flip(BOOL bx, BOOL by, BOOL bHotSpot=FALSE);
+		void Render(float x, float y);
+		void RenderEx(float x, float y, float fRot=0.0f, float fHScale=1.0f, float fVScale=0.0f);
+		void RenderStretch(float x1, float y1, float x2, float y2);
+		void Render4V(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 
-	HTEXTURE GetTexture() const;
-	void GetTextureRect(float &x, float &y, float &w, float &h) const;
-	DWORD GetColor(int nIndex=0) const;
-	float GetZ(int nIndex=0) const;
-	DWORD GetBlendMode() const;
-	void GetHotSpot(float &x, float &y) const;
-	float GetWidth() const;
-	float GetHeight() const;
-	void GetBoundingBox(float x, float y, CRect &rect) const;
-	void GetBoundingBox(float x, float y, float fRot, float fHScale, float fVScale, CRect &rect) const;
+		void SetTexture(HTEXTURE hTex);
+		void SetTextureRect(float x, float y, float w, float h);
+		void SetColor(DWORD dwColor, int nIndex=-1);
+		void SetZ(float z, int nIndex=-1);
+		void SetBlendMode(DWORD dwBlend);
+		void SetHotSpot(float x, float y);
 
-protected:
-	PAPPLICATION m_pApp;
-	QUAD m_quadTex;
-	float m_fLeft, m_fTop, m_fWidth, m_fHeight, m_fHotx, m_fHoty;
-};
+		HTEXTURE GetTexture() const;
+		void GetTextureRect(float *x, float *y, float *w, float *h) const;
+		DWORD GetColor(int nIndex=0) const;
+		float GetZ(int nIndex=0) const;
+		DWORD GetBlendMode() const;
+		void GetHotSpot(float *x, float *y) const;
+		float GetWidth() const;
+		float GetHeight() const;
+		void GetBoundingBox(float x, float y, CRect *pRect) const;
+		void GetBoundingBox(float x, float y, float fRot, float fHScale, float fVScale, CRect *pRect) const;
 
-#endif  // _SPRITE_H_
+	protected:
+		PAPPLICATION m_pApp;
+		QUAD m_quadTex;
+		float m_fLeft, m_fTop, m_fWidth, m_fHeight, m_fHotx, m_fHoty;
+	};
+
+}
+
+#endif  // _RUGE_SPRITE_H_

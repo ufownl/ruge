@@ -19,8 +19,8 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _RENDERER_H_
-#define _RENDERER_H_
+#ifndef _RUGE_RENDERER_H_
+#define _RUGE_RENDERER_H_
 
 #ifndef _RUGE_IMPL_
 #include <windows.h>
@@ -39,32 +39,6 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #define SETR(col, r) (((col)&0xFF00FFFF)+(DWORD(r)<<16))
 #define SETG(col, g) (((col)&0xFFFF00FF)+(DWORD(g)<<8))
 #define SETB(col, b) (((col)&0xFFFFFF00)+DWORD(b))
-
-typedef HANDLE HDEVICE;
-typedef HANDLE HTEXTURE;
-typedef HANDLE HTARGET;
-typedef HANDLE HFONTX;
-
-typedef struct VERTEX
-{
-	float x, y, z, rhw;
-	DWORD dwColor;
-	float tu, tv;
-} *PVERTEX;
-
-typedef struct TRIANGLE
-{
-	VERTEX v[3];
-	HTEXTURE hTex;
-	DWORD dwBlend;
-} *PTRIANGLE;
-
-typedef struct QUAD
-{
-	VERTEX v[4];
-	HTEXTURE hTex;
-	DWORD dwBlend;
-} *PQUAD;
 
 #define VSYNC_DEFAULT	0x00000000L
 #define VSYNC_ONE		0x00000001L
@@ -98,79 +72,110 @@ typedef struct QUAD
 #define IFF_HDR	7L
 #define IFF_PFM	8L
 
-enum RendererIntState
+namespace RUGE
 {
-	RENDERER_WIDTH,
-	RENDERER_HEIGHT,
-};
 
-enum RendererBoolState
-{
-	RENDERER_WINDOWED,
-	RENDERER_DEVICELOST,
-};
+	typedef HANDLE HDEVICE;
+	typedef HANDLE HTEXTURE;
+	typedef HANDLE HTARGET;
+	typedef HANDLE HFONT;
 
-enum RendererDwordState
-{
-	RENDERER_VSYNC,
-	RENDERER_MAGFILTER,
-	RENDERER_MINFILTER
-};
+	typedef struct VERTEX
+	{
+		float x, y, z, rhw;
+		DWORD dwColor;
+		float tu, tv;
+	} *PVERTEX;
 
-enum RendererEventHandlerState
-{
-	RENDERER_EVENTHANDLER
-};
+	typedef struct TRIANGLE
+	{
+		VERTEX v[3];
+		HTEXTURE hTex;
+		DWORD dwBlend;
+	} *PTRIANGLE;
 
-enum RendererHandleState
-{
-	RENDERER_DEVICE
-};
+	typedef struct QUAD
+	{
+		VERTEX v[4];
+		HTEXTURE hTex;
+		DWORD dwBlend;
+	} *PQUAD;
 
-typedef struct IRenderer : public IUnknown
-{
-	// IRenderer
-	STDMETHOD(SetState)(RendererIntState State, int nVal) PURE;
-	STDMETHOD(SetState)(RendererBoolState State, BOOL bVal) PURE;
-	STDMETHOD(SetState)(RendererDwordState State, DWORD dwVal) PURE;
-	STDMETHOD(SetState)(RendererEventHandlerState State, PRENDEREREVENTHANDLER pVal) PURE;
+	enum RendererIntState
+	{
+		RENDERER_WIDTH,
+		RENDERER_HEIGHT,
+	};
 
-	STDMETHOD_(int, GetState)(RendererIntState State) PURE;
-	STDMETHOD_(BOOL, GetState)(RendererBoolState State) PURE;
-	STDMETHOD_(DWORD, GetState)(RendererDwordState State) PURE;
-	STDMETHOD_(PRENDEREREVENTHANDLER, GetState)(RendererEventHandlerState State) PURE;
-	STDMETHOD_(HANDLE, GetState)(RendererHandleState State) PURE;
+	enum RendererBoolState
+	{
+		RENDERER_WINDOWED,
+		RENDERER_DEVICELOST,
+	};
 
-	STDMETHOD(Initialize)(HWND hWnd) PURE;
-	STDMETHOD(Shutdown)() PURE;
-	STDMETHOD(RendererLoop)() PURE;
+	enum RendererDwordState
+	{
+		RENDERER_VSYNC,
+		RENDERER_MAGFILTER,
+		RENDERER_MINFILTER
+	};
 
-	STDMETHOD(BeginTarget)(HTARGET hTarg) PURE;
-	STDMETHOD(EndTarget)() PURE;
-	STDMETHOD(Clear)(DWORD dwColor=0) PURE;
-	STDMETHOD(RenderLine)(PVERTEX pV1, PVERTEX pV2, DWORD dwBlend=BLEND_DEFAULT) PURE;
-	STDMETHOD(RenderTriangle)(PTRIANGLE pTriangle) PURE;
-	STDMETHOD(RenderQuad)(PQUAD pQuad) PURE;
-	STDMETHOD(Shotsnap)(LPCSTR lpcszPath, DWORD dwIFF=IFF_BMP) PURE;
+	enum RendererEventHandlerState
+	{
+		RENDERER_EVENTHANDLER
+	};
 
-	STDMETHOD_(HTEXTURE, Texture_Create)(int nWidth, int nHeight) PURE;
-	STDMETHOD_(HTEXTURE, Texture_Load)(LPCSTR lpcszPath) PURE;
-	STDMETHOD(Texture_Free)(HTEXTURE hTex) PURE;
-	STDMETHOD_(void*, Texture_Lock)(HTEXTURE hTex, BOOL bReadOnly=TRUE, int x=0, int y=0, int w=0, int h=0) PURE;
-	STDMETHOD(Texture_Unlock)(HTEXTURE hTex) PURE;
-	STDMETHOD_(int, Texture_GetWidth)(HTEXTURE hTex) PURE;
-	STDMETHOD_(int, Texture_GetHeight)(HTEXTURE hTex) PURE;
+	enum RendererHandleState
+	{
+		RENDERER_DEVICE
+	};
 
-	STDMETHOD_(HTARGET, Target_Create)(int nWidth, int nHeight) PURE;
-	STDMETHOD(Target_Free)(HTARGET hTarg) PURE;
-	STDMETHOD_(HTEXTURE, Target_GetTexture)(HTARGET hTarg) PURE;
+	typedef struct IRenderer : public IUnknown
+	{
+		// IRenderer
+		STDMETHOD(SetState)(RendererIntState State, int nVal) PURE;
+		STDMETHOD(SetState)(RendererBoolState State, BOOL bVal) PURE;
+		STDMETHOD(SetState)(RendererDwordState State, DWORD dwVal) PURE;
+		STDMETHOD(SetState)(RendererEventHandlerState State, PRENDEREREVENTHANDLER pVal) PURE;
 
-	STDMETHOD_(HFONTX, Font_Create)(int nHeight, int nWidth, int nWeight, BOOL bItalic, LPCSTR lpcszFont) PURE;
-	STDMETHOD(Font_Free)(HFONTX hFont) PURE;
-	STDMETHOD_(int, Font_DrawText)(HFONTX hFont, LPCSTR lpcszText, LPRECT lpRect,
-		float z=0.0f, DWORD dwFormat=DT_TOP|DT_LEFT, DWORD dwColor=0xFFFFFFFF) PURE;
-} *PRENDERER;
+		STDMETHOD_(int, GetState)(RendererIntState State) PURE;
+		STDMETHOD_(BOOL, GetState)(RendererBoolState State) PURE;
+		STDMETHOD_(DWORD, GetState)(RendererDwordState State) PURE;
+		STDMETHOD_(PRENDEREREVENTHANDLER, GetState)(RendererEventHandlerState State) PURE;
+		STDMETHOD_(HANDLE, GetState)(RendererHandleState State) PURE;
 
-_COM_SMARTPTR_TYPEDEF(IRenderer, __uuidof(IRenderer));
+		STDMETHOD(Initialize)(HWND hWnd) PURE;
+		STDMETHOD(Shutdown)() PURE;
+		STDMETHOD(RendererLoop)() PURE;
 
-#endif  // _RENDERER_H_
+		STDMETHOD(BeginTarget)(HTARGET hTarg) PURE;
+		STDMETHOD(EndTarget)() PURE;
+		STDMETHOD(Clear)(DWORD dwColor=0) PURE;
+		STDMETHOD(RenderLine)(PVERTEX pV1, PVERTEX pV2, DWORD dwBlend=BLEND_DEFAULT) PURE;
+		STDMETHOD(RenderTriangle)(PTRIANGLE pTriangle) PURE;
+		STDMETHOD(RenderQuad)(PQUAD pQuad) PURE;
+		STDMETHOD(Shotsnap)(LPCSTR lpcszPath, DWORD dwIFF=IFF_BMP) PURE;
+
+		STDMETHOD_(HTEXTURE, Texture_Create)(int nWidth, int nHeight) PURE;
+		STDMETHOD_(HTEXTURE, Texture_Load)(LPCSTR lpcszPath) PURE;
+		STDMETHOD(Texture_Free)(HTEXTURE hTex) PURE;
+		STDMETHOD_(void*, Texture_Lock)(HTEXTURE hTex, BOOL bReadOnly=TRUE, int x=0, int y=0, int w=0, int h=0) PURE;
+		STDMETHOD(Texture_Unlock)(HTEXTURE hTex) PURE;
+		STDMETHOD_(int, Texture_GetWidth)(HTEXTURE hTex) PURE;
+		STDMETHOD_(int, Texture_GetHeight)(HTEXTURE hTex) PURE;
+
+		STDMETHOD_(HTARGET, Target_Create)(int nWidth, int nHeight) PURE;
+		STDMETHOD(Target_Free)(HTARGET hTarg) PURE;
+		STDMETHOD_(HTEXTURE, Target_GetTexture)(HTARGET hTarg) PURE;
+
+		STDMETHOD_(HFONT, Font_Create)(int nHeight, int nWidth, int nWeight, BOOL bItalic, LPCSTR lpcszFont) PURE;
+		STDMETHOD(Font_Free)(HFONT hFont) PURE;
+		STDMETHOD_(int, Font_DrawText)(HFONT hFont, LPCSTR lpcszText, LPRECT lpRect,
+			float z=0.0f, DWORD dwFormat=DT_TOP|DT_LEFT, DWORD dwColor=0xFFFFFFFF) PURE;
+	} *PRENDERER;
+
+	_COM_SMARTPTR_TYPEDEF(IRenderer, __uuidof(IRenderer));
+
+}
+
+#endif  // _RUGE_RENDERER_H_

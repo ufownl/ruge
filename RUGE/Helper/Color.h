@@ -19,42 +19,47 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#ifndef _COLOR_H_
-#define _COLOR_H_
+#ifndef _RUGE_COLOR_H_
+#define _RUGE_COLOR_H_
 
-class CColor
+namespace RUGE
 {
-public:
-	CColor(float a=0, float r=0, float g=0, float b=0);
-	CColor(const CColor &color);
-	CColor(DWORD dwColor);
 
-	CColor& operator = (const CColor &color);
-	CColor& operator = (DWORD dwColor);
+	class CColor
+	{
+	public:
+		CColor(float a=0, float r=0, float g=0, float b=0);
+		CColor(const CColor &color);
+		CColor(DWORD dwColor);
 
-	CColor operator - (const CColor &color) const;
-	CColor operator + (const CColor &color) const;
-	CColor operator * (const CColor &color) const;
-	CColor& operator -= (const CColor &color);
-	CColor& operator += (const CColor &color);
-	CColor& operator *= (const CColor &color);
+		CColor& operator = (const CColor &color);
+		CColor& operator = (DWORD dwColor);
 
-	CColor operator / (float fScale) const;
-	CColor operator * (float fScale) const;
-	CColor& operator /= (float fScale);
-	CColor& operator *= (float fScale);
+		CColor operator - (const CColor &color) const;
+		CColor operator + (const CColor &color) const;
+		CColor operator * (const CColor &color) const;
+		CColor& operator -= (const CColor &color);
+		CColor& operator += (const CColor &color);
+		CColor& operator *= (const CColor &color);
 
-	bool operator == (const CColor &color) const;
-	bool operator != (const CColor &color) const;
+		CColor operator / (float fScale) const;
+		CColor operator * (float fScale) const;
+		CColor& operator /= (float fScale);
+		CColor& operator *= (float fScale);
 
-	void SetColor(DWORD dwColor);
-	DWORD GetColor() const;
-	void Clamp();
+		BOOL operator == (const CColor &color) const;
+		BOOL operator != (const CColor &color) const;
 
-public:
-	float r, g, b, a;
-};
+		void SetColor(DWORD dwColor);
+		DWORD GetColor() const;
+		void Clamp();
 
-CColor operator * (float fScale, const CColor &color);
+	public:
+		float r, g, b, a;
+	};
 
-#endif  // _COLOR_H_
+	CColor operator * (float fScale, const CColor &color);
+
+}
+
+#endif  // _RUGE_COLOR_H_
