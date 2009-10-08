@@ -22,10 +22,10 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #define RUGE_EXPORT _declspec(dllexport)
 #include "RUGE.h"
 
-RUGE::PAPPLICATION g_pApp;
-
 namespace RUGE
 {
+
+	PAPPLICATION g_pApp;
 
 	PAPPLICATION GetRUGE()
 	{
