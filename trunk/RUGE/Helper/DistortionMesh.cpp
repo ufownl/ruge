@@ -42,7 +42,6 @@ namespace RUGE
 			m_pVertexArray[i].x=0.0f;
 			m_pVertexArray[i].y=0.0f;
 			m_pVertexArray[i].z=0.5f;
-			m_pVertexArray[i].rhw=1.0f;
 			m_pVertexArray[i].dwColor=0xFFFFFFFF;
 			m_pVertexArray[i].tu=0.0f;
 			m_pVertexArray[i].tv=0.0f;
@@ -119,7 +118,6 @@ namespace RUGE
 				m_quadTex.v[0].x=x+m_pVertexArray[nIndex].x;
 				m_quadTex.v[0].y=y+m_pVertexArray[nIndex].y;
 				m_quadTex.v[0].z=m_pVertexArray[nIndex].z;
-				m_quadTex.v[0].rhw=m_pVertexArray[nIndex].rhw;
 				m_quadTex.v[0].dwColor=m_pVertexArray[nIndex].dwColor;
 
 				m_quadTex.v[1].tu=m_pVertexArray[nIndex+1].tu;
@@ -127,7 +125,6 @@ namespace RUGE
 				m_quadTex.v[1].x=x+m_pVertexArray[nIndex+1].x;
 				m_quadTex.v[1].y=y+m_pVertexArray[nIndex+1].y;
 				m_quadTex.v[1].z=m_pVertexArray[nIndex+1].z;
-				m_quadTex.v[1].rhw=m_pVertexArray[nIndex+1].rhw;
 				m_quadTex.v[1].dwColor=m_pVertexArray[nIndex+1].dwColor;
 
 				m_quadTex.v[2].tu=m_pVertexArray[nIndex+m_nCols+1].tu;
@@ -135,7 +132,6 @@ namespace RUGE
 				m_quadTex.v[2].x=x+m_pVertexArray[nIndex+m_nCols+1].x;
 				m_quadTex.v[2].y=y+m_pVertexArray[nIndex+m_nCols+1].y;
 				m_quadTex.v[2].z=m_pVertexArray[nIndex+m_nCols+1].z;
-				m_quadTex.v[2].rhw=m_pVertexArray[nIndex+m_nCols+1].rhw;
 				m_quadTex.v[2].dwColor=m_pVertexArray[nIndex+m_nCols+1].dwColor;
 
 				m_quadTex.v[3].tu=m_pVertexArray[nIndex+m_nCols].tu;
@@ -143,7 +139,6 @@ namespace RUGE
 				m_quadTex.v[3].x=x+m_pVertexArray[nIndex+m_nCols].x;
 				m_quadTex.v[3].y=y+m_pVertexArray[nIndex+m_nCols].y;
 				m_quadTex.v[3].z=m_pVertexArray[nIndex+m_nCols].z;
-				m_quadTex.v[3].rhw=m_pVertexArray[nIndex+m_nCols].rhw;
 				m_quadTex.v[3].dwColor=m_pVertexArray[nIndex+m_nCols].dwColor;
 
 				m_pApp->Gfx_RenderQuad(&m_quadTex);

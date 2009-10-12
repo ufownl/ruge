@@ -412,11 +412,7 @@ namespace RUGE
 	STDMETHODIMP CRendererImpl::Clear(DWORD dwColor/* =0 */)
 	{
 		assert(m_lpD3DDevice!=NULL);
-
-		HRESULT hr=m_lpD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, dwColor, 1.0f, 0);
-
-		if ((FAILED(hr))) return hr;
-		return m_lpD3DDevice->SetTransform(D3DTS_PROJECTION, &m_d3dxmatProj);
+		return m_lpD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, dwColor, 1.0f, 0);
 	}
 
 	STDMETHODIMP CRendererImpl::RenderLine(PVERTEX pV1, PVERTEX pV2, DWORD dwBlend/* =BLEND_DEFAULT */)
@@ -701,7 +697,7 @@ namespace RUGE
 		hr=m_lpD3DDevice->GetDepthStencilSurface(&m_lpD3DSurfDepth);
 		if (FAILED(hr)) return hr;
 		hr=m_lpD3DDevice->CreateVertexBuffer(sizeof(VERTEX)*VERTEX_BUFFER_SIZE, D3DUSAGE_WRITEONLY,
-			D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1, D3DPOOL_DEFAULT, &m_lpD3DVertexBuf, NULL);
+			D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1, D3DPOOL_DEFAULT, &m_lpD3DVertexBuf, NULL);
 		if (FAILED(hr))
 		{
 			fprintf(stderr, "Can't create D3D vertex buffer.\n");
@@ -727,7 +723,7 @@ namespace RUGE
 		m_lpD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 		m_lpD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
-		m_lpD3DDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+		m_lpD3DDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
 		m_lpD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, m_dwMagFilter);
 		m_lpD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, m_dwMinFilter);
 
@@ -780,7 +776,8 @@ namespace RUGE
 		assert(m_lpD3DDevice!=NULL);
 		m_lpD3DDevice->BeginScene();
 		m_lpD3DDevice->SetStreamSource(0, m_lpD3DVertexBuf, 0, sizeof(VERTEX));
-		m_lpD3DDevice->SetFVF(D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1);
+		m_lpD3DDevice->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1);
+		m_lpD3DDevice->SetTransform(D3DTS_PROJECTION, &m_d3dxmatProj);
 	}
 
 	void CRendererImpl::EndScene()
