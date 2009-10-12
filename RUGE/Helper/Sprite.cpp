@@ -30,7 +30,6 @@ namespace RUGE
 		{
 			m_quadTex.v[i].x=0.0f;
 			m_quadTex.v[i].y=0.0f;
-			m_quadTex.v[i].rhw=1.0f;
 		}
 		SetTexture(hTex);
 		SetTextureRect(x, y, w, h);

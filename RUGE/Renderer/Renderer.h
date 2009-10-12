@@ -82,7 +82,7 @@ namespace RUGE
 
 	typedef struct VERTEX
 	{
-		float x, y, z, rhw;
+		float x, y, z;
 		DWORD dwColor;
 		float tu, tv;
 	} *PVERTEX;
