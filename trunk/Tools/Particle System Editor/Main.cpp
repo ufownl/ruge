@@ -37,6 +37,8 @@ int main(int argc, char *argv[])
 	pApp->System_SetState(RUGE::APP_CAPTION, "RUGE Particle System Editor");  // 设置窗口标题
 	pApp->System_SetState(RUGE::APP_HIDECURSOR, TRUE);  // 隐藏系统鼠标指针
 	pApp->System_SetState(RUGE::APP_VSYNC, VSYNC_ONE);  // 开启垂直同步
+	pApp->System_SetState(RUGE::APP_MAGFILTER, TEXF_LINEAR);  // 开启放大滤镜线性过滤
+	pApp->System_SetState(RUGE::APP_MINFILTER, TEXF_LINEAR);  // 开启缩小滤镜线性过滤
 	hr=pApp->System_Initialize();  // 初始化RUGE Application对象
 	if (SUCCEEDED(hr)) hr=pApp->System_Run();  // 进入主循环
 	else

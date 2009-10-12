@@ -138,9 +138,9 @@ HRESULT CEventHandler::InitResource()
 	m_htexPar=m_pApp->Texture_Load("Res\\Particles.png");
 
 	m_psprLPane1=new RUGE::CSprite(m_htexGUI, 0, 0, 168, 512);
-	m_psprLPane2=new RUGE::CSprite(m_htexGUI, 337, 0, 168, 88);
+	m_psprLPane2=new RUGE::CSprite(m_htexGUI, 336, 0, 168, 88);
 	m_psprRPane1=new RUGE::CSprite(m_htexGUI, 168, 0, 168, 512);
-	m_psprRPane2=new RUGE::CSprite(m_htexGUI, 337, 89, 168, 88);
+	m_psprRPane2=new RUGE::CSprite(m_htexGUI, 336, 88, 168, 88);
 
 	m_psprCursor=new RUGE::CSprite(m_htexGUI, 487, 181, 19, 26);
 	m_psprColor=new RUGE::CSprite(m_htexGUI, 466, 208, 14, 80);
@@ -245,11 +245,7 @@ void CEventHandler::Render()
 {
 	// 在此添加渲染代码
 	m_pApp->Gfx_Clear();
-	m_pApp->System_SetState(RUGE::APP_MAGFILTER, TEXF_LINEAR);
-	m_pApp->System_SetState(RUGE::APP_MINFILTER, TEXF_LINEAR);
 	m_pParsys->Render();
-	m_pApp->System_SetState(RUGE::APP_MAGFILTER, TEXF_NEAREST);
-	m_pApp->System_SetState(RUGE::APP_MINFILTER, TEXF_NEAREST);
 	if (m_bBBox)
 	{
 		RUGE::CRect rect;
@@ -321,8 +317,8 @@ void CEventHandler::CreateGUI()
 	RUGE::CText *pText;
 
 	// Presets & stuff
-	m_pGUI->AddCtrl(new RUGE::CButton(CMD_EXIT, 718, 484, 73, 17, m_htexGUI, 336, 192));
-	pBtn=new RUGE::CButton(CMD_HELP, 641, 484, 73, 17, m_htexGUI, 336, 192);
+	m_pGUI->AddCtrl(new RUGE::CButton(CMD_EXIT, 718, 484, 73, 17, m_htexGUI, 336, 191));
+	pBtn=new RUGE::CButton(CMD_HELP, 641, 484, 73, 17, m_htexGUI, 336, 191);
 	pBtn->SetMode(TRUE);
 	m_pGUI->AddCtrl(pBtn);
 
