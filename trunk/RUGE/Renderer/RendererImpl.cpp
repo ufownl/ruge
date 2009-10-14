@@ -523,7 +523,9 @@ namespace RUGE
 
 		LPDIRECT3DTEXTURE9 lpD3DTex;
 
-		if (FAILED(D3DXCreateTextureFromFile(m_lpD3DDevice, lpcszPath, &lpD3DTex))) return NULL;
+		if (FAILED(D3DXCreateTextureFromFileEx(m_lpD3DDevice, lpcszPath, D3DX_DEFAULT,
+			D3DX_DEFAULT, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_NONE,
+			D3DX_DEFAULT, 0, NULL, NULL, &lpD3DTex))) return NULL;
 		Texture_Append(lpD3DTex);
 		return (HTEXTURE)lpD3DTex;
 	}
