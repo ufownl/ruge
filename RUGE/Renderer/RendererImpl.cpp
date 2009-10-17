@@ -22,6 +22,10 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 
 #define VERTEX_BUFFER_SIZE	6000L
 
+#define PRIM_LINE		2L
+#define PRIM_TRIANGLE	3L
+#define PRIM_QUAD		6L
+
 namespace RUGE
 {
 
