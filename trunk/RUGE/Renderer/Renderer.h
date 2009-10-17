@@ -50,10 +50,6 @@ along with RUGE.  If not, see <http://www.gnu.org/licenses/>.
 #define TEXF_NEAREST	1L
 #define TEXF_LINEAR		2L
 
-#define PRIM_LINE		2L
-#define PRIM_TRIANGLE	3L
-#define PRIM_QUAD		6L
-
 #define BLEND_COLORADD		1L
 #define BLEND_COLORMUL		0L
 #define BLEND_ALPHABLEND	2L
