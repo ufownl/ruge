@@ -43,7 +43,8 @@ namespace RUGE
 	enum AppStringState
 	{
 		APP_CAPTION,
-		APP_ICON
+		APP_ICON,
+		APP_INIFILE
 	};
 
 	enum AppIntState
@@ -97,6 +98,14 @@ namespace RUGE
 
 		STDMETHOD(System_Initialize)() PURE;
 		STDMETHOD(System_Run)() PURE;
+
+		STDMETHOD(Ini_SetInt)(LPCSTR lpcszSection, LPCSTR lpcszName, int nVal) PURE;
+		STDMETHOD(Ini_SetFloat)(LPCSTR lpcszSection, LPCSTR lpcszName, float fVal) PURE;
+		STDMETHOD(Ini_SetString)(LPCSTR lpcszSection, LPCSTR lpcszName, LPCSTR lpcszVal) PURE;
+
+		STDMETHOD_(int, Ini_GetInt)(LPCSTR lpcszSection, LPCSTR lpcszName, int nDef=0) PURE;
+		STDMETHOD_(float, Ini_GetFloat)(LPCSTR lpcszSection, LPCSTR lpcszName, float fDef=0) PURE;
+		STDMETHOD_(LPCSTR, Ini_GetString)(LPCSTR lpcszSection, LPCSTR lpcszName, LPCSTR lpcszDef=NULL) PURE;
 
 		STDMETHOD(Gfx_BeginTarget)(HTARGET hTarg) PURE;
 		STDMETHOD(Gfx_EndTarget)() PURE;

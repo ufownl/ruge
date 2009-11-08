@@ -29,6 +29,7 @@ namespace RUGE
 		: m_uRefCount(0)
 		, m_lpcszCaption("RangerUFO's Game Engine")
 		, m_lpcszIcon(NULL)
+		, m_lpcszIniFile(NULL)
 		, m_bHideCursor(FALSE)
 		, m_bActive(FALSE)
 		, m_bNotSuspend(FALSE)
@@ -40,12 +41,13 @@ namespace RUGE
 	{
 		assert(m_pThis==NULL);
 		m_pThis=this;
+		g_uDllLockCount++;
+		memset(m_szIniBuf, 0, sizeof(m_szIniBuf));
 		m_pRenderer.CreateInstance(__uuidof(CRendererImpl));
 		m_pAudio.CreateInstance(__uuidof(CAudioImpl));
 		m_pInput.CreateInstance(__uuidof(CInputImpl));
 		m_pTimer.CreateInstance(__uuidof(CTimerImpl));
 		m_pRand.CreateInstance(__uuidof(CRandomImpl));
-		g_uDllLockCount++;
 	}
 
 	CApplicationImpl::~CApplicationImpl()
@@ -91,6 +93,9 @@ namespace RUGE
 		case APP_ICON:
 			m_lpcszIcon=lpcszVal;
 			if (m_hWnd!=NULL) SetClassLong(m_hWnd, GCL_HICON, (LONG)(LONG_PTR)LoadIcon(GetModuleHandle(NULL), m_lpcszIcon));
+			break;
+		case APP_INIFILE:
+			m_lpcszIniFile=lpcszVal;
 			break;
 		}
 		return S_OK;
@@ -163,6 +168,8 @@ namespace RUGE
 			return m_lpcszCaption;
 		case APP_ICON:
 			return m_lpcszIcon;
+		case APP_INIFILE:
+			return m_lpcszIniFile;
 		}
 		return NULL;
 	}
@@ -358,6 +365,50 @@ namespace RUGE
 		if (m_pEventHandler!=NULL) m_pEventHandler->ReleaseResource();
 		fprintf(stderr, "The End.\n");
 		return (HRESULT)Msg.wParam;
+	}
+
+	STDMETHODIMP CApplicationImpl::Ini_SetInt(LPCSTR lpcszSection, LPCSTR lpcszName, int nVal)
+	{
+		if (m_lpcszIniFile==NULL) return E_POINTER;
+		sprintf(m_szIniBuf, "%d", nVal);
+		if (!WritePrivateProfileString(lpcszSection, lpcszName, m_szIniBuf, m_lpcszIniFile)) return -1;
+		return S_OK;
+	}
+
+	STDMETHODIMP CApplicationImpl::Ini_SetFloat(LPCSTR lpcszSection, LPCSTR lpcszName, float fVal)
+	{
+		if (m_lpcszIniFile==NULL) return E_POINTER;
+		sprintf(m_szIniBuf, "%f", fVal);
+		if (!WritePrivateProfileString(lpcszSection, lpcszName, m_szIniBuf, m_lpcszIniFile)) return -1;
+		return S_OK;
+	}
+
+	STDMETHODIMP CApplicationImpl::Ini_SetString(LPCSTR lpcszSection, LPCSTR lpcszName, LPCSTR lpcszVal)
+	{
+		if (m_lpcszIniFile==NULL) return E_POINTER;
+		if (!WritePrivateProfileString(lpcszSection, lpcszName, lpcszVal, m_lpcszIniFile)) return -1;
+		return S_OK;
+	}
+
+	STDMETHODIMP_(int) CApplicationImpl::Ini_GetInt(LPCSTR lpcszSection, LPCSTR lpcszName, int nDef/* =0 */)
+	{
+		if (m_lpcszIniFile!=NULL && GetPrivateProfileString(lpcszSection, lpcszName,
+			NULL, m_szIniBuf, sizeof(m_szIniBuf), m_lpcszIniFile)) return atoi(m_szIniBuf);
+		return nDef;
+	}
+
+	STDMETHODIMP_(float) CApplicationImpl::Ini_GetFloat(LPCSTR lpcszSection, LPCSTR lpcszName, float fDef/* =0 */)
+	{
+		if (m_lpcszIniFile!=NULL && GetPrivateProfileString(lpcszSection, lpcszName,
+			NULL, m_szIniBuf, sizeof(m_szIniBuf), m_lpcszIniFile)) return (float)atof(m_szIniBuf);
+		return fDef;
+	}
+
+	STDMETHODIMP_(LPCSTR) CApplicationImpl::Ini_GetString(LPCSTR lpcszSection, LPCSTR lpcszName, LPCSTR lpcszDef/* =NULL */)
+	{
+		if (m_lpcszIniFile!=NULL && GetPrivateProfileString(lpcszSection, lpcszName,
+			NULL, m_szIniBuf, sizeof(m_szIniBuf), m_lpcszIniFile)) return m_szIniBuf;
+		return lpcszDef;
 	}
 
 	STDMETHODIMP CApplicationImpl::Gfx_BeginTarget(HTARGET hTarg)
