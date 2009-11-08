@@ -55,6 +55,14 @@ namespace RUGE
 		STDMETHOD(System_Initialize)();
 		STDMETHOD(System_Run)();
 
+		STDMETHOD(Ini_SetInt)(LPCSTR lpcszSection, LPCSTR lpcszName, int nVal);
+		STDMETHOD(Ini_SetFloat)(LPCSTR lpcszSection, LPCSTR lpcszName, float fVal);
+		STDMETHOD(Ini_SetString)(LPCSTR lpcszSection, LPCSTR lpcszName, LPCSTR lpcszVal);
+
+		STDMETHOD_(int, Ini_GetInt)(LPCSTR lpcszSection, LPCSTR lpcszName, int nDef=0);
+		STDMETHOD_(float, Ini_GetFloat)(LPCSTR lpcszSection, LPCSTR lpcszName, float fDef=0);
+		STDMETHOD_(LPCSTR, Ini_GetString)(LPCSTR lpcszSection, LPCSTR lpcszName, LPCSTR lpcszDef=NULL);
+
 		STDMETHOD(Gfx_BeginTarget)(HTARGET hTarg);
 		STDMETHOD(Gfx_EndTarget)();
 		STDMETHOD(Gfx_Clear)(DWORD dwColor=0);
@@ -129,10 +137,11 @@ namespace RUGE
 	protected:
 		static CApplicationImpl *m_pThis;
 		ULONG m_uRefCount;
-		LPCSTR m_lpcszCaption, m_lpcszIcon;
+		LPCSTR m_lpcszCaption, m_lpcszIcon, m_lpcszIniFile;
 		BOOL m_bHideCursor, m_bActive, m_bNotSuspend;
 		PAPPLICATIONEVENTHANDLER m_pEventHandler;
 		HWND m_hWnd;
+		char m_szIniBuf[256];
 		float m_fTime, m_fDelta;
 		int m_nFPS;
 		IRendererPtr m_pRenderer;
