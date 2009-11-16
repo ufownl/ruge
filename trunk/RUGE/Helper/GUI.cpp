@@ -38,10 +38,6 @@ namespace RUGE
 		, m_fOldY(0)
 		, m_nWheel(0)
 		, m_nWheelOld(0)
-		, m_bLPressed(FALSE)
-		, m_bLReleased(FALSE)
-		, m_bRPressed(FALSE)
-		, m_bRReleased(FALSE)
 	{
 	}
 
@@ -207,12 +203,10 @@ namespace RUGE
 
 	int CGUI::Update(float fDelta)
 	{
+		BOOL bLPressed=m_pApp->Input_KeyPressed(VK_LBUTTON), bRPressed=m_pApp->Input_KeyPressed(VK_RBUTTON);
+
 		m_pApp->Input_GetMousePos(&m_fCurX, &m_fCurY);
 		m_nWheel=m_pApp->Input_GetMouseWheel();
-		m_bLPressed=m_pApp->Input_KeyPressed(VK_LBUTTON);
-		m_bLReleased=!m_bLPressed;
-		m_bRPressed=m_pApp->Input_KeyPressed(VK_RBUTTON);
-		m_bRReleased=!m_bRPressed;
 
 		for (CControl *p=m_pCtrlList; p!=NULL; p=p->m_pNext) p->Update(fDelta);
 
@@ -296,7 +290,7 @@ namespace RUGE
 		{
 			CControl *pCtrl=m_pCtrlLock;
 
-			if (!m_bLPressed && !m_bRPressed) m_pCtrlLock=NULL;
+			if (!bLPressed && !bRPressed) m_pCtrlLock=NULL;
 			if (ProcessCtrl(pCtrl)) return pCtrl->m_nID;
 		}
 		else
@@ -318,7 +312,6 @@ namespace RUGE
 						m_pCtrlOver=pCtrl;
 					}
 					if (ProcessCtrl(pCtrl)) return pCtrl->m_nID;
-					else return 0;
 				}
 			}
 			if (m_pCtrlOver!=NULL)
