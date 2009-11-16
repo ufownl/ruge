@@ -74,7 +74,6 @@ namespace RUGE
 		CSprite *m_psprCursor;
 		float m_fCurX, m_fCurY, m_fOldX, m_fOldY;
 		SHORT m_nWheel, m_nWheelOld;
-		BOOL m_bLPressed, m_bLReleased, m_bRPressed, m_bRReleased;
 	};
 
 }
