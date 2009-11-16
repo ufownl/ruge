@@ -296,6 +296,7 @@ namespace RUGE
 		else
 		{
 			CControl *pCtrl=m_pCtrlList;
+			BOOL bOver=FALSE;
 
 			if (pCtrl!=NULL)
 			{
@@ -305,6 +306,7 @@ namespace RUGE
 			{
 				if (pCtrl->m_Rect.TestPoint(m_fCurX, m_fCurY) && pCtrl->m_bEnabled)
 				{
+					bOver=TRUE;
 					if (pCtrl!=m_pCtrlOver)
 					{
 						if (m_pCtrlOver!=NULL) m_pCtrlOver->MouseOver(FALSE);
@@ -314,7 +316,7 @@ namespace RUGE
 					if (ProcessCtrl(pCtrl)) return pCtrl->m_nID;
 				}
 			}
-			if (m_pCtrlOver!=NULL)
+			if (!bOver && m_pCtrlOver!=NULL)
 			{
 				m_pCtrlOver->MouseOver(FALSE);
 				m_pCtrlOver=NULL;
