@@ -53,8 +53,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,7,3,1
- PRODUCTVERSION 2,7,3,1
+ FILEVERSION 2,7,4,1
+ PRODUCTVERSION 2,7,4,1
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -71,12 +71,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "游侠UFO工作室"
             VALUE "FileDescription", "RengerUFO's Game Engine"
-            VALUE "FileVersion", "2, 7, 3, 1"
+            VALUE "FileVersion", "2, 7, 4, 1"
             VALUE "InternalName", "RUGE"
             VALUE "LegalCopyright", "Copyright (C) 2009"
             VALUE "OriginalFilename", "RUGE.dll"
             VALUE "ProductName", "RUGE 动态链接库"
-            VALUE "ProductVersion", "2, 7, 3, 1"
+            VALUE "ProductVersion", "2, 7, 4, 1"
         END
     END
     BLOCK "VarFileInfo"

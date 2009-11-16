@@ -205,6 +205,8 @@ namespace RUGE
 	{
 		BOOL bLPressed=m_pApp->Input_KeyPressed(VK_LBUTTON), bRPressed=m_pApp->Input_KeyPressed(VK_RBUTTON);
 
+		m_fOldX=m_fCurX;
+		m_fOldY=m_fCurY;
 		m_pApp->Input_GetMousePos(&m_fCurX, &m_fCurY);
 		m_nWheel=m_pApp->Input_GetMouseWheel();
 
@@ -358,12 +360,7 @@ namespace RUGE
 			bResult=bResult || pCtrl->MouseWheel(m_nWheel);
 			m_nWheelOld=m_nWheel;
 		}
-		if (m_fCurX!=m_fOldX || m_fCurY!=m_fOldY)
-		{
-			bResult=bResult || pCtrl->MouseMove(m_fCurX-pCtrl->m_Rect.x1, m_fCurY-pCtrl->m_Rect.y1);
-			m_fOldX=m_fCurX;
-			m_fOldY=m_fCurY;
-		}
+		if (m_fCurX!=m_fOldX || m_fCurY!=m_fOldY) bResult=bResult || pCtrl->MouseMove(m_fCurX-pCtrl->m_Rect.x1, m_fCurY-pCtrl->m_Rect.y1);
 		return bResult;
 	}
 
