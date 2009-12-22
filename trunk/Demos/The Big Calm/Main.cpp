@@ -54,7 +54,7 @@ float g_fSeaP[SEA_SUBDIVISION];
 RUGE::CColor g_colSkyTop, g_colSkyBtm, g_colSeaTop, g_colSeaBtm;
 RUGE::CColor g_colSun, g_colSunGlow, g_colMoon, g_colMoonGlow, g_colSeaGlow;
 
-float g_fSunX, g_fSunY, g_fSunS, g_SunGlowS;
+float g_fSunX, g_fSunY, g_fSunS, g_fSunGlowS;
 float g_fMoonX, g_fMoonY, g_fMoonS, g_fMoonGlowS;
 float g_fSeaGlowX, g_fSeaGlowSX, g_fSeaGlowSY;
 
@@ -309,7 +309,7 @@ void UpdateSimulation(float fDelta)
 	g_fSunX=SCREEN_WIDTH*0.5f+cosf(fZenith)*ORBITS_RADIUS;
 	g_fSunY=SKY_HEIGHT*1.2f+sinf(fZenith)*ORBITS_RADIUS;
 	g_fSunS=1.0f-0.3f*sinf((g_fTime-6.0f)/12.0f*M_PI);
-	g_SunGlowS=3.0f*(1.0f-a)+3.0f;
+	g_fSunGlowS=3.0f*(1.0f-a)+3.0f;
 
 	if(g_nSeqID>=6) a=sinf((g_fTime-18.0f)/6.0f*M_PI_2);
 	else a=sinf((1.0f-g_fTime/6.0f)*M_PI_2);
@@ -345,8 +345,8 @@ void UpdateSimulation(float fDelta)
 		g_colSeaGlow=g_colSunGlow;
 		g_colSeaGlow.a=a;
 		g_fSeaGlowX=g_fSunX;
-		g_fSeaGlowSX=g_SunGlowS;
-		g_fSeaGlowSY=g_SunGlowS*0.6f;
+		g_fSeaGlowSX=g_fSunGlowS;
+		g_fSeaGlowSY=g_fSunGlowS*0.6f;
 	}
 	else g_colSeaGlow.a=0.0f;
 
@@ -444,8 +444,10 @@ void RenderSimulation()
 		}
 	}
 
+	printf("%f\n", g_colSunGlow.a);
+
 	g_psprGlow->SetColor(g_colSunGlow.GetColor());
-	g_psprGlow->RenderEx(g_fSunX, g_fSunY, 0.0f, g_SunGlowS);
+	g_psprGlow->RenderEx(g_fSunX, g_fSunY, 0.0f, g_fSunGlowS);
 	g_psprSun->SetColor(g_colSun.GetColor());
 	g_psprSun->RenderEx(g_fSunX, g_fSunY, 0.0f, g_fSunS);
 
