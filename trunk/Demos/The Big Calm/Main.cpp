@@ -444,8 +444,6 @@ void RenderSimulation()
 		}
 	}
 
-	printf("%f\n", g_colSunGlow.a);
-
 	g_psprGlow->SetColor(g_colSunGlow.GetColor());
 	g_psprGlow->RenderEx(g_fSunX, g_fSunY, 0.0f, g_fSunGlowS);
 	g_psprSun->SetColor(g_colSun.GetColor());
