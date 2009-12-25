@@ -87,9 +87,9 @@ namespace RUGE
 	{
 		CScene *pScene=GetScene(nID);
 
-		if (pScene==NULL) return NULL;
 		if (m_pScene!=NULL) m_pScene->Exit();
-		if (pScene->Enter(wParam, lParam)) m_pScene=pScene;
+		if (pScene==NULL) m_pScene=NULL;
+		else if (pScene->Enter(wParam, lParam)) m_pScene=pScene;
 		else
 		{
 			pScene->Exit();
