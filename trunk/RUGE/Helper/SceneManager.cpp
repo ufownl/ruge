@@ -90,7 +90,11 @@ namespace RUGE
 		if (pScene==NULL) return NULL;
 		if (m_pScene!=NULL) m_pScene->Exit();
 		if (pScene->Enter(wParam, lParam)) m_pScene=pScene;
-		else m_pScene=NULL;
+		else
+		{
+			pScene->Exit();
+			m_pScene=NULL;
+		}
 		return m_pScene;
 	}
 
