@@ -29,6 +29,9 @@ function Construct(this)
 	Control_SetRect(this, Rect);
 end
 
+function Deconstruct(this)
+end
+
 function SetColor(this, Color)
 end
 

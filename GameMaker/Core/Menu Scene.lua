@@ -9,6 +9,9 @@ function Construct(this)
 	Spr=NULL;
 end
 
+function Deconstruct(this)
+end
+
 function Enter(this, Param)
 	Tex=Texture_Load("cursor.png");
 	Sound=Effect_Load("menu.wav");
