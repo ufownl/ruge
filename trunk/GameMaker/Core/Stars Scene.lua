@@ -31,6 +31,9 @@ function Construct(this)
 	end
 end
 
+function Deconstruct(this)
+end
+
 function Enter(this, Param)
 	Random_Seed(os.time());
 
