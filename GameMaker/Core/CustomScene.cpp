@@ -36,6 +36,12 @@ CCustomScene::CCustomScene(int nID, LPCSTR lpcszPath)
 
 CCustomScene::~CCustomScene()
 {
+	if (m_luaState->GetGlobal("Deconstruct").IsFunction())
+	{
+		LuaPlus::LuaFunction<void> Lua_Deconstruct=m_luaState->GetGlobal("Deconstruct");
+
+		Lua_Deconstruct(this);
+	}
 }
 
 int CCustomScene::GetID() const
