@@ -34,7 +34,10 @@ int Lua_Control_Create(LuaPlus::LuaState *lua)
 		if (args[1].IsInteger()) nID=args[1].GetInteger();
 		if (args[2].IsString()) lpcszPath=args[2].GetString();
 		pCtrl=new CCustomCtrl(nID, lpcszPath);
-		if (args.Count()>=3 && args[3].IsTable()) TableCopy(&pCtrl->GetLua()->GetGlobals().CreateTable("Attribute"), &args[3]);
+		
+		LuaPlus::LuaObject Attr=pCtrl->GetLua()->GetGlobals().CreateTable("Attribute");
+
+		if (args.Count()>=3 && args[3].IsTable()) TableCopy(&Attr, &args[3]);
 	}
 	if (pCtrl->GetLua()->GetGlobal("Construct").IsFunction())
 	{
