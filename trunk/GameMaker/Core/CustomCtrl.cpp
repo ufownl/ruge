@@ -36,6 +36,12 @@ CCustomCtrl::CCustomCtrl(int nID, LPCSTR lpcszPath)
 
 CCustomCtrl::~CCustomCtrl()
 {
+	if (m_luaState->GetGlobal("Deconstruct").IsFunction())
+	{
+		LuaPlus::LuaFunction<void> Lua_Deconstruct=m_luaState->GetGlobal("Deconstruct");
+
+		Lua_Deconstruct(this);
+	}
 }
 
 void CCustomCtrl::SetStatic(BOOL bStatic)
