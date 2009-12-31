@@ -41,7 +41,7 @@ namespace RUGE
 
 	typedef struct IAudio : public IUnknown
 	{
-		STDMETHOD(SetState)(AudioIntState State, int nMaxChannels) PURE;
+		STDMETHOD(SetState)(AudioIntState State, int nVal) PURE;
 
 		STDMETHOD_(int, GetState)(AudioIntState State) PURE;
 

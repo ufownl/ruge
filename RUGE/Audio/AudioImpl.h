@@ -45,7 +45,7 @@ namespace RUGE
 		STDMETHOD(QueryInterface)(REFIID riid, void** ppv);
 
 		// IAudio
-		STDMETHOD(SetState)(AudioIntState State, int nMaxChannels);
+		STDMETHOD(SetState)(AudioIntState State, int nVal);
 
 		STDMETHOD_(int, GetState)(AudioIntState State);
 

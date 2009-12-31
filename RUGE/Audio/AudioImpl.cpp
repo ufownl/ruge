@@ -64,12 +64,12 @@ namespace RUGE
 		return hr;
 	}
 
-	STDMETHODIMP CAudioImpl::SetState(AudioIntState State, int nMaxChannels)
+	STDMETHODIMP CAudioImpl::SetState(AudioIntState State, int nVal)
 	{
 		switch (State)
 		{
 		case AUDIO_MAXCHANNELS:
-			if (m_pFmod==NULL) m_nMaxChannels=nMaxChannels;
+			if (m_pFmod==NULL) m_nMaxChannels=nVal;
 			break;
 		}
 		return S_OK;
