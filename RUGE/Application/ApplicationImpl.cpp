@@ -250,7 +250,7 @@ namespace RUGE
 
 		fprintf(stderr, "RUGE Started..\n\nRUGE Version: 2.7\n");
 		GetLocalTime(&SysTime);
-		fprintf(stderr, "Date: %02d-%02d-%d, %02d:%02d:%02d\n\n", SysTime.wYear, SysTime.wMonth, SysTime.wDay, SysTime.wHour, SysTime.wMinute, SysTime.wSecond);
+		fprintf(stderr, "Date: %02d-%02d-%02d, %02d:%02d:%02d\n\n", SysTime.wYear, SysTime.wMonth, SysTime.wDay, SysTime.wHour, SysTime.wMinute, SysTime.wSecond);
 		fprintf(stderr, "Application: %s\n", m_lpcszCaption);
 		OSVer.dwOSVersionInfoSize=sizeof(OSVer);
 		GetVersionEx(&OSVer);
