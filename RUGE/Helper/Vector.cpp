@@ -151,8 +151,10 @@ namespace RUGE
 
 	CVector& CVector::Rotate(float a)
 	{
-		x=x*cosf(a)-y*sinf(a);
-		y=x*sinf(a)+y*cosf(a);
+		CVector v = *this;
+
+		x = v.x * cosf(a) - v.y * sinf(a);
+		y = v.x * sinf(a) + v.y * cosf(a);
 		return *this;
 	}
 
